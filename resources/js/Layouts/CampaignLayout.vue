@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import Sidebar from '@/Components/Layout/Sidebar.vue';
 import TopBar from '@/Components/Layout/TopBar.vue';
+import type { PageProps } from '@/types';
 
 interface Campaign {
     id: number;
@@ -10,24 +11,16 @@ interface Campaign {
     slug: string;
 }
 
-interface User {
-    name: string;
-    email: string;
-}
-
-interface PageProps {
-    auth: {
-        user: User;
-    };
+interface CampaignPageProps extends PageProps {
     campaigns?: Campaign[];
     campaign?: Campaign;
 }
 
-const page = usePage<PageProps>();
+const page = usePage<CampaignPageProps>();
 
 const user = computed(() => page.props.auth.user);
-const campaigns = computed(() => page.props.campaigns || []);
-const currentCampaign = computed(() => page.props.campaign);
+const campaigns = computed(() => (page.props as CampaignPageProps).campaigns || []);
+const currentCampaign = computed(() => (page.props as CampaignPageProps).campaign);
 </script>
 
 <template>

@@ -111,13 +111,13 @@ const submit = () => {
                             <!-- Player Count -->
                             <div>
                                 <InputLabel for="player_count" value="Number of Players (optional)" />
-                                <TextInput
+                                <input
                                     id="player_count"
                                     v-model.number="form.player_count"
                                     type="number"
                                     min="1"
                                     max="20"
-                                    class="mt-1 block w-full"
+                                    class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                     placeholder="e.g., 4"
                                 />
                                 <InputError :message="form.errors.player_count" class="mt-2" />
