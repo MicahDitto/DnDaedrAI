@@ -26,96 +26,99 @@ const toggleSection = (section: string) => {
     expandedSections.value[section] = !expandedSections.value[section];
 };
 
-const navItems = computed(() => [
-    {
-        key: 'dashboard',
-        label: 'Dashboard',
-        icon: 'home',
-        href: props.campaign ? route('campaigns.show', props.campaign.slug) : route('dashboard'),
-        expandable: false,
-    },
-    {
-        key: 'sessions',
-        label: 'Sessions',
-        icon: 'calendar',
-        expandable: true,
-        children: [
-            { label: 'Timeline View', href: '#' },
-            { label: 'Session 0 (Setup)', href: '#' },
-            { label: '+ Next Session', href: '#', isAction: true },
-        ],
-    },
-    {
-        key: 'characters',
-        label: 'Characters',
-        icon: 'users',
-        expandable: true,
-        children: [
-            { label: 'Player Characters', href: '#' },
-            { label: 'NPCs', href: '#' },
-            { label: 'Villains', href: '#' },
-            { label: 'Relationships Map', href: '#' },
-        ],
-    },
-    {
-        key: 'places',
-        label: 'Places',
-        icon: 'map',
-        expandable: true,
-        children: [
-            { label: 'World Overview', href: '#' },
-            { label: 'Regions', href: '#' },
-            { label: 'Maps Gallery', href: '#' },
-        ],
-    },
-    {
-        key: 'plots',
-        label: 'Plots',
-        icon: 'book',
-        expandable: true,
-        children: [
-            { label: 'Main Campaign Arc', href: '#' },
-            { label: 'Character Arcs', href: '#' },
-            { label: 'Side Quests', href: '#' },
-            { label: 'Mysteries', href: '#' },
-        ],
-    },
-    {
-        key: 'worldbuilding',
-        label: 'Worldbuilding',
-        icon: 'globe',
-        expandable: true,
-        children: [
-            { label: 'History & Timeline', href: '#' },
-            { label: 'Lore & Legends', href: '#' },
-            { label: 'Factions', href: '#' },
-            { label: 'Religions', href: '#' },
-            { label: 'Magic System', href: '#' },
-        ],
-    },
-    {
-        key: 'tools',
-        label: 'Tools',
-        icon: 'dice',
-        expandable: true,
-        children: [
-            { label: 'Random Generators', href: '#' },
-            { label: 'Encounter Builder', href: '#' },
-            { label: 'NPC Quick-Gen', href: '#' },
-        ],
-    },
-    {
-        key: 'notes',
-        label: 'Notes',
-        icon: 'note',
-        expandable: true,
-        children: [
-            { label: 'Session Notes', href: '#' },
-            { label: 'DM Journal', href: '#' },
-            { label: 'Scratch Pad', href: '#' },
-        ],
-    },
-]);
+const navItems = computed(() => {
+    const slug = props.campaign?.slug;
+
+    return [
+        {
+            key: 'dashboard',
+            label: 'Dashboard',
+            icon: 'home',
+            href: slug ? route('campaigns.show', slug) : route('dashboard'),
+            expandable: false,
+        },
+        {
+            key: 'sessions',
+            label: 'Sessions',
+            icon: 'calendar',
+            expandable: true,
+            children: [
+                { label: 'Timeline View', href: '#' },
+                { label: 'Session 0 (Setup)', href: slug ? route('campaigns.setup', slug) : '#' },
+                { label: '+ Next Session', href: '#', isAction: true },
+            ],
+        },
+        {
+            key: 'characters',
+            label: 'Characters',
+            icon: 'users',
+            href: slug ? route('campaigns.characters.index', slug) : '#',
+            expandable: true,
+            children: [
+                { label: 'All Characters', href: slug ? route('campaigns.characters.index', slug) : '#' },
+                { label: '+ New Character', href: slug ? route('campaigns.characters.create', slug) : '#', isAction: true },
+            ],
+        },
+        {
+            key: 'places',
+            label: 'Places',
+            icon: 'map',
+            href: slug ? route('campaigns.places.index', slug) : '#',
+            expandable: true,
+            children: [
+                { label: 'All Places', href: slug ? route('campaigns.places.index', slug) : '#' },
+                { label: '+ New Place', href: slug ? route('campaigns.places.create', slug) : '#', isAction: true },
+            ],
+        },
+        {
+            key: 'plots',
+            label: 'Plots',
+            icon: 'book',
+            expandable: true,
+            children: [
+                { label: 'Main Campaign Arc', href: '#' },
+                { label: 'Character Arcs', href: '#' },
+                { label: 'Side Quests', href: '#' },
+                { label: 'Mysteries', href: '#' },
+            ],
+        },
+        {
+            key: 'worldbuilding',
+            label: 'Worldbuilding',
+            icon: 'globe',
+            expandable: true,
+            children: [
+                { label: 'History & Timeline', href: '#' },
+                { label: 'Lore & Legends', href: '#' },
+                { label: 'Factions', href: '#' },
+                { label: 'Religions', href: '#' },
+                { label: 'Magic System', href: '#' },
+            ],
+        },
+        {
+            key: 'tools',
+            label: 'Tools',
+            icon: 'dice',
+            expandable: true,
+            children: [
+                { label: 'Random Generators', href: '#' },
+                { label: 'Encounter Builder', href: '#' },
+                { label: 'NPC Quick-Gen', href: '#' },
+            ],
+        },
+        {
+            key: 'notes',
+            label: 'Notes',
+            icon: 'note',
+            expandable: true,
+            children: [
+                { label: 'Session Notes', href: '#' },
+                { label: 'DM Journal', href: '#' },
+                { label: 'Scratch Pad', href: '#' },
+            ],
+        },
+    ];
+});
 
 const icons: Record<string, string> = {
     home: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',

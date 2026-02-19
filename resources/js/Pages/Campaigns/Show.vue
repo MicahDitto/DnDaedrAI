@@ -88,6 +88,27 @@ const formatDate = (dateString: string) => {
             </div>
         </template>
 
+        <!-- Session 0 Setup Banner -->
+        <div
+            v-if="campaign.status === 'setup'"
+            class="mb-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg shadow-lg p-6 text-white"
+        >
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold">Complete Session 0 Setup</h2>
+                    <p class="mt-1 text-indigo-100">
+                        Answer a few questions to customize your campaign and get personalized recommendations.
+                    </p>
+                </div>
+                <Link
+                    :href="route('campaigns.setup', campaign.slug)"
+                    class="px-6 py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-indigo-50 transition-colors"
+                >
+                    Start Setup
+                </Link>
+            </div>
+        </div>
+
         <!-- Stats Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-white rounded-lg shadow p-6">
@@ -237,19 +258,25 @@ const formatDate = (dateString: string) => {
         <div class="mt-8 bg-white rounded-lg shadow p-6">
             <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <button class="flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-gray-300 hover:border-indigo-500 hover:bg-indigo-50 transition-colors">
+                <Link
+                    :href="route('campaigns.characters.create', campaign.slug)"
+                    class="flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-gray-300 hover:border-indigo-500 hover:bg-indigo-50 transition-colors"
+                >
                     <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
                     <span class="mt-2 text-sm font-medium text-gray-600">Add Character</span>
-                </button>
+                </Link>
 
-                <button class="flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-gray-300 hover:border-indigo-500 hover:bg-indigo-50 transition-colors">
+                <Link
+                    :href="route('campaigns.places.create', campaign.slug)"
+                    class="flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-gray-300 hover:border-indigo-500 hover:bg-indigo-50 transition-colors"
+                >
                     <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                     <span class="mt-2 text-sm font-medium text-gray-600">Add Place</span>
-                </button>
+                </Link>
 
                 <button class="flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-gray-300 hover:border-indigo-500 hover:bg-indigo-50 transition-colors">
                     <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

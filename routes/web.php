@@ -3,6 +3,7 @@
 use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\QuestionnaireController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -66,6 +67,14 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.places.update');
     Route::delete('/campaigns/{campaignSlug}/places/{nodeSlug}', [NodeController::class, 'placesDestroy'])
         ->name('campaigns.places.destroy');
+
+    // Session 0 Questionnaire routes
+    Route::get('/campaigns/{campaignSlug}/setup', [QuestionnaireController::class, 'show'])
+        ->name('campaigns.setup');
+    Route::post('/campaigns/{campaignSlug}/setup', [QuestionnaireController::class, 'store'])
+        ->name('campaigns.setup.store');
+    Route::post('/campaigns/{campaignSlug}/setup/complete', [QuestionnaireController::class, 'complete'])
+        ->name('campaigns.setup.complete');
 });
 
 require __DIR__.'/auth.php';
