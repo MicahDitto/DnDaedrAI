@@ -462,4 +462,261 @@ class NodeController extends Controller
         return redirect()->route('campaigns.places.index', $campaign->slug)
             ->with('success', 'Place deleted successfully.');
     }
+
+    // Factions
+    public function factionsIndex(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $factions = $campaign->nodes()
+            ->factions()
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Factions/Index', [
+            'campaign' => $campaign,
+            'factions' => $factions,
+            'subtypes' => $this->getSubtypes('faction'),
+        ]);
+    }
+
+    public function factionsCreate(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        // Get places for headquarters selection
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        return Inertia::render('Factions/Create', [
+            'campaign' => $campaign,
+            'subtypes' => $this->getSubtypes('faction'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'places' => $places,
+        ]);
+    }
+
+    public function factionsStore(Request $request, string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('faction'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.goals' => 'nullable|string',
+            'content.methods' => 'nullable|string',
+            'content.resources' => 'nullable|string',
+            'content.history' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'headquarters_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = [];
+        if (!empty($validated['headquarters_id'])) {
+            $metadata['headquarters_id'] = $validated['headquarters_id'];
+        }
+
+        $node = $campaign->nodes()->create([
+            'type' => 'faction',
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Create edge to headquarters if specified
+        if (!empty($validated['headquarters_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $node->id,
+                'target_node_id' => $validated['headquarters_id'],
+                'type' => 'headquartered_in',
+                'label' => 'Headquartered in',
+            ]);
+        }
+
+        return redirect()->route('campaigns.factions.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $node->slug,
+        ])->with('success', 'Faction created successfully.');
+    }
+
+    public function factionsShow(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $faction = $campaign->nodes()
+            ->factions()
+            ->where('slug', $nodeSlug)
+            ->with(['tags', 'outgoingEdges.targetNode', 'incomingEdges.sourceNode'])
+            ->firstOrFail();
+
+        // Get members (characters with member_of edge to this faction)
+        $members = $campaign->nodes()
+            ->characters()
+            ->whereHas('outgoingEdges', function ($query) use ($faction) {
+                $query->where('target_node_id', $faction->id)
+                    ->where('type', 'member_of');
+            })
+            ->get();
+
+        // Get headquarters
+        $headquartersEdge = $faction->outgoingEdges()
+            ->where('type', 'headquartered_in')
+            ->with('targetNode')
+            ->first();
+        $headquarters = $headquartersEdge?->targetNode;
+
+        // Get allied factions
+        $alliedFactions = $campaign->nodes()
+            ->factions()
+            ->where('id', '!=', $faction->id)
+            ->where(function ($query) use ($faction) {
+                $query->whereHas('outgoingEdges', function ($q) use ($faction) {
+                    $q->where('target_node_id', $faction->id)
+                        ->where('type', 'allied_with');
+                })->orWhereHas('incomingEdges', function ($q) use ($faction) {
+                    $q->where('source_node_id', $faction->id)
+                        ->where('type', 'allied_with');
+                });
+            })
+            ->get();
+
+        // Get rival factions
+        $rivalFactions = $campaign->nodes()
+            ->factions()
+            ->where('id', '!=', $faction->id)
+            ->where(function ($query) use ($faction) {
+                $query->whereHas('outgoingEdges', function ($q) use ($faction) {
+                    $q->where('target_node_id', $faction->id)
+                        ->where('type', 'rivals_with');
+                })->orWhereHas('incomingEdges', function ($q) use ($faction) {
+                    $q->where('source_node_id', $faction->id)
+                        ->where('type', 'rivals_with');
+                });
+            })
+            ->get();
+
+        return Inertia::render('Factions/Show', [
+            'campaign' => $campaign,
+            'faction' => $faction,
+            'members' => $members,
+            'headquarters' => $headquarters,
+            'alliedFactions' => $alliedFactions,
+            'rivalFactions' => $rivalFactions,
+        ]);
+    }
+
+    public function factionsEdit(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $faction = $campaign->nodes()
+            ->factions()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get current headquarters from edges
+        $currentHeadquarters = $faction->outgoingEdges()
+            ->where('type', 'headquartered_in')
+            ->first();
+
+        return Inertia::render('Factions/Edit', [
+            'campaign' => $campaign,
+            'faction' => $faction,
+            'subtypes' => $this->getSubtypes('faction'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'places' => $places,
+            'currentHeadquartersId' => $currentHeadquarters?->target_node_id,
+        ]);
+    }
+
+    public function factionsUpdate(Request $request, string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $faction = $campaign->nodes()
+            ->factions()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('faction'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.goals' => 'nullable|string',
+            'content.methods' => 'nullable|string',
+            'content.resources' => 'nullable|string',
+            'content.history' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'headquarters_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = $faction->metadata ?? [];
+        if (!empty($validated['headquarters_id'])) {
+            $metadata['headquarters_id'] = $validated['headquarters_id'];
+        } else {
+            unset($metadata['headquarters_id']);
+        }
+
+        $faction->update([
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']),
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Update headquarters edge
+        $faction->outgoingEdges()->where('type', 'headquartered_in')->delete();
+        if (!empty($validated['headquarters_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $faction->id,
+                'target_node_id' => $validated['headquarters_id'],
+                'type' => 'headquartered_in',
+                'label' => 'Headquartered in',
+            ]);
+        }
+
+        return redirect()->route('campaigns.factions.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $faction->slug,
+        ])->with('success', 'Faction updated successfully.');
+    }
+
+    public function factionsDestroy(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $faction = $campaign->nodes()
+            ->factions()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $faction->delete();
+
+        return redirect()->route('campaigns.factions.index', $campaign->slug)
+            ->with('success', 'Faction deleted successfully.');
+    }
 }

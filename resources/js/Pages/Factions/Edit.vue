@@ -1,0 +1,294 @@
+<script setup lang="ts">
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import CampaignLayout from '@/Layouts/CampaignLayout.vue';
+import InputLabel from '@/Components/InputLabel.vue';
+import TextInput from '@/Components/TextInput.vue';
+import InputError from '@/Components/InputError.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+
+interface Place {
+    id: string;
+    name: string;
+    subtype: string;
+}
+
+interface Faction {
+    id: string;
+    name: string;
+    slug: string;
+    subtype: string;
+    summary: string | null;
+    content: {
+        description?: string;
+        goals?: string;
+        methods?: string;
+        resources?: string;
+        history?: string;
+        secrets?: string;
+    };
+    confidence: string;
+    is_secret: boolean;
+}
+
+interface Campaign {
+    id: number;
+    name: string;
+    slug: string;
+}
+
+const props = defineProps<{
+    campaign: Campaign;
+    faction: Faction;
+    subtypes: Record<string, string>;
+    confidenceLevels: Record<string, string>;
+    places: Place[];
+    currentHeadquartersId: string | null;
+}>();
+
+const form = useForm({
+    name: props.faction.name,
+    subtype: props.faction.subtype,
+    summary: props.faction.summary || '',
+    content: {
+        description: props.faction.content?.description || '',
+        goals: props.faction.content?.goals || '',
+        methods: props.faction.content?.methods || '',
+        resources: props.faction.content?.resources || '',
+        history: props.faction.content?.history || '',
+        secrets: props.faction.content?.secrets || '',
+    },
+    headquarters_id: props.currentHeadquartersId || '',
+    confidence: props.faction.confidence,
+    is_secret: props.faction.is_secret,
+});
+
+const submit = () => {
+    form.put(route('campaigns.factions.update', [props.campaign.slug, props.faction.slug]));
+};
+</script>
+
+<template>
+    <Head :title="`Edit ${faction.name} - ${campaign.name}`" />
+
+    <CampaignLayout>
+        <template #header>
+            <div class="flex items-center space-x-4">
+                <Link
+                    :href="route('campaigns.factions.show', [campaign.slug, faction.slug])"
+                    class="text-gray-500 hover:text-gray-700"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </Link>
+                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    Edit: {{ faction.name }}
+                </h2>
+            </div>
+        </template>
+
+        <div class="py-6">
+            <div class="max-w-3xl mx-auto">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <form @submit.prevent="submit" class="space-y-6">
+                            <!-- Basic Info Section -->
+                            <div class="border-b border-gray-200 pb-6">
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Name -->
+                                    <div class="md:col-span-2">
+                                        <InputLabel for="name" value="Name" />
+                                        <TextInput
+                                            id="name"
+                                            v-model="form.name"
+                                            type="text"
+                                            class="mt-1 block w-full"
+                                            required
+                                            placeholder="e.g., The Thieves Guild"
+                                        />
+                                        <InputError :message="form.errors.name" class="mt-2" />
+                                    </div>
+
+                                    <!-- Subtype -->
+                                    <div>
+                                        <InputLabel for="subtype" value="Faction Type" />
+                                        <select
+                                            id="subtype"
+                                            v-model="form.subtype"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            required
+                                        >
+                                            <option v-for="(label, value) in subtypes" :key="value" :value="value">
+                                                {{ label }}
+                                            </option>
+                                        </select>
+                                        <InputError :message="form.errors.subtype" class="mt-2" />
+                                    </div>
+
+                                    <!-- Confidence -->
+                                    <div>
+                                        <InputLabel for="confidence" value="Confidence Level" />
+                                        <select
+                                            id="confidence"
+                                            v-model="form.confidence"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                        >
+                                            <option v-for="(label, value) in confidenceLevels" :key="value" :value="value">
+                                                {{ label }}
+                                            </option>
+                                        </select>
+                                        <InputError :message="form.errors.confidence" class="mt-2" />
+                                    </div>
+
+                                    <!-- Headquarters -->
+                                    <div>
+                                        <InputLabel for="headquarters_id" value="Headquarters" />
+                                        <select
+                                            id="headquarters_id"
+                                            v-model="form.headquarters_id"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                        >
+                                            <option value="">None</option>
+                                            <option v-for="place in places" :key="place.id" :value="place.id">
+                                                {{ place.name }}
+                                            </option>
+                                        </select>
+                                        <InputError :message="form.errors.headquarters_id" class="mt-2" />
+                                    </div>
+
+                                    <!-- Summary -->
+                                    <div class="md:col-span-2">
+                                        <InputLabel for="summary" value="Short Summary" />
+                                        <textarea
+                                            id="summary"
+                                            v-model="form.summary"
+                                            rows="2"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            placeholder="A brief one-liner about this faction..."
+                                            maxlength="500"
+                                        />
+                                        <InputError :message="form.errors.summary" class="mt-2" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Details Section -->
+                            <div class="border-b border-gray-200 pb-6">
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">Faction Details</h3>
+
+                                <div class="space-y-6">
+                                    <!-- Description -->
+                                    <div>
+                                        <InputLabel for="description" value="Description" />
+                                        <textarea
+                                            id="description"
+                                            v-model="form.content.description"
+                                            rows="4"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            placeholder="What is this faction? How is it organized?"
+                                        />
+                                    </div>
+
+                                    <!-- Goals -->
+                                    <div>
+                                        <InputLabel for="goals" value="Goals & Objectives" />
+                                        <textarea
+                                            id="goals"
+                                            v-model="form.content.goals"
+                                            rows="3"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            placeholder="What does this faction want to achieve?"
+                                        />
+                                    </div>
+
+                                    <!-- Methods -->
+                                    <div>
+                                        <InputLabel for="methods" value="Methods & Operations" />
+                                        <textarea
+                                            id="methods"
+                                            v-model="form.content.methods"
+                                            rows="3"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            placeholder="How does this faction operate? What methods do they use?"
+                                        />
+                                    </div>
+
+                                    <!-- Resources -->
+                                    <div>
+                                        <InputLabel for="resources" value="Resources & Assets" />
+                                        <textarea
+                                            id="resources"
+                                            v-model="form.content.resources"
+                                            rows="3"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            placeholder="What resources does this faction control? Money, people, territory?"
+                                        />
+                                    </div>
+
+                                    <!-- History -->
+                                    <div>
+                                        <InputLabel for="history" value="History" />
+                                        <textarea
+                                            id="history"
+                                            v-model="form.content.history"
+                                            rows="3"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            placeholder="What is the history of this faction?"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Secrets Section -->
+                            <div class="border-b border-gray-200 pb-6">
+                                <h3 class="text-lg font-medium text-gray-900 mb-4">DM Secrets</h3>
+
+                                <div class="space-y-4">
+                                    <!-- Is Secret -->
+                                    <div class="flex items-center">
+                                        <input
+                                            id="is_secret"
+                                            v-model="form.is_secret"
+                                            type="checkbox"
+                                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                        />
+                                        <label for="is_secret" class="ml-2 block text-sm text-gray-700">
+                                            This entire faction is a secret (DM eyes only)
+                                        </label>
+                                    </div>
+
+                                    <!-- Secrets -->
+                                    <div>
+                                        <InputLabel for="secrets" value="Faction Secrets" />
+                                        <textarea
+                                            id="secrets"
+                                            v-model="form.content.secrets"
+                                            rows="3"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            placeholder="What secrets does this faction have? Hidden agendas, true leaders, dark pasts?"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit -->
+                            <div class="flex items-center justify-end space-x-4">
+                                <Link
+                                    :href="route('campaigns.factions.show', [campaign.slug, faction.slug])"
+                                    class="text-gray-600 hover:text-gray-900"
+                                >
+                                    Cancel
+                                </Link>
+                                <PrimaryButton :disabled="form.processing">
+                                    Save Changes
+                                </PrimaryButton>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </CampaignLayout>
+</template>

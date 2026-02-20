@@ -4,6 +4,7 @@ use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\SessionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -75,6 +76,38 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.setup.store');
     Route::post('/campaigns/{campaignSlug}/setup/complete', [QuestionnaireController::class, 'complete'])
         ->name('campaigns.setup.complete');
+
+    // Game Session routes
+    Route::get('/campaigns/{campaignSlug}/sessions', [SessionController::class, 'index'])
+        ->name('campaigns.sessions.index');
+    Route::get('/campaigns/{campaignSlug}/sessions/create', [SessionController::class, 'create'])
+        ->name('campaigns.sessions.create');
+    Route::post('/campaigns/{campaignSlug}/sessions', [SessionController::class, 'store'])
+        ->name('campaigns.sessions.store');
+    Route::get('/campaigns/{campaignSlug}/sessions/{number}', [SessionController::class, 'show'])
+        ->name('campaigns.sessions.show')->where('number', '[0-9]+');
+    Route::get('/campaigns/{campaignSlug}/sessions/{number}/edit', [SessionController::class, 'edit'])
+        ->name('campaigns.sessions.edit')->where('number', '[0-9]+');
+    Route::put('/campaigns/{campaignSlug}/sessions/{number}', [SessionController::class, 'update'])
+        ->name('campaigns.sessions.update')->where('number', '[0-9]+');
+    Route::delete('/campaigns/{campaignSlug}/sessions/{number}', [SessionController::class, 'destroy'])
+        ->name('campaigns.sessions.destroy')->where('number', '[0-9]+');
+
+    // Faction routes (within a campaign)
+    Route::get('/campaigns/{campaignSlug}/factions', [NodeController::class, 'factionsIndex'])
+        ->name('campaigns.factions.index');
+    Route::get('/campaigns/{campaignSlug}/factions/create', [NodeController::class, 'factionsCreate'])
+        ->name('campaigns.factions.create');
+    Route::post('/campaigns/{campaignSlug}/factions', [NodeController::class, 'factionsStore'])
+        ->name('campaigns.factions.store');
+    Route::get('/campaigns/{campaignSlug}/factions/{nodeSlug}', [NodeController::class, 'factionsShow'])
+        ->name('campaigns.factions.show');
+    Route::get('/campaigns/{campaignSlug}/factions/{nodeSlug}/edit', [NodeController::class, 'factionsEdit'])
+        ->name('campaigns.factions.edit');
+    Route::put('/campaigns/{campaignSlug}/factions/{nodeSlug}', [NodeController::class, 'factionsUpdate'])
+        ->name('campaigns.factions.update');
+    Route::delete('/campaigns/{campaignSlug}/factions/{nodeSlug}', [NodeController::class, 'factionsDestroy'])
+        ->name('campaigns.factions.destroy');
 });
 
 require __DIR__.'/auth.php';

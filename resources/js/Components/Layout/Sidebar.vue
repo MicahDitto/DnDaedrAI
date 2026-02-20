@@ -41,11 +41,12 @@ const navItems = computed(() => {
             key: 'sessions',
             label: 'Sessions',
             icon: 'calendar',
+            href: slug ? route('campaigns.sessions.index', slug) : '#',
             expandable: true,
             children: [
-                { label: 'Timeline View', href: '#' },
+                { label: 'All Sessions', href: slug ? route('campaigns.sessions.index', slug) : '#' },
                 { label: 'Session 0 (Setup)', href: slug ? route('campaigns.setup', slug) : '#' },
-                { label: '+ Next Session', href: '#', isAction: true },
+                { label: '+ Plan Session', href: slug ? route('campaigns.sessions.create', slug) : '#', isAction: true },
             ],
         },
         {
@@ -88,9 +89,10 @@ const navItems = computed(() => {
             icon: 'globe',
             expandable: true,
             children: [
+                { label: 'Factions', href: slug ? route('campaigns.factions.index', slug) : '#' },
+                { label: '+ New Faction', href: slug ? route('campaigns.factions.create', slug) : '#', isAction: true },
                 { label: 'History & Timeline', href: '#' },
                 { label: 'Lore & Legends', href: '#' },
-                { label: 'Factions', href: '#' },
                 { label: 'Religions', href: '#' },
                 { label: 'Magic System', href: '#' },
             ],
@@ -191,7 +193,7 @@ const icons: Record<string, string> = {
                             :key="child.label"
                             :href="child.href"
                             class="block px-4 py-1.5 text-sm hover:bg-gray-800 hover:text-white transition-colors"
-                            :class="{ 'text-indigo-400': child.isAction }"
+                            :class="{ 'text-indigo-400': 'isAction' in child && child.isAction }"
                         >
                             {{ child.label }}
                         </Link>
