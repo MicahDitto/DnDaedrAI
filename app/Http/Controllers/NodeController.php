@@ -719,4 +719,273 @@ class NodeController extends Controller
         return redirect()->route('campaigns.factions.index', $campaign->slug)
             ->with('success', 'Faction deleted successfully.');
     }
+
+    // Items
+    public function itemsIndex(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $items = $campaign->nodes()
+            ->items()
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Items/Index', [
+            'campaign' => $campaign,
+            'items' => $items,
+            'subtypes' => $this->getSubtypes('item'),
+        ]);
+    }
+
+    public function itemsCreate(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        // Get characters for owner selection
+        $characters = $campaign->nodes()
+            ->characters()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get places for location selection
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        return Inertia::render('Items/Create', [
+            'campaign' => $campaign,
+            'subtypes' => $this->getSubtypes('item'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'characters' => $characters,
+            'places' => $places,
+        ]);
+    }
+
+    public function itemsStore(Request $request, string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('item'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.properties' => 'nullable|string',
+            'content.history' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'owner_id' => 'nullable|uuid|exists:nodes,id',
+            'location_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = [];
+        if (!empty($validated['owner_id'])) {
+            $metadata['owner_id'] = $validated['owner_id'];
+        }
+        if (!empty($validated['location_id'])) {
+            $metadata['location_id'] = $validated['location_id'];
+        }
+
+        $node = $campaign->nodes()->create([
+            'type' => 'item',
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Create edge to owner if specified
+        if (!empty($validated['owner_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $node->id,
+                'target_node_id' => $validated['owner_id'],
+                'type' => 'owned_by',
+                'label' => 'Owned by',
+            ]);
+        }
+
+        // Create edge to location if specified
+        if (!empty($validated['location_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $node->id,
+                'target_node_id' => $validated['location_id'],
+                'type' => 'located_in',
+                'label' => 'Located in',
+            ]);
+        }
+
+        return redirect()->route('campaigns.items.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $node->slug,
+        ])->with('success', 'Item created successfully.');
+    }
+
+    public function itemsShow(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $item = $campaign->nodes()
+            ->items()
+            ->where('slug', $nodeSlug)
+            ->with(['tags', 'outgoingEdges.targetNode', 'incomingEdges.sourceNode'])
+            ->firstOrFail();
+
+        // Get owner
+        $ownerEdge = $item->outgoingEdges()
+            ->where('type', 'owned_by')
+            ->with('targetNode')
+            ->first();
+        $owner = $ownerEdge?->targetNode;
+
+        // Get location
+        $locationEdge = $item->outgoingEdges()
+            ->where('type', 'located_in')
+            ->with('targetNode')
+            ->first();
+        $location = $locationEdge?->targetNode;
+
+        return Inertia::render('Items/Show', [
+            'campaign' => $campaign,
+            'item' => $item,
+            'owner' => $owner,
+            'location' => $location,
+        ]);
+    }
+
+    public function itemsEdit(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $item = $campaign->nodes()
+            ->items()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $characters = $campaign->nodes()
+            ->characters()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get current owner from edges
+        $currentOwner = $item->outgoingEdges()
+            ->where('type', 'owned_by')
+            ->first();
+
+        // Get current location from edges
+        $currentLocation = $item->outgoingEdges()
+            ->where('type', 'located_in')
+            ->first();
+
+        return Inertia::render('Items/Edit', [
+            'campaign' => $campaign,
+            'item' => $item,
+            'subtypes' => $this->getSubtypes('item'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'characters' => $characters,
+            'places' => $places,
+            'currentOwnerId' => $currentOwner?->target_node_id,
+            'currentLocationId' => $currentLocation?->target_node_id,
+        ]);
+    }
+
+    public function itemsUpdate(Request $request, string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $item = $campaign->nodes()
+            ->items()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('item'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.properties' => 'nullable|string',
+            'content.history' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'owner_id' => 'nullable|uuid|exists:nodes,id',
+            'location_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = $item->metadata ?? [];
+        if (!empty($validated['owner_id'])) {
+            $metadata['owner_id'] = $validated['owner_id'];
+        } else {
+            unset($metadata['owner_id']);
+        }
+        if (!empty($validated['location_id'])) {
+            $metadata['location_id'] = $validated['location_id'];
+        } else {
+            unset($metadata['location_id']);
+        }
+
+        $item->update([
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']),
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Update owner edge
+        $item->outgoingEdges()->where('type', 'owned_by')->delete();
+        if (!empty($validated['owner_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $item->id,
+                'target_node_id' => $validated['owner_id'],
+                'type' => 'owned_by',
+                'label' => 'Owned by',
+            ]);
+        }
+
+        // Update location edge
+        $item->outgoingEdges()->where('type', 'located_in')->delete();
+        if (!empty($validated['location_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $item->id,
+                'target_node_id' => $validated['location_id'],
+                'type' => 'located_in',
+                'label' => 'Located in',
+            ]);
+        }
+
+        return redirect()->route('campaigns.items.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $item->slug,
+        ])->with('success', 'Item updated successfully.');
+    }
+
+    public function itemsDestroy(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $item = $campaign->nodes()
+            ->items()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $item->delete();
+
+        return redirect()->route('campaigns.items.index', $campaign->slug)
+            ->with('success', 'Item deleted successfully.');
+    }
 }

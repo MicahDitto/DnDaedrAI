@@ -108,6 +108,22 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.factions.update');
     Route::delete('/campaigns/{campaignSlug}/factions/{nodeSlug}', [NodeController::class, 'factionsDestroy'])
         ->name('campaigns.factions.destroy');
+
+    // Item routes (within a campaign)
+    Route::get('/campaigns/{campaignSlug}/items', [NodeController::class, 'itemsIndex'])
+        ->name('campaigns.items.index');
+    Route::get('/campaigns/{campaignSlug}/items/create', [NodeController::class, 'itemsCreate'])
+        ->name('campaigns.items.create');
+    Route::post('/campaigns/{campaignSlug}/items', [NodeController::class, 'itemsStore'])
+        ->name('campaigns.items.store');
+    Route::get('/campaigns/{campaignSlug}/items/{nodeSlug}', [NodeController::class, 'itemsShow'])
+        ->name('campaigns.items.show');
+    Route::get('/campaigns/{campaignSlug}/items/{nodeSlug}/edit', [NodeController::class, 'itemsEdit'])
+        ->name('campaigns.items.edit');
+    Route::put('/campaigns/{campaignSlug}/items/{nodeSlug}', [NodeController::class, 'itemsUpdate'])
+        ->name('campaigns.items.update');
+    Route::delete('/campaigns/{campaignSlug}/items/{nodeSlug}', [NodeController::class, 'itemsDestroy'])
+        ->name('campaigns.items.destroy');
 });
 
 require __DIR__.'/auth.php';
