@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import CampaignLayout from '@/Layouts/CampaignLayout.vue';
+import RelationshipManager from '@/Components/RelationshipManager.vue';
 import { ref } from 'vue';
 
 interface Edge {
     id: number;
     type: string;
     label: string | null;
+    strength: number | null;
+    is_secret: boolean;
     target_node?: {
         id: string;
         name: string;
@@ -224,36 +227,14 @@ const getNodeRoute = (node: { type: string; slug: string }) => {
                         </div>
 
                         <!-- Relationships -->
-                        <div class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
-                            <h3 class="text-sm font-medium text-arcane-grey uppercase mb-4">Relationships</h3>
-
-                            <div v-if="character.outgoing_edges.length === 0 && character.incoming_edges.length === 0" class="text-sm text-arcane-grey">
-                                No relationships yet.
-                            </div>
-
-                            <div v-else class="space-y-3">
-                                <div v-for="edge in character.outgoing_edges" :key="edge.id" class="text-sm">
-                                    <span class="text-arcane-grey">{{ edge.label || edge.type }}</span>
-                                    <Link
-                                        v-if="edge.target_node"
-                                        :href="getNodeRoute(edge.target_node)"
-                                        class="text-arcane-periwinkle hover:text-white transition-colors ml-1"
-                                    >
-                                        {{ edge.target_node.name }}
-                                    </Link>
-                                </div>
-                                <div v-for="edge in character.incoming_edges" :key="edge.id" class="text-sm">
-                                    <Link
-                                        v-if="edge.source_node"
-                                        :href="getNodeRoute(edge.source_node)"
-                                        class="text-arcane-periwinkle hover:text-white transition-colors"
-                                    >
-                                        {{ edge.source_node.name }}
-                                    </Link>
-                                    <span class="text-arcane-grey ml-1">{{ edge.label || edge.type }}</span>
-                                </div>
-                            </div>
-                        </div>
+                        <RelationshipManager
+                            :campaign-slug="campaign.slug"
+                            :node-id="character.id"
+                            :node-name="character.name"
+                            node-type="character"
+                            :initial-outgoing-edges="character.outgoing_edges"
+                            :initial-incoming-edges="character.incoming_edges"
+                        />
                     </div>
                 </div>
             </div>

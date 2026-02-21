@@ -1,7 +1,28 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import CampaignLayout from '@/Layouts/CampaignLayout.vue';
+import RelationshipManager from '@/Components/RelationshipManager.vue';
 import { ref } from 'vue';
+
+interface Edge {
+    id: number;
+    type: string;
+    label: string | null;
+    strength: number | null;
+    is_secret: boolean;
+    target_node?: {
+        id: string;
+        name: string;
+        slug: string;
+        type: string;
+    };
+    source_node?: {
+        id: string;
+        name: string;
+        slug: string;
+        type: string;
+    };
+}
 
 interface Character {
     id: string;
@@ -33,6 +54,8 @@ interface Item {
     is_secret: boolean;
     created_at: string;
     updated_at: string;
+    outgoing_edges: Edge[];
+    incoming_edges: Edge[];
 }
 
 interface Campaign {
@@ -240,6 +263,16 @@ const formatDate = (dateString: string) => {
                                 Unknown location
                             </div>
                         </div>
+
+                        <!-- Relationships -->
+                        <RelationshipManager
+                            :campaign-slug="campaign.slug"
+                            :node-id="item.id"
+                            :node-name="item.name"
+                            node-type="item"
+                            :initial-outgoing-edges="item.outgoing_edges"
+                            :initial-incoming-edges="item.incoming_edges"
+                        />
                     </div>
                 </div>
             </div>

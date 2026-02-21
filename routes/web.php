@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\EdgeController;
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionnaireController;
@@ -41,6 +42,20 @@ Route::middleware('auth')->group(function () {
     // Search route (within a campaign)
     Route::get('/campaigns/{campaignSlug}/search', [SearchController::class, 'search'])
         ->name('campaigns.search');
+
+    // Relationship/Edge routes (within a campaign)
+    Route::get('/campaigns/{campaignSlug}/edges/types', [EdgeController::class, 'types'])
+        ->name('campaigns.edges.types');
+    Route::get('/campaigns/{campaignSlug}/edges/{nodeId}', [EdgeController::class, 'index'])
+        ->name('campaigns.edges.index');
+    Route::get('/campaigns/{campaignSlug}/edges/{nodeId}/targets', [EdgeController::class, 'availableTargets'])
+        ->name('campaigns.edges.targets');
+    Route::post('/campaigns/{campaignSlug}/edges', [EdgeController::class, 'store'])
+        ->name('campaigns.edges.store');
+    Route::put('/campaigns/{campaignSlug}/edges/{edgeId}', [EdgeController::class, 'update'])
+        ->name('campaigns.edges.update');
+    Route::delete('/campaigns/{campaignSlug}/edges/{edgeId}', [EdgeController::class, 'destroy'])
+        ->name('campaigns.edges.destroy');
 
     // Character routes (within a campaign)
     Route::get('/campaigns/{campaignSlug}/characters', [NodeController::class, 'charactersIndex'])

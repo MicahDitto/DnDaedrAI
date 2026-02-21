@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import CampaignLayout from '@/Layouts/CampaignLayout.vue';
+import RelationshipManager from '@/Components/RelationshipManager.vue';
 import { ref } from 'vue';
 
 interface Edge {
     id: number;
     type: string;
     label: string | null;
+    strength: number | null;
+    is_secret: boolean;
     target_node?: {
         id: string;
         name: string;
@@ -301,6 +304,16 @@ const parentPlace = props.place.outgoing_edges.find(e => e.type === 'located_in'
                                 </li>
                             </ul>
                         </div>
+
+                        <!-- Relationships -->
+                        <RelationshipManager
+                            :campaign-slug="campaign.slug"
+                            :node-id="place.id"
+                            :node-name="place.name"
+                            node-type="place"
+                            :initial-outgoing-edges="place.outgoing_edges"
+                            :initial-incoming-edges="place.incoming_edges"
+                        />
                     </div>
                 </div>
             </div>

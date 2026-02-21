@@ -1,7 +1,28 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import CampaignLayout from '@/Layouts/CampaignLayout.vue';
+import RelationshipManager from '@/Components/RelationshipManager.vue';
 import { ref } from 'vue';
+
+interface Edge {
+    id: number;
+    type: string;
+    label: string | null;
+    strength: number | null;
+    is_secret: boolean;
+    target_node?: {
+        id: string;
+        name: string;
+        slug: string;
+        type: string;
+    };
+    source_node?: {
+        id: string;
+        name: string;
+        slug: string;
+        type: string;
+    };
+}
 
 interface Character {
     id: string;
@@ -41,6 +62,8 @@ interface Plot {
     is_secret: boolean;
     created_at: string;
     updated_at: string;
+    outgoing_edges: Edge[];
+    incoming_edges: Edge[];
 }
 
 interface Campaign {
@@ -278,6 +301,16 @@ const formatDate = (dateString: string) => {
                                 No factions involved
                             </div>
                         </div>
+
+                        <!-- Relationships -->
+                        <RelationshipManager
+                            :campaign-slug="campaign.slug"
+                            :node-id="plot.id"
+                            :node-name="plot.name"
+                            node-type="plot"
+                            :initial-outgoing-edges="plot.outgoing_edges"
+                            :initial-incoming-edges="plot.incoming_edges"
+                        />
                     </div>
                 </div>
             </div>
