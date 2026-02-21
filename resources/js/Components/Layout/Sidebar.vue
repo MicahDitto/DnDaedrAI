@@ -149,11 +149,11 @@ const icons: Record<string, string> = {
 </script>
 
 <template>
-    <aside class="w-64 bg-gray-900 text-gray-300 flex flex-col h-full">
+    <aside class="w-64 bg-graphite-900 text-arcane-grey flex flex-col h-full border-r border-charcoal/30">
         <!-- Logo -->
-        <div class="p-4 border-b border-gray-700">
-            <Link :href="route('dashboard')" class="flex items-center space-x-2">
-                <span class="text-xl font-bold text-white">DnDaedrAI</span>
+        <div class="p-4 border-b border-charcoal/30">
+            <Link :href="route('dashboard')" class="flex items-center space-x-2 group">
+                <span class="text-xl font-bold text-gradient-arcane">DnDaedrAI</span>
             </Link>
         </div>
 
@@ -164,9 +164,9 @@ const icons: Record<string, string> = {
                 <template v-if="!item.expandable">
                     <Link
                         :href="item.href"
-                        class="flex items-center px-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors"
+                        class="flex items-center px-4 py-2 text-sm hover:bg-gunmetal hover:text-white transition-colors"
                     >
-                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-3 transition-all hover:icon-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="icons[item.icon]" />
                         </svg>
                         {{ item.label }}
@@ -177,7 +177,7 @@ const icons: Record<string, string> = {
                 <template v-else>
                     <button
                         @click="toggleSection(item.key)"
-                        class="w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-gray-800 hover:text-white transition-colors"
+                        class="w-full flex items-center justify-between px-4 py-2 text-sm hover:bg-gunmetal hover:text-white transition-colors"
                     >
                         <span class="flex items-center">
                             <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -199,14 +199,14 @@ const icons: Record<string, string> = {
                     <!-- Children -->
                     <div
                         v-show="expandedSections[item.key]"
-                        class="ml-8 border-l border-gray-700"
+                        class="ml-8 border-l border-charcoal/50"
                     >
                         <Link
                             v-for="child in item.children"
                             :key="child.label"
                             :href="child.href"
-                            class="block px-4 py-1.5 text-sm hover:bg-gray-800 hover:text-white transition-colors"
-                            :class="{ 'text-indigo-400': 'isAction' in child && child.isAction }"
+                            class="block px-4 py-1.5 text-sm hover:bg-gunmetal hover:text-white transition-colors"
+                            :class="{ 'text-arcane-periwinkle': 'isAction' in child && child.isAction }"
                         >
                             {{ child.label }}
                         </Link>
@@ -216,7 +216,7 @@ const icons: Record<string, string> = {
         </nav>
 
         <!-- Settings -->
-        <div class="border-t border-gray-700 p-4">
+        <div class="border-t border-charcoal/30 p-4">
             <Link
                 href="#"
                 class="flex items-center text-sm hover:text-white transition-colors"

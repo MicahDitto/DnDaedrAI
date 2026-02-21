@@ -1,3 +1,246 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ===== CSS Custom Properties for Dark Theme ===== */
+:root {
+    /* Core Colors */
+    --color-graphite: #2A2B2E;
+    --color-gunmetal: #42434A;
+    --color-charcoal: #5A5A66;
+
+    /* Accent Colors */
+    --color-arcane-purple: #806EB3;
+    --color-arcane-periwinkle: #A682FF;
+    --color-arcane-grey: #A5A2D4;
+
+    /* Semantic Colors */
+    --color-nature: #A4C2A8;
+    --color-legendary-gold: #D2BB5C;
+    --color-legendary-amber: #FFB30F;
+
+    /* Typography - High Contrast */
+    --color-text-primary: #E2E8F0;
+    --color-text-secondary: #CBD5E1;
+    --color-text-muted: #C4C1E0;
+    --color-text-subtle: #94A3B8;
+    --color-placeholder: #94A3B8;
+
+    /* Glassmorphism */
+    --glass-bg: rgba(66, 67, 74, 0.7);
+    --glass-border: rgba(166, 130, 255, 0.2);
+    --glass-blur: 12px;
+}
+
+/* ===== Base Layer Overrides ===== */
+@layer base {
+    body {
+        @apply bg-graphite text-slate-200;
+    }
+
+    /* High contrast placeholder styling */
+    ::placeholder {
+        color: var(--color-placeholder);
+        opacity: 1;
+    }
+
+    /* Input text visibility */
+    input, textarea, select {
+        color: var(--color-text-primary);
+    }
+
+    input:focus, textarea:focus, select:focus {
+        color: white;
+    }
+
+    /* Custom scrollbar for dark mode */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--color-graphite);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--color-charcoal);
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-arcane-grey);
+    }
+}
+
+/* ===== Component Layer - Reusable Classes ===== */
+@layer components {
+    /* Glassmorphism Card */
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        -webkit-backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid var(--glass-border);
+        @apply rounded-lg;
+    }
+
+    /* Standard Dark Card */
+    .card-dark {
+        @apply bg-gunmetal rounded-lg shadow-dark-md;
+        @apply border border-charcoal/30;
+    }
+
+    /* Card with subtle glow on hover */
+    .card-dark-interactive {
+        @apply bg-gunmetal rounded-lg shadow-dark-md;
+        @apply border border-charcoal/30;
+        @apply transition-all duration-200;
+        @apply hover:border-arcane-periwinkle/30 hover:shadow-glow-arcane-sm;
+    }
+
+    /* Luminous Border Effect */
+    .luminous-border {
+        position: relative;
+        background: var(--color-gunmetal);
+        @apply rounded-lg;
+    }
+
+    .luminous-border::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 1px;
+        border-radius: inherit;
+        background: linear-gradient(135deg, var(--color-arcane-periwinkle) 0%, var(--color-charcoal) 100%);
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    /* Icon Glow Effects */
+    .icon-glow {
+        filter: drop-shadow(0 0 8px var(--color-arcane-periwinkle));
+    }
+
+    .icon-glow-nature {
+        filter: drop-shadow(0 0 8px var(--color-nature));
+    }
+
+    .icon-glow-legendary {
+        filter: drop-shadow(0 0 8px var(--color-legendary-amber));
+    }
+
+    /* Arcane Primary Button */
+    .btn-arcane {
+        @apply relative overflow-hidden;
+        background: linear-gradient(135deg, var(--color-arcane-purple) 0%, var(--color-arcane-periwinkle) 100%);
+        @apply text-white font-semibold px-4 py-2 rounded-md;
+        @apply transition-all duration-200;
+        @apply shadow-glow-arcane-sm;
+    }
+
+    .btn-arcane:hover {
+        background: linear-gradient(135deg, #9080C3 0%, #B692FF 100%);
+        @apply shadow-glow-arcane;
+        transform: translateY(-1px);
+    }
+
+    .btn-arcane:active {
+        transform: translateY(0);
+    }
+
+    .btn-arcane:focus {
+        @apply outline-none ring-2 ring-arcane-periwinkle ring-offset-2 ring-offset-graphite;
+    }
+
+    /* Secondary Button */
+    .btn-secondary-dark {
+        @apply bg-gunmetal text-arcane-grey;
+        @apply border border-charcoal rounded-md px-4 py-2;
+        @apply transition-all duration-200;
+        @apply hover:border-arcane-periwinkle/50 hover:text-white;
+    }
+
+    .btn-secondary-dark:focus {
+        @apply outline-none ring-2 ring-arcane-periwinkle ring-offset-2 ring-offset-graphite;
+    }
+
+    /* Danger Button with glow */
+    .btn-danger-dark {
+        @apply bg-danger text-white font-semibold px-4 py-2 rounded-md;
+        @apply transition-all duration-200;
+    }
+
+    .btn-danger-dark:hover {
+        @apply bg-danger-light shadow-glow-danger;
+    }
+
+    .btn-danger-dark:focus {
+        @apply outline-none ring-2 ring-danger ring-offset-2 ring-offset-graphite;
+    }
+
+    /* Dark Form Input */
+    .input-dark {
+        @apply bg-charcoal border-charcoal-dark text-slate-200;
+        @apply rounded-md px-3 py-2;
+        @apply placeholder-slate-400;
+        @apply transition-all duration-200;
+    }
+
+    .input-dark:focus {
+        @apply border-arcane-periwinkle ring-1 ring-arcane-periwinkle;
+        @apply shadow-glow-arcane-sm;
+        @apply outline-none text-white;
+    }
+
+    /* Status Badges */
+    .badge-arcane {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+        @apply bg-arcane-periwinkle/20 text-arcane-periwinkle border border-arcane-periwinkle/30;
+    }
+
+    .badge-nature {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+        @apply bg-nature/20 text-nature border border-nature/30;
+    }
+
+    .badge-legendary {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+        @apply bg-legendary-gold/20 text-legendary-gold border border-legendary-gold/30;
+    }
+
+    .badge-danger {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+        @apply bg-danger/20 text-danger-light border border-danger/30;
+    }
+
+    .badge-neutral {
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+        @apply bg-charcoal/50 text-arcane-grey border border-charcoal/50;
+    }
+}
+
+/* ===== Utilities Layer ===== */
+@layer utilities {
+    /* Text gradient utility */
+    .text-gradient-arcane {
+        @apply bg-clip-text text-transparent;
+        background-image: linear-gradient(135deg, #806EB3 0%, #A682FF 100%);
+    }
+
+    .text-gradient-legendary {
+        @apply bg-clip-text text-transparent;
+        background-image: linear-gradient(135deg, #D2BB5C 0%, #FFB30F 100%);
+    }
+
+    /* Focus ring offset for dark backgrounds */
+    .ring-offset-dark {
+        --tw-ring-offset-color: #2A2B2E;
+    }
+}

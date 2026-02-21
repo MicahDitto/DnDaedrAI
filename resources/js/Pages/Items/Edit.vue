@@ -80,13 +80,13 @@ const submit = () => {
             <div class="flex items-center space-x-4">
                 <Link
                     :href="route('campaigns.items.show', [campaign.slug, item.slug])"
-                    class="text-gray-500 hover:text-gray-700"
+                    class="text-arcane-grey hover:text-white transition-colors"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </Link>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 class="font-semibold text-xl text-white leading-tight">
                     Edit: {{ item.name }}
                 </h2>
             </div>
@@ -94,12 +94,12 @@ const submit = () => {
 
         <div class="py-6">
             <div class="max-w-3xl mx-auto">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-gunmetal overflow-hidden shadow-dark-md sm:rounded-lg border border-arcane-periwinkle/10">
                     <div class="p-6">
                         <form @submit.prevent="submit" class="space-y-6">
                             <!-- Basic Info Section -->
-                            <div class="border-b border-gray-200 pb-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Basic Information</h3>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <!-- Name -->
@@ -122,7 +122,7 @@ const submit = () => {
                                         <select
                                             id="subtype"
                                             v-model="form.subtype"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             required
                                         >
                                             <option v-for="(label, value) in subtypes" :key="value" :value="value">
@@ -138,7 +138,7 @@ const submit = () => {
                                         <select
                                             id="confidence"
                                             v-model="form.confidence"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                         >
                                             <option v-for="(label, value) in confidenceLevels" :key="value" :value="value">
                                                 {{ label }}
@@ -153,7 +153,7 @@ const submit = () => {
                                         <select
                                             id="owner_id"
                                             v-model="form.owner_id"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                         >
                                             <option value="">No Owner</option>
                                             <option v-for="character in characters" :key="character.id" :value="character.id">
@@ -169,7 +169,7 @@ const submit = () => {
                                         <select
                                             id="location_id"
                                             v-model="form.location_id"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                         >
                                             <option value="">Unknown Location</option>
                                             <option v-for="place in places" :key="place.id" :value="place.id">
@@ -186,7 +186,7 @@ const submit = () => {
                                             id="summary"
                                             v-model="form.summary"
                                             rows="2"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="A brief one-liner about this item..."
                                             maxlength="500"
                                         />
@@ -196,8 +196,8 @@ const submit = () => {
                             </div>
 
                             <!-- Details Section -->
-                            <div class="border-b border-gray-200 pb-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Item Details</h3>
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Item Details</h3>
 
                                 <div class="space-y-6">
                                     <!-- Description -->
@@ -207,7 +207,7 @@ const submit = () => {
                                             id="description"
                                             v-model="form.content.description"
                                             rows="4"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="What does this item look like? What is it made of?"
                                         />
                                     </div>
@@ -219,7 +219,7 @@ const submit = () => {
                                             id="properties"
                                             v-model="form.content.properties"
                                             rows="3"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="What special properties or abilities does this item have?"
                                         />
                                     </div>
@@ -231,7 +231,7 @@ const submit = () => {
                                             id="history"
                                             v-model="form.content.history"
                                             rows="3"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="What is the history of this item? Who created it?"
                                         />
                                     </div>
@@ -239,8 +239,8 @@ const submit = () => {
                             </div>
 
                             <!-- Secrets Section -->
-                            <div class="border-b border-gray-200 pb-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">DM Secrets</h3>
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">DM Secrets</h3>
 
                                 <div class="space-y-4">
                                     <!-- Is Secret -->
@@ -249,9 +249,9 @@ const submit = () => {
                                             id="is_secret"
                                             v-model="form.is_secret"
                                             type="checkbox"
-                                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                            class="h-4 w-4 bg-charcoal border-charcoal text-arcane-periwinkle focus:ring-arcane-periwinkle rounded"
                                         />
-                                        <label for="is_secret" class="ml-2 block text-sm text-gray-700">
+                                        <label for="is_secret" class="ml-2 block text-sm text-arcane-grey">
                                             This entire item is a secret (DM eyes only)
                                         </label>
                                     </div>
@@ -263,7 +263,7 @@ const submit = () => {
                                             id="secrets"
                                             v-model="form.content.secrets"
                                             rows="3"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="What secrets does this item hold? Curses, hidden powers, true origins?"
                                         />
                                     </div>
@@ -274,7 +274,7 @@ const submit = () => {
                             <div class="flex items-center justify-end space-x-4">
                                 <Link
                                     :href="route('campaigns.items.show', [campaign.slug, item.slug])"
-                                    class="text-gray-600 hover:text-gray-900"
+                                    class="text-arcane-grey hover:text-white transition-colors"
                                 >
                                     Cancel
                                 </Link>

@@ -19,10 +19,10 @@ defineProps<{
 
 const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-        setup: 'bg-yellow-100 text-yellow-800',
-        active: 'bg-green-100 text-green-800',
-        paused: 'bg-gray-100 text-gray-800',
-        completed: 'bg-blue-100 text-blue-800',
+        setup: 'bg-legendary-gold/20 text-legendary-gold',
+        active: 'bg-nature/20 text-nature',
+        paused: 'bg-charcoal text-arcane-grey',
+        completed: 'bg-arcane-periwinkle/20 text-arcane-periwinkle',
     };
     return colors[status] || colors.setup;
 };
@@ -42,12 +42,12 @@ const formatDate = (dateString: string) => {
     <AuthenticatedLayout>
         <template #header>
             <div class="flex justify-between items-center">
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 class="font-semibold text-xl text-white leading-tight">
                     My Campaigns
                 </h2>
                 <Link
                     :href="route('campaigns.create')"
-                    class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+                    class="inline-flex items-center px-4 py-2 bg-arcane-flow border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-glow-arcane-sm hover:shadow-glow-arcane hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-arcane-periwinkle focus:ring-offset-2 focus:ring-offset-graphite transition-all duration-200"
                 >
                     + New Campaign
                 </Link>
@@ -59,11 +59,11 @@ const formatDate = (dateString: string) => {
                 <!-- Empty State -->
                 <div
                     v-if="campaigns.length === 0"
-                    class="bg-white overflow-hidden shadow-sm sm:rounded-lg"
+                    class="bg-gunmetal overflow-hidden shadow-dark-md sm:rounded-lg border border-arcane-periwinkle/10"
                 >
                     <div class="p-12 text-center">
                         <svg
-                            class="mx-auto h-12 w-12 text-gray-400"
+                            class="mx-auto h-12 w-12 text-arcane-grey"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -75,14 +75,14 @@ const formatDate = (dateString: string) => {
                                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                             />
                         </svg>
-                        <h3 class="mt-4 text-lg font-medium text-gray-900">No campaigns yet</h3>
-                        <p class="mt-2 text-sm text-gray-500">
+                        <h3 class="mt-4 text-lg font-medium text-white">No campaigns yet</h3>
+                        <p class="mt-2 text-sm text-arcane-grey">
                             Get started by creating your first campaign.
                         </p>
                         <div class="mt-6">
                             <Link
                                 :href="route('campaigns.create')"
-                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700"
+                                class="inline-flex items-center px-4 py-2 bg-arcane-flow border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-glow-arcane-sm hover:shadow-glow-arcane"
                             >
                                 Create Campaign
                             </Link>
@@ -99,11 +99,11 @@ const formatDate = (dateString: string) => {
                         v-for="campaign in campaigns"
                         :key="campaign.id"
                         :href="route('campaigns.show', campaign.slug)"
-                        class="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow"
+                        class="bg-gunmetal overflow-hidden shadow-dark-md sm:rounded-lg border border-arcane-periwinkle/10 hover:shadow-glow-arcane-sm hover:border-arcane-periwinkle/30 transition-all duration-200"
                     >
                         <div class="p-6">
                             <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-lg font-semibold text-gray-900">
+                                <h3 class="text-lg font-semibold text-white">
                                     {{ campaign.name }}
                                 </h3>
                                 <span
@@ -116,7 +116,7 @@ const formatDate = (dateString: string) => {
 
                             <p
                                 v-if="campaign.description"
-                                class="text-sm text-gray-600 mb-4 line-clamp-2"
+                                class="text-sm text-arcane-grey mb-4 line-clamp-2"
                             >
                                 {{ campaign.description }}
                             </p>
@@ -124,18 +124,18 @@ const formatDate = (dateString: string) => {
                             <div class="flex flex-wrap gap-2 mb-4">
                                 <span
                                     v-if="campaign.genre"
-                                    class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-700"
+                                    class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-arcane-purple/20 text-arcane-purple"
                                 >
                                     {{ campaign.genre.replace('_', ' ') }}
                                 </span>
                                 <span
-                                    class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-700"
+                                    class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-arcane-periwinkle/20 text-arcane-periwinkle"
                                 >
                                     {{ campaign.rule_system }}
                                 </span>
                             </div>
 
-                            <p class="text-xs text-gray-500">
+                            <p class="text-xs text-arcane-grey">
                                 Created {{ formatDate(campaign.created_at) }}
                             </p>
                         </div>

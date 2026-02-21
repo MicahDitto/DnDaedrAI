@@ -46,13 +46,13 @@ const submit = () => {
             <div class="flex items-center space-x-4">
                 <Link
                     :href="route('campaigns.characters.index', campaign.slug)"
-                    class="text-gray-500 hover:text-gray-700"
+                    class="text-arcane-grey hover:text-white transition-colors"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </Link>
-                <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 class="font-semibold text-xl text-white leading-tight">
                     Create Character
                 </h2>
             </div>
@@ -60,12 +60,12 @@ const submit = () => {
 
         <div class="py-6">
             <div class="max-w-3xl mx-auto">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="bg-gunmetal overflow-hidden shadow-dark-md sm:rounded-lg border border-arcane-periwinkle/10">
                     <div class="p-6">
                         <form @submit.prevent="submit" class="space-y-6">
                             <!-- Basic Info Section -->
-                            <div class="border-b border-gray-200 pb-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Basic Information</h3>
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <!-- Name -->
@@ -89,7 +89,7 @@ const submit = () => {
                                         <select
                                             id="subtype"
                                             v-model="form.subtype"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             required
                                         >
                                             <option v-for="(label, value) in subtypes" :key="value" :value="value">
@@ -105,7 +105,7 @@ const submit = () => {
                                         <select
                                             id="confidence"
                                             v-model="form.confidence"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                         >
                                             <option v-for="(label, value) in confidenceLevels" :key="value" :value="value">
                                                 {{ label }}
@@ -121,7 +121,7 @@ const submit = () => {
                                             id="summary"
                                             v-model="form.summary"
                                             rows="2"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="A brief one-liner about this character..."
                                             maxlength="500"
                                         />
@@ -131,8 +131,8 @@ const submit = () => {
                             </div>
 
                             <!-- Details Section -->
-                            <div class="border-b border-gray-200 pb-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">Character Details</h3>
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Character Details</h3>
 
                                 <div class="space-y-6">
                                     <!-- Appearance -->
@@ -142,7 +142,7 @@ const submit = () => {
                                             id="appearance"
                                             v-model="form.content.appearance"
                                             rows="3"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="What does this character look like?"
                                         />
                                     </div>
@@ -154,7 +154,7 @@ const submit = () => {
                                             id="personality"
                                             v-model="form.content.personality"
                                             rows="3"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="How do they act? What are their traits?"
                                         />
                                     </div>
@@ -166,7 +166,7 @@ const submit = () => {
                                             id="motivation"
                                             v-model="form.content.motivation"
                                             rows="3"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="What drives this character? What do they want?"
                                         />
                                     </div>
@@ -178,7 +178,7 @@ const submit = () => {
                                             id="voice_notes"
                                             v-model="form.content.voice_notes"
                                             rows="2"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="Notes on how to roleplay this character..."
                                         />
                                     </div>
@@ -186,8 +186,8 @@ const submit = () => {
                             </div>
 
                             <!-- Secrets Section -->
-                            <div class="border-b border-gray-200 pb-6">
-                                <h3 class="text-lg font-medium text-gray-900 mb-4">DM Secrets</h3>
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">DM Secrets</h3>
 
                                 <div class="space-y-4">
                                     <!-- Is Secret -->
@@ -196,9 +196,9 @@ const submit = () => {
                                             id="is_secret"
                                             v-model="form.is_secret"
                                             type="checkbox"
-                                            class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                            class="h-4 w-4 bg-charcoal border-charcoal text-arcane-periwinkle focus:ring-arcane-periwinkle rounded"
                                         />
-                                        <label for="is_secret" class="ml-2 block text-sm text-gray-700">
+                                        <label for="is_secret" class="ml-2 block text-sm text-arcane-grey">
                                             This entire character is a secret (DM eyes only)
                                         </label>
                                     </div>
@@ -210,7 +210,7 @@ const submit = () => {
                                             id="secrets"
                                             v-model="form.content.secrets"
                                             rows="3"
-                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="What secrets does this character have? What don't the players know yet?"
                                         />
                                     </div>
@@ -221,7 +221,7 @@ const submit = () => {
                             <div class="flex items-center justify-end space-x-4">
                                 <Link
                                     :href="route('campaigns.characters.index', campaign.slug)"
-                                    class="text-gray-600 hover:text-gray-900"
+                                    class="text-arcane-grey hover:text-white transition-colors"
                                 >
                                     Cancel
                                 </Link>

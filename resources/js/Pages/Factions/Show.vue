@@ -67,14 +67,14 @@ const deleteFaction = () => {
 
 const getSubtypeColor = (subtype: string) => {
     const colors: Record<string, string> = {
-        guild: 'bg-blue-100 text-blue-800',
-        government: 'bg-purple-100 text-purple-800',
-        religious: 'bg-yellow-100 text-yellow-800',
-        criminal: 'bg-red-100 text-red-800',
-        military: 'bg-green-100 text-green-800',
-        arcane: 'bg-indigo-100 text-indigo-800',
+        guild: 'bg-arcane-periwinkle/20 text-arcane-periwinkle',
+        government: 'bg-arcane-purple/20 text-arcane-purple',
+        religious: 'bg-legendary-gold/20 text-legendary-gold',
+        criminal: 'bg-danger/20 text-danger-light',
+        military: 'bg-nature/20 text-nature',
+        arcane: 'bg-arcane-periwinkle/30 text-arcane-periwinkle',
     };
-    return colors[subtype] || 'bg-gray-100 text-gray-800';
+    return colors[subtype] || 'bg-charcoal text-arcane-grey';
 };
 
 const getSubtypeLabel = (subtype: string) => {
@@ -107,18 +107,18 @@ const formatDate = (dateString: string) => {
                 <div class="flex items-center space-x-4">
                     <Link
                         :href="route('campaigns.factions.index', campaign.slug)"
-                        class="text-gray-500 hover:text-gray-700"
+                        class="text-arcane-grey hover:text-white transition-colors"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </Link>
                     <div>
-                        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center">
+                        <h2 class="font-semibold text-xl text-white leading-tight flex items-center">
                             {{ faction.name }}
                             <svg
                                 v-if="faction.is_secret"
-                                class="w-5 h-5 ml-2 text-gray-400"
+                                class="w-5 h-5 ml-2 text-arcane-grey"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -138,13 +138,13 @@ const formatDate = (dateString: string) => {
                 <div class="flex items-center space-x-3">
                     <Link
                         :href="route('campaigns.factions.edit', [campaign.slug, faction.slug])"
-                        class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50"
+                        class="inline-flex items-center px-4 py-2 bg-gunmetal border border-charcoal rounded-md font-semibold text-xs text-arcane-grey uppercase tracking-widest shadow-dark-sm hover:bg-charcoal hover:text-white transition-colors"
                     >
                         Edit
                     </Link>
                     <button
                         @click="showDeleteModal = true"
-                        class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700"
+                        class="inline-flex items-center px-4 py-2 bg-danger border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all"
                     >
                         Delete
                     </button>
@@ -158,79 +158,79 @@ const formatDate = (dateString: string) => {
                     <!-- Main Content -->
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Summary -->
-                        <div v-if="faction.summary" class="bg-white shadow-sm rounded-lg p-6">
-                            <p class="text-gray-600 italic">{{ faction.summary }}</p>
+                        <div v-if="faction.summary" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <p class="text-arcane-grey italic">{{ faction.summary }}</p>
                         </div>
 
                         <!-- Description -->
-                        <div v-if="faction.content?.description" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-3">Description</h3>
-                            <p class="text-gray-600 whitespace-pre-wrap">{{ faction.content.description }}</p>
+                        <div v-if="faction.content?.description" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-lg font-medium text-white mb-3">Description</h3>
+                            <p class="text-arcane-grey whitespace-pre-wrap">{{ faction.content.description }}</p>
                         </div>
 
                         <!-- Goals -->
-                        <div v-if="faction.content?.goals" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-3">Goals & Objectives</h3>
-                            <p class="text-gray-600 whitespace-pre-wrap">{{ faction.content.goals }}</p>
+                        <div v-if="faction.content?.goals" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-lg font-medium text-white mb-3">Goals & Objectives</h3>
+                            <p class="text-arcane-grey whitespace-pre-wrap">{{ faction.content.goals }}</p>
                         </div>
 
                         <!-- Methods -->
-                        <div v-if="faction.content?.methods" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-3">Methods & Operations</h3>
-                            <p class="text-gray-600 whitespace-pre-wrap">{{ faction.content.methods }}</p>
+                        <div v-if="faction.content?.methods" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-lg font-medium text-white mb-3">Methods & Operations</h3>
+                            <p class="text-arcane-grey whitespace-pre-wrap">{{ faction.content.methods }}</p>
                         </div>
 
                         <!-- Resources -->
-                        <div v-if="faction.content?.resources" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-3">Resources & Assets</h3>
-                            <p class="text-gray-600 whitespace-pre-wrap">{{ faction.content.resources }}</p>
+                        <div v-if="faction.content?.resources" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-lg font-medium text-white mb-3">Resources & Assets</h3>
+                            <p class="text-arcane-grey whitespace-pre-wrap">{{ faction.content.resources }}</p>
                         </div>
 
                         <!-- History -->
-                        <div v-if="faction.content?.history" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-3">History</h3>
-                            <p class="text-gray-600 whitespace-pre-wrap">{{ faction.content.history }}</p>
+                        <div v-if="faction.content?.history" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-lg font-medium text-white mb-3">History</h3>
+                            <p class="text-arcane-grey whitespace-pre-wrap">{{ faction.content.history }}</p>
                         </div>
 
                         <!-- DM Secrets -->
-                        <div v-if="faction.content?.secrets" class="bg-red-50 border border-red-200 shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-red-900 mb-3 flex items-center">
+                        <div v-if="faction.content?.secrets" class="bg-danger/10 border border-danger/30 shadow-dark-md rounded-lg p-6">
+                            <h3 class="text-lg font-medium text-danger-light mb-3 flex items-center">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                                 DM Secrets
                             </h3>
-                            <p class="text-red-800 whitespace-pre-wrap">{{ faction.content.secrets }}</p>
+                            <p class="text-danger-light whitespace-pre-wrap">{{ faction.content.secrets }}</p>
                         </div>
                     </div>
 
                     <!-- Sidebar -->
                     <div class="space-y-6">
                         <!-- Metadata -->
-                        <div class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase mb-4">Details</h3>
+                        <div class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-sm font-medium text-arcane-grey uppercase mb-4">Details</h3>
                             <dl class="space-y-3">
                                 <div>
-                                    <dt class="text-xs text-gray-500">Confidence</dt>
-                                    <dd class="text-sm text-gray-900 capitalize">{{ faction.confidence }}</dd>
+                                    <dt class="text-xs text-arcane-grey">Confidence</dt>
+                                    <dd class="text-sm text-white capitalize">{{ faction.confidence }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-xs text-gray-500">Created</dt>
-                                    <dd class="text-sm text-gray-900">{{ formatDate(faction.created_at) }}</dd>
+                                    <dt class="text-xs text-arcane-grey">Created</dt>
+                                    <dd class="text-sm text-white">{{ formatDate(faction.created_at) }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-xs text-gray-500">Updated</dt>
-                                    <dd class="text-sm text-gray-900">{{ formatDate(faction.updated_at) }}</dd>
+                                    <dt class="text-xs text-arcane-grey">Updated</dt>
+                                    <dd class="text-sm text-white">{{ formatDate(faction.updated_at) }}</dd>
                                 </div>
                             </dl>
                         </div>
 
                         <!-- Headquarters -->
-                        <div v-if="headquarters" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase mb-4">Headquarters</h3>
+                        <div v-if="headquarters" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-sm font-medium text-arcane-grey uppercase mb-4">Headquarters</h3>
                             <Link
                                 :href="route('campaigns.places.show', [campaign.slug, headquarters.slug])"
-                                class="flex items-center text-indigo-600 hover:text-indigo-900"
+                                class="flex items-center text-arcane-periwinkle hover:text-white transition-colors"
                             >
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -241,10 +241,10 @@ const formatDate = (dateString: string) => {
                         </div>
 
                         <!-- Members -->
-                        <div class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase mb-4">Members</h3>
+                        <div class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-sm font-medium text-arcane-grey uppercase mb-4">Members</h3>
 
-                            <div v-if="members.length === 0" class="text-sm text-gray-500">
+                            <div v-if="members.length === 0" class="text-sm text-arcane-grey">
                                 No known members.
                             </div>
 
@@ -253,7 +253,7 @@ const formatDate = (dateString: string) => {
                                     v-for="member in members"
                                     :key="member.id"
                                     :href="route('campaigns.characters.show', [campaign.slug, member.slug])"
-                                    class="flex items-center text-sm text-indigo-600 hover:text-indigo-900"
+                                    class="flex items-center text-sm text-arcane-periwinkle hover:text-white transition-colors"
                                 >
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -264,14 +264,14 @@ const formatDate = (dateString: string) => {
                         </div>
 
                         <!-- Allied Factions -->
-                        <div v-if="alliedFactions.length > 0" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase mb-4">Allies</h3>
+                        <div v-if="alliedFactions.length > 0" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-sm font-medium text-arcane-grey uppercase mb-4">Allies</h3>
                             <div class="space-y-2">
                                 <Link
                                     v-for="ally in alliedFactions"
                                     :key="ally.id"
                                     :href="route('campaigns.factions.show', [campaign.slug, ally.slug])"
-                                    class="flex items-center text-sm text-green-600 hover:text-green-900"
+                                    class="flex items-center text-sm text-nature hover:text-white transition-colors"
                                 >
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -282,14 +282,14 @@ const formatDate = (dateString: string) => {
                         </div>
 
                         <!-- Rival Factions -->
-                        <div v-if="rivalFactions.length > 0" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase mb-4">Rivals</h3>
+                        <div v-if="rivalFactions.length > 0" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-sm font-medium text-arcane-grey uppercase mb-4">Rivals</h3>
                             <div class="space-y-2">
                                 <Link
                                     v-for="rival in rivalFactions"
                                     :key="rival.id"
                                     :href="route('campaigns.factions.show', [campaign.slug, rival.slug])"
-                                    class="flex items-center text-sm text-red-600 hover:text-red-900"
+                                    class="flex items-center text-sm text-danger-light hover:text-white transition-colors"
                                 >
                                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -306,22 +306,22 @@ const formatDate = (dateString: string) => {
         <!-- Delete Modal -->
         <div v-if="showDeleteModal" class="fixed inset-0 z-50 overflow-y-auto">
             <div class="flex items-center justify-center min-h-screen px-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75" @click="showDeleteModal = false"></div>
-                <div class="relative bg-white rounded-lg max-w-md w-full p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Delete Faction</h3>
-                    <p class="text-sm text-gray-500 mb-6">
+                <div class="fixed inset-0 bg-black/70 backdrop-blur-sm" @click="showDeleteModal = false"></div>
+                <div class="relative bg-gunmetal rounded-lg max-w-md w-full p-6 border border-arcane-periwinkle/20">
+                    <h3 class="text-lg font-medium text-white mb-4">Delete Faction</h3>
+                    <p class="text-sm text-arcane-grey mb-6">
                         Are you sure you want to delete "{{ faction.name }}"? This action cannot be undone.
                     </p>
                     <div class="flex justify-end space-x-3">
                         <button
                             @click="showDeleteModal = false"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                            class="px-4 py-2 text-sm font-medium text-arcane-grey bg-gunmetal border border-charcoal rounded-md hover:bg-charcoal hover:text-white transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             @click="deleteFaction"
-                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700"
+                            class="px-4 py-2 text-sm font-medium text-white bg-danger border border-transparent rounded-md hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all"
                         >
                             Delete
                         </button>

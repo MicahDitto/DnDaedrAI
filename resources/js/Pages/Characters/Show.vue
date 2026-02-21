@@ -61,11 +61,11 @@ const deleteCharacter = () => {
 
 const getSubtypeColor = (subtype: string) => {
     const colors: Record<string, string> = {
-        pc: 'bg-green-100 text-green-800',
-        npc: 'bg-blue-100 text-blue-800',
-        villain: 'bg-red-100 text-red-800',
-        ally: 'bg-purple-100 text-purple-800',
-        neutral: 'bg-gray-100 text-gray-800',
+        pc: 'bg-nature/20 text-nature',
+        npc: 'bg-arcane-periwinkle/20 text-arcane-periwinkle',
+        villain: 'bg-danger/20 text-danger-light',
+        ally: 'bg-arcane-purple/20 text-arcane-purple',
+        neutral: 'bg-charcoal text-arcane-grey',
     };
     return colors[subtype] || colors.neutral;
 };
@@ -111,18 +111,18 @@ const getNodeRoute = (node: { type: string; slug: string }) => {
                 <div class="flex items-center space-x-4">
                     <Link
                         :href="route('campaigns.characters.index', campaign.slug)"
-                        class="text-gray-500 hover:text-gray-700"
+                        class="text-arcane-grey hover:text-white transition-colors"
                     >
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </Link>
                     <div>
-                        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center">
+                        <h2 class="font-semibold text-xl text-white leading-tight flex items-center">
                             {{ character.name }}
                             <svg
                                 v-if="character.is_secret"
-                                class="w-5 h-5 ml-2 text-gray-400"
+                                class="w-5 h-5 ml-2 text-arcane-grey"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -142,13 +142,13 @@ const getNodeRoute = (node: { type: string; slug: string }) => {
                 <div class="flex items-center space-x-3">
                     <Link
                         :href="route('campaigns.characters.edit', [campaign.slug, character.slug])"
-                        class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50"
+                        class="inline-flex items-center px-4 py-2 bg-gunmetal border border-charcoal rounded-md font-semibold text-xs text-arcane-grey uppercase tracking-widest shadow-dark-sm hover:bg-charcoal hover:text-white transition-colors"
                     >
                         Edit
                     </Link>
                     <button
                         @click="showDeleteModal = true"
-                        class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700"
+                        class="inline-flex items-center px-4 py-2 bg-danger border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all"
                     >
                         Delete
                     </button>
@@ -162,82 +162,82 @@ const getNodeRoute = (node: { type: string; slug: string }) => {
                     <!-- Main Content -->
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Summary -->
-                        <div v-if="character.summary" class="bg-white shadow-sm rounded-lg p-6">
-                            <p class="text-gray-600 italic">{{ character.summary }}</p>
+                        <div v-if="character.summary" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <p class="text-arcane-grey italic">{{ character.summary }}</p>
                         </div>
 
                         <!-- Appearance -->
-                        <div v-if="character.content?.appearance" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-3">Appearance</h3>
-                            <p class="text-gray-600 whitespace-pre-wrap">{{ character.content.appearance }}</p>
+                        <div v-if="character.content?.appearance" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-lg font-medium text-white mb-3">Appearance</h3>
+                            <p class="text-arcane-grey whitespace-pre-wrap">{{ character.content.appearance }}</p>
                         </div>
 
                         <!-- Personality -->
-                        <div v-if="character.content?.personality" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-3">Personality</h3>
-                            <p class="text-gray-600 whitespace-pre-wrap">{{ character.content.personality }}</p>
+                        <div v-if="character.content?.personality" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-lg font-medium text-white mb-3">Personality</h3>
+                            <p class="text-arcane-grey whitespace-pre-wrap">{{ character.content.personality }}</p>
                         </div>
 
                         <!-- Motivation -->
-                        <div v-if="character.content?.motivation" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-3">Motivation / Goals</h3>
-                            <p class="text-gray-600 whitespace-pre-wrap">{{ character.content.motivation }}</p>
+                        <div v-if="character.content?.motivation" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-lg font-medium text-white mb-3">Motivation / Goals</h3>
+                            <p class="text-arcane-grey whitespace-pre-wrap">{{ character.content.motivation }}</p>
                         </div>
 
                         <!-- Voice Notes -->
-                        <div v-if="character.content?.voice_notes" class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-3">Voice / Mannerisms</h3>
-                            <p class="text-gray-600 whitespace-pre-wrap">{{ character.content.voice_notes }}</p>
+                        <div v-if="character.content?.voice_notes" class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-lg font-medium text-white mb-3">Voice / Mannerisms</h3>
+                            <p class="text-arcane-grey whitespace-pre-wrap">{{ character.content.voice_notes }}</p>
                         </div>
 
                         <!-- DM Secrets -->
-                        <div v-if="character.content?.secrets" class="bg-red-50 border border-red-200 shadow-sm rounded-lg p-6">
-                            <h3 class="text-lg font-medium text-red-900 mb-3 flex items-center">
+                        <div v-if="character.content?.secrets" class="bg-danger/10 border border-danger/30 shadow-dark-md rounded-lg p-6">
+                            <h3 class="text-lg font-medium text-danger-light mb-3 flex items-center">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                                 </svg>
                                 DM Secrets
                             </h3>
-                            <p class="text-red-800 whitespace-pre-wrap">{{ character.content.secrets }}</p>
+                            <p class="text-danger-light whitespace-pre-wrap">{{ character.content.secrets }}</p>
                         </div>
                     </div>
 
                     <!-- Sidebar -->
                     <div class="space-y-6">
                         <!-- Metadata -->
-                        <div class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase mb-4">Details</h3>
+                        <div class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-sm font-medium text-arcane-grey uppercase mb-4">Details</h3>
                             <dl class="space-y-3">
                                 <div>
-                                    <dt class="text-xs text-gray-500">Confidence</dt>
-                                    <dd class="text-sm text-gray-900 capitalize">{{ character.confidence }}</dd>
+                                    <dt class="text-xs text-arcane-grey">Confidence</dt>
+                                    <dd class="text-sm text-white capitalize">{{ character.confidence }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-xs text-gray-500">Created</dt>
-                                    <dd class="text-sm text-gray-900">{{ formatDate(character.created_at) }}</dd>
+                                    <dt class="text-xs text-arcane-grey">Created</dt>
+                                    <dd class="text-sm text-white">{{ formatDate(character.created_at) }}</dd>
                                 </div>
                                 <div>
-                                    <dt class="text-xs text-gray-500">Updated</dt>
-                                    <dd class="text-sm text-gray-900">{{ formatDate(character.updated_at) }}</dd>
+                                    <dt class="text-xs text-arcane-grey">Updated</dt>
+                                    <dd class="text-sm text-white">{{ formatDate(character.updated_at) }}</dd>
                                 </div>
                             </dl>
                         </div>
 
                         <!-- Relationships -->
-                        <div class="bg-white shadow-sm rounded-lg p-6">
-                            <h3 class="text-sm font-medium text-gray-500 uppercase mb-4">Relationships</h3>
+                        <div class="bg-gunmetal shadow-dark-md rounded-lg p-6 border border-arcane-periwinkle/10">
+                            <h3 class="text-sm font-medium text-arcane-grey uppercase mb-4">Relationships</h3>
 
-                            <div v-if="character.outgoing_edges.length === 0 && character.incoming_edges.length === 0" class="text-sm text-gray-500">
+                            <div v-if="character.outgoing_edges.length === 0 && character.incoming_edges.length === 0" class="text-sm text-arcane-grey">
                                 No relationships yet.
                             </div>
 
                             <div v-else class="space-y-3">
                                 <div v-for="edge in character.outgoing_edges" :key="edge.id" class="text-sm">
-                                    <span class="text-gray-500">{{ edge.label || edge.type }}</span>
+                                    <span class="text-arcane-grey">{{ edge.label || edge.type }}</span>
                                     <Link
                                         v-if="edge.target_node"
                                         :href="getNodeRoute(edge.target_node)"
-                                        class="text-indigo-600 hover:text-indigo-900 ml-1"
+                                        class="text-arcane-periwinkle hover:text-white transition-colors ml-1"
                                     >
                                         {{ edge.target_node.name }}
                                     </Link>
@@ -246,11 +246,11 @@ const getNodeRoute = (node: { type: string; slug: string }) => {
                                     <Link
                                         v-if="edge.source_node"
                                         :href="getNodeRoute(edge.source_node)"
-                                        class="text-indigo-600 hover:text-indigo-900"
+                                        class="text-arcane-periwinkle hover:text-white transition-colors"
                                     >
                                         {{ edge.source_node.name }}
                                     </Link>
-                                    <span class="text-gray-500 ml-1">{{ edge.label || edge.type }}</span>
+                                    <span class="text-arcane-grey ml-1">{{ edge.label || edge.type }}</span>
                                 </div>
                             </div>
                         </div>
@@ -262,22 +262,22 @@ const getNodeRoute = (node: { type: string; slug: string }) => {
         <!-- Delete Modal -->
         <div v-if="showDeleteModal" class="fixed inset-0 z-50 overflow-y-auto">
             <div class="flex items-center justify-center min-h-screen px-4">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75" @click="showDeleteModal = false"></div>
-                <div class="relative bg-white rounded-lg max-w-md w-full p-6">
-                    <h3 class="text-lg font-medium text-gray-900 mb-4">Delete Character</h3>
-                    <p class="text-sm text-gray-500 mb-6">
+                <div class="fixed inset-0 bg-black/70 backdrop-blur-sm" @click="showDeleteModal = false"></div>
+                <div class="relative bg-gunmetal rounded-lg max-w-md w-full p-6 border border-arcane-periwinkle/20">
+                    <h3 class="text-lg font-medium text-white mb-4">Delete Character</h3>
+                    <p class="text-sm text-arcane-grey mb-6">
                         Are you sure you want to delete "{{ character.name }}"? This action cannot be undone.
                     </p>
                     <div class="flex justify-end space-x-3">
                         <button
                             @click="showDeleteModal = false"
-                            class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                            class="px-4 py-2 text-sm font-medium text-arcane-grey bg-gunmetal border border-charcoal rounded-md hover:bg-charcoal hover:text-white transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             @click="deleteCharacter"
-                            class="px-4 py-2 text-sm font-medium text-white bg-red-600 border border-transparent rounded-md hover:bg-red-700"
+                            class="px-4 py-2 text-sm font-medium text-white bg-danger border border-transparent rounded-md hover:shadow-[0_0_15px_rgba(239,68,68,0.3)] transition-all"
                         >
                             Delete
                         </button>

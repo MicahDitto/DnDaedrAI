@@ -147,17 +147,17 @@ const isSelected = (value: string) => {
             <div class="flex items-center space-x-4">
                 <Link
                     :href="route('campaigns.show', campaign.slug)"
-                    class="text-gray-500 hover:text-gray-700"
+                    class="text-arcane-grey hover:text-white transition-colors"
                 >
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
                 </Link>
                 <div>
-                    <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                    <h2 class="font-semibold text-xl text-white leading-tight">
                         Session 0: Campaign Setup
                     </h2>
-                    <p class="text-sm text-gray-500">{{ campaign.name }}</p>
+                    <p class="text-sm text-arcane-grey">{{ campaign.name }}</p>
                 </div>
             </div>
         </template>
@@ -166,26 +166,26 @@ const isSelected = (value: string) => {
             <div class="max-w-2xl mx-auto">
                 <!-- Progress Bar -->
                 <div class="mb-8">
-                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                    <div class="flex justify-between text-sm text-arcane-grey mb-2">
                         <span>Question {{ currentStep + 1 }} of {{ totalSteps }}</span>
                         <span>{{ Math.round(progress) }}% complete</span>
                     </div>
-                    <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="h-2 bg-charcoal rounded-full overflow-hidden">
                         <div
-                            class="h-full bg-indigo-600 transition-all duration-300"
+                            class="h-full bg-arcane-flow transition-all duration-300"
                             :style="{ width: `${progress}%` }"
                         />
                     </div>
                 </div>
 
                 <!-- Question Card -->
-                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                <div class="bg-gunmetal shadow-dark-md rounded-lg overflow-hidden border border-arcane-periwinkle/10">
                     <div class="p-8">
                         <!-- Question Header -->
-                        <h3 class="text-2xl font-semibold text-gray-900 mb-2">
+                        <h3 class="text-2xl font-semibold text-white mb-2">
                             {{ currentQuestion.title }}
                         </h3>
-                        <p class="text-gray-600 mb-8">
+                        <p class="text-arcane-grey mb-8">
                             {{ currentQuestion.description }}
                         </p>
 
@@ -198,20 +198,20 @@ const isSelected = (value: string) => {
                                 class="w-full text-left p-4 rounded-lg border-2 transition-all"
                                 :class="[
                                     isSelected(option.value)
-                                        ? 'border-indigo-500 bg-indigo-50'
-                                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                        ? 'border-arcane-periwinkle bg-arcane-periwinkle/10'
+                                        : 'border-charcoal hover:border-arcane-grey/50 hover:bg-charcoal/50'
                                 ]"
                             >
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <span class="font-medium text-gray-900">{{ option.label }}</span>
-                                        <p v-if="option.description" class="text-sm text-gray-500 mt-1">
+                                        <span class="font-medium text-white">{{ option.label }}</span>
+                                        <p v-if="option.description" class="text-sm text-arcane-grey mt-1">
                                             {{ option.description }}
                                         </p>
                                     </div>
                                     <div
                                         v-if="isSelected(option.value)"
-                                        class="w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center"
+                                        class="w-5 h-5 rounded-full bg-arcane-periwinkle flex items-center justify-center"
                                     >
                                         <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
@@ -223,7 +223,7 @@ const isSelected = (value: string) => {
 
                         <!-- Multi Select -->
                         <div v-else-if="currentQuestion.type === 'multi_select'" class="space-y-3">
-                            <p v-if="currentQuestion.max_selections" class="text-sm text-gray-500 mb-4">
+                            <p v-if="currentQuestion.max_selections" class="text-sm text-arcane-grey mb-4">
                                 Select up to {{ currentQuestion.max_selections }} options
                             </p>
                             <button
@@ -233,20 +233,20 @@ const isSelected = (value: string) => {
                                 class="w-full text-left p-4 rounded-lg border-2 transition-all"
                                 :class="[
                                     isSelected(option.value)
-                                        ? 'border-indigo-500 bg-indigo-50'
-                                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                        ? 'border-arcane-periwinkle bg-arcane-periwinkle/10'
+                                        : 'border-charcoal hover:border-arcane-grey/50 hover:bg-charcoal/50'
                                 ]"
                             >
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <span class="font-medium text-gray-900">{{ option.label }}</span>
-                                        <p v-if="option.description" class="text-sm text-gray-500 mt-1">
+                                        <span class="font-medium text-white">{{ option.label }}</span>
+                                        <p v-if="option.description" class="text-sm text-arcane-grey mt-1">
                                             {{ option.description }}
                                         </p>
                                     </div>
                                     <div
                                         class="w-5 h-5 rounded border-2 flex items-center justify-center"
-                                        :class="isSelected(option.value) ? 'bg-indigo-500 border-indigo-500' : 'border-gray-300'"
+                                        :class="isSelected(option.value) ? 'bg-arcane-periwinkle border-arcane-periwinkle' : 'border-charcoal'"
                                     >
                                         <svg v-if="isSelected(option.value)" class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
@@ -265,9 +265,9 @@ const isSelected = (value: string) => {
                                 :min="currentQuestion.min"
                                 :max="currentQuestion.max"
                                 :placeholder="String(currentQuestion.default || '')"
-                                class="w-32 text-center text-3xl font-semibold border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg"
+                                class="w-32 text-center text-3xl font-semibold bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-lg"
                             />
-                            <p v-if="currentQuestion.min && currentQuestion.max" class="text-sm text-gray-500">
+                            <p v-if="currentQuestion.min && currentQuestion.max" class="text-sm text-arcane-grey">
                                 ({{ currentQuestion.min }} - {{ currentQuestion.max }})
                             </p>
                         </div>
@@ -279,7 +279,7 @@ const isSelected = (value: string) => {
                                 :value="currentResponse as string || ''"
                                 @input="currentResponse = ($event.target as HTMLInputElement).value"
                                 :placeholder="currentQuestion.placeholder"
-                                class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg"
+                                class="w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-lg"
                             />
                         </div>
 
@@ -290,24 +290,24 @@ const isSelected = (value: string) => {
                                 @input="currentResponse = ($event.target as HTMLTextAreaElement).value"
                                 :placeholder="currentQuestion.placeholder"
                                 rows="5"
-                                class="w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-lg"
+                                class="w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-lg"
                             />
                         </div>
                     </div>
 
                     <!-- Navigation -->
-                    <div class="bg-gray-50 px-8 py-4 flex justify-between items-center">
+                    <div class="bg-charcoal/50 px-8 py-4 flex justify-between items-center border-t border-charcoal">
                         <button
                             v-if="!isFirstStep"
                             @click="prevStep"
-                            class="px-4 py-2 text-gray-600 hover:text-gray-900"
+                            class="px-4 py-2 text-arcane-grey hover:text-white transition-colors"
                         >
                             Back
                         </button>
                         <div v-else></div>
 
                         <div class="flex items-center space-x-4">
-                            <span v-if="isSaving" class="text-sm text-gray-500">
+                            <span v-if="isSaving" class="text-sm text-arcane-grey">
                                 Saving...
                             </span>
 
@@ -315,7 +315,7 @@ const isSelected = (value: string) => {
                                 v-if="!isLastStep"
                                 @click="nextStep"
                                 :disabled="!canProceed || isSaving"
-                                class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="px-6 py-2 bg-arcane-flow text-white rounded-lg hover:shadow-glow-arcane transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Next
                             </button>
@@ -324,7 +324,7 @@ const isSelected = (value: string) => {
                                 v-else
                                 @click="complete"
                                 :disabled="isSaving"
-                                class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="px-6 py-2 bg-nature text-white rounded-lg hover:shadow-[0_0_15px_rgba(164,194,168,0.3)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Complete Setup
                             </button>
@@ -336,7 +336,7 @@ const isSelected = (value: string) => {
                 <div class="mt-4 text-center">
                     <Link
                         :href="route('campaigns.show', campaign.slug)"
-                        class="text-sm text-gray-500 hover:text-gray-700"
+                        class="text-sm text-arcane-grey hover:text-white transition-colors"
                     >
                         Skip for now (you can complete this later)
                     </Link>
