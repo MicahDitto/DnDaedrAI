@@ -87,12 +87,11 @@ const navItems = computed(() => {
             key: 'plots',
             label: 'Plots',
             icon: 'book',
+            href: slug ? route('campaigns.plots.index', slug) : '#',
             expandable: true,
             children: [
-                { label: 'Main Campaign Arc', href: '#' },
-                { label: 'Character Arcs', href: '#' },
-                { label: 'Side Quests', href: '#' },
-                { label: 'Mysteries', href: '#' },
+                { label: 'All Plots', href: slug ? route('campaigns.plots.index', slug) : '#' },
+                { label: '+ New Plot', href: slug ? route('campaigns.plots.create', slug) : '#', isAction: true },
             ],
         },
         {

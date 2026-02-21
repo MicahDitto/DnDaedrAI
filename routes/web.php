@@ -4,6 +4,7 @@ use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\NodeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionnaireController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SessionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/campaigns/{slug}/edit', [CampaignController::class, 'edit'])->name('campaigns.edit');
     Route::put('/campaigns/{slug}', [CampaignController::class, 'update'])->name('campaigns.update');
     Route::delete('/campaigns/{slug}', [CampaignController::class, 'destroy'])->name('campaigns.destroy');
+
+    // Search route (within a campaign)
+    Route::get('/campaigns/{campaignSlug}/search', [SearchController::class, 'search'])
+        ->name('campaigns.search');
 
     // Character routes (within a campaign)
     Route::get('/campaigns/{campaignSlug}/characters', [NodeController::class, 'charactersIndex'])
@@ -124,6 +129,22 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.items.update');
     Route::delete('/campaigns/{campaignSlug}/items/{nodeSlug}', [NodeController::class, 'itemsDestroy'])
         ->name('campaigns.items.destroy');
+
+    // Plot routes (within a campaign)
+    Route::get('/campaigns/{campaignSlug}/plots', [NodeController::class, 'plotsIndex'])
+        ->name('campaigns.plots.index');
+    Route::get('/campaigns/{campaignSlug}/plots/create', [NodeController::class, 'plotsCreate'])
+        ->name('campaigns.plots.create');
+    Route::post('/campaigns/{campaignSlug}/plots', [NodeController::class, 'plotsStore'])
+        ->name('campaigns.plots.store');
+    Route::get('/campaigns/{campaignSlug}/plots/{nodeSlug}', [NodeController::class, 'plotsShow'])
+        ->name('campaigns.plots.show');
+    Route::get('/campaigns/{campaignSlug}/plots/{nodeSlug}/edit', [NodeController::class, 'plotsEdit'])
+        ->name('campaigns.plots.edit');
+    Route::put('/campaigns/{campaignSlug}/plots/{nodeSlug}', [NodeController::class, 'plotsUpdate'])
+        ->name('campaigns.plots.update');
+    Route::delete('/campaigns/{campaignSlug}/plots/{nodeSlug}', [NodeController::class, 'plotsDestroy'])
+        ->name('campaigns.plots.destroy');
 });
 
 require __DIR__.'/auth.php';

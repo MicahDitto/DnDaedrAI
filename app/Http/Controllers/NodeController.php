@@ -988,4 +988,376 @@ class NodeController extends Controller
         return redirect()->route('campaigns.items.index', $campaign->slug)
             ->with('success', 'Item deleted successfully.');
     }
+
+    // Plots
+    public function plotsIndex(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $plots = $campaign->nodes()
+            ->plots()
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Plots/Index', [
+            'campaign' => $campaign,
+            'plots' => $plots,
+            'subtypes' => $this->getSubtypes('plot'),
+        ]);
+    }
+
+    public function plotsCreate(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        // Get characters for involvement selection
+        $characters = $campaign->nodes()
+            ->characters()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get places for location selection
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get factions for involvement selection
+        $factions = $campaign->nodes()
+            ->factions()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        return Inertia::render('Plots/Create', [
+            'campaign' => $campaign,
+            'subtypes' => $this->getSubtypes('plot'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'characters' => $characters,
+            'places' => $places,
+            'factions' => $factions,
+        ]);
+    }
+
+    public function plotsStore(Request $request, string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('plot'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.objectives' => 'nullable|string',
+            'content.stakes' => 'nullable|string',
+            'content.progress' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'involved_character_ids' => 'nullable|array',
+            'involved_character_ids.*' => 'uuid|exists:nodes,id',
+            'involved_place_ids' => 'nullable|array',
+            'involved_place_ids.*' => 'uuid|exists:nodes,id',
+            'involved_faction_ids' => 'nullable|array',
+            'involved_faction_ids.*' => 'uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = [];
+        if (!empty($validated['involved_character_ids'])) {
+            $metadata['involved_character_ids'] = $validated['involved_character_ids'];
+        }
+        if (!empty($validated['involved_place_ids'])) {
+            $metadata['involved_place_ids'] = $validated['involved_place_ids'];
+        }
+        if (!empty($validated['involved_faction_ids'])) {
+            $metadata['involved_faction_ids'] = $validated['involved_faction_ids'];
+        }
+
+        $node = $campaign->nodes()->create([
+            'type' => 'plot',
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Create edges to involved characters
+        if (!empty($validated['involved_character_ids'])) {
+            foreach ($validated['involved_character_ids'] as $characterId) {
+                $campaign->edges()->create([
+                    'source_node_id' => $node->id,
+                    'target_node_id' => $characterId,
+                    'type' => 'involves',
+                    'label' => 'Involves',
+                ]);
+            }
+        }
+
+        // Create edges to involved places
+        if (!empty($validated['involved_place_ids'])) {
+            foreach ($validated['involved_place_ids'] as $placeId) {
+                $campaign->edges()->create([
+                    'source_node_id' => $node->id,
+                    'target_node_id' => $placeId,
+                    'type' => 'takes_place_in',
+                    'label' => 'Takes place in',
+                ]);
+            }
+        }
+
+        // Create edges to involved factions
+        if (!empty($validated['involved_faction_ids'])) {
+            foreach ($validated['involved_faction_ids'] as $factionId) {
+                $campaign->edges()->create([
+                    'source_node_id' => $node->id,
+                    'target_node_id' => $factionId,
+                    'type' => 'involves',
+                    'label' => 'Involves',
+                ]);
+            }
+        }
+
+        return redirect()->route('campaigns.plots.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $node->slug,
+        ])->with('success', 'Plot created successfully.');
+    }
+
+    public function plotsShow(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $plot = $campaign->nodes()
+            ->plots()
+            ->where('slug', $nodeSlug)
+            ->with(['tags', 'outgoingEdges.targetNode', 'incomingEdges.sourceNode'])
+            ->firstOrFail();
+
+        // Get involved characters
+        $involvedCharacters = $campaign->nodes()
+            ->characters()
+            ->whereHas('incomingEdges', function ($query) use ($plot) {
+                $query->where('source_node_id', $plot->id)
+                    ->where('type', 'involves');
+            })
+            ->get();
+
+        // Get involved places
+        $involvedPlaces = $campaign->nodes()
+            ->places()
+            ->whereHas('incomingEdges', function ($query) use ($plot) {
+                $query->where('source_node_id', $plot->id)
+                    ->where('type', 'takes_place_in');
+            })
+            ->get();
+
+        // Get involved factions
+        $involvedFactions = $campaign->nodes()
+            ->factions()
+            ->whereHas('incomingEdges', function ($query) use ($plot) {
+                $query->where('source_node_id', $plot->id)
+                    ->where('type', 'involves');
+            })
+            ->get();
+
+        return Inertia::render('Plots/Show', [
+            'campaign' => $campaign,
+            'plot' => $plot,
+            'involvedCharacters' => $involvedCharacters,
+            'involvedPlaces' => $involvedPlaces,
+            'involvedFactions' => $involvedFactions,
+        ]);
+    }
+
+    public function plotsEdit(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $plot = $campaign->nodes()
+            ->plots()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $characters = $campaign->nodes()
+            ->characters()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        $factions = $campaign->nodes()
+            ->factions()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get current involved characters from edges
+        $currentInvolvedCharacterIds = $plot->outgoingEdges()
+            ->where('type', 'involves')
+            ->whereHas('targetNode', function ($query) {
+                $query->where('type', 'character');
+            })
+            ->pluck('target_node_id')
+            ->toArray();
+
+        // Get current involved places from edges
+        $currentInvolvedPlaceIds = $plot->outgoingEdges()
+            ->where('type', 'takes_place_in')
+            ->pluck('target_node_id')
+            ->toArray();
+
+        // Get current involved factions from edges
+        $currentInvolvedFactionIds = $plot->outgoingEdges()
+            ->where('type', 'involves')
+            ->whereHas('targetNode', function ($query) {
+                $query->where('type', 'faction');
+            })
+            ->pluck('target_node_id')
+            ->toArray();
+
+        return Inertia::render('Plots/Edit', [
+            'campaign' => $campaign,
+            'plot' => $plot,
+            'subtypes' => $this->getSubtypes('plot'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'characters' => $characters,
+            'places' => $places,
+            'factions' => $factions,
+            'currentInvolvedCharacterIds' => $currentInvolvedCharacterIds,
+            'currentInvolvedPlaceIds' => $currentInvolvedPlaceIds,
+            'currentInvolvedFactionIds' => $currentInvolvedFactionIds,
+        ]);
+    }
+
+    public function plotsUpdate(Request $request, string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $plot = $campaign->nodes()
+            ->plots()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('plot'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.objectives' => 'nullable|string',
+            'content.stakes' => 'nullable|string',
+            'content.progress' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'involved_character_ids' => 'nullable|array',
+            'involved_character_ids.*' => 'uuid|exists:nodes,id',
+            'involved_place_ids' => 'nullable|array',
+            'involved_place_ids.*' => 'uuid|exists:nodes,id',
+            'involved_faction_ids' => 'nullable|array',
+            'involved_faction_ids.*' => 'uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = $plot->metadata ?? [];
+        if (!empty($validated['involved_character_ids'])) {
+            $metadata['involved_character_ids'] = $validated['involved_character_ids'];
+        } else {
+            unset($metadata['involved_character_ids']);
+        }
+        if (!empty($validated['involved_place_ids'])) {
+            $metadata['involved_place_ids'] = $validated['involved_place_ids'];
+        } else {
+            unset($metadata['involved_place_ids']);
+        }
+        if (!empty($validated['involved_faction_ids'])) {
+            $metadata['involved_faction_ids'] = $validated['involved_faction_ids'];
+        } else {
+            unset($metadata['involved_faction_ids']);
+        }
+
+        $plot->update([
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']),
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Update character involvement edges
+        $plot->outgoingEdges()
+            ->where('type', 'involves')
+            ->whereHas('targetNode', function ($query) {
+                $query->where('type', 'character');
+            })
+            ->delete();
+        if (!empty($validated['involved_character_ids'])) {
+            foreach ($validated['involved_character_ids'] as $characterId) {
+                $campaign->edges()->create([
+                    'source_node_id' => $plot->id,
+                    'target_node_id' => $characterId,
+                    'type' => 'involves',
+                    'label' => 'Involves',
+                ]);
+            }
+        }
+
+        // Update place edges
+        $plot->outgoingEdges()->where('type', 'takes_place_in')->delete();
+        if (!empty($validated['involved_place_ids'])) {
+            foreach ($validated['involved_place_ids'] as $placeId) {
+                $campaign->edges()->create([
+                    'source_node_id' => $plot->id,
+                    'target_node_id' => $placeId,
+                    'type' => 'takes_place_in',
+                    'label' => 'Takes place in',
+                ]);
+            }
+        }
+
+        // Update faction involvement edges
+        $plot->outgoingEdges()
+            ->where('type', 'involves')
+            ->whereHas('targetNode', function ($query) {
+                $query->where('type', 'faction');
+            })
+            ->delete();
+        if (!empty($validated['involved_faction_ids'])) {
+            foreach ($validated['involved_faction_ids'] as $factionId) {
+                $campaign->edges()->create([
+                    'source_node_id' => $plot->id,
+                    'target_node_id' => $factionId,
+                    'type' => 'involves',
+                    'label' => 'Involves',
+                ]);
+            }
+        }
+
+        return redirect()->route('campaigns.plots.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $plot->slug,
+        ])->with('success', 'Plot updated successfully.');
+    }
+
+    public function plotsDestroy(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $plot = $campaign->nodes()
+            ->plots()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $plot->delete();
+
+        return redirect()->route('campaigns.plots.index', $campaign->slug)
+            ->with('success', 'Plot deleted successfully.');
+    }
 }
