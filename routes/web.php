@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionnaireController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -29,6 +30,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Settings routes
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings/provider', [SettingsController::class, 'updateProvider'])->name('settings.provider');
+    Route::put('/settings/api-key', [SettingsController::class, 'updateApiKey'])->name('settings.api-key');
+    Route::delete('/settings/api-key', [SettingsController::class, 'removeApiKey'])->name('settings.api-key.remove');
+    Route::put('/settings/preferences', [SettingsController::class, 'updatePreferences'])->name('settings.preferences');
+    Route::post('/settings/test-api-key', [SettingsController::class, 'testApiKey'])->name('settings.test-api-key');
 
     // Campaign routes
     Route::get('/campaigns', [CampaignController::class, 'index'])->name('campaigns.index');
