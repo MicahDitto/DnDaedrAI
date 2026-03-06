@@ -244,3 +244,276 @@
         --tw-ring-offset-color: #2A2B2E;
     }
 }
+
+/* ===== Page Transitions ===== */
+.page-enter-active {
+    @apply transition-all duration-[250ms] ease-out;
+}
+
+.page-leave-active {
+    @apply transition-all duration-[150ms] ease-in;
+}
+
+.page-enter-from {
+    opacity: 0;
+    transform: scale(0.98) translateY(8px);
+}
+
+.page-enter-to,
+.page-leave-from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+.page-leave-to {
+    opacity: 0;
+    transform: scale(0.98) translateY(-4px);
+}
+
+/* ===== Card Animations ===== */
+.card-lift {
+    @apply transition-all duration-200 ease-out;
+}
+
+.card-lift:hover {
+    transform: translateY(-2px);
+}
+
+/* Staggered card entrance */
+.card-stagger {
+    opacity: 0;
+    animation: card-enter-anim 300ms ease-out forwards;
+}
+
+.card-stagger:nth-child(1) { animation-delay: 0ms; }
+.card-stagger:nth-child(2) { animation-delay: 50ms; }
+.card-stagger:nth-child(3) { animation-delay: 100ms; }
+.card-stagger:nth-child(4) { animation-delay: 150ms; }
+.card-stagger:nth-child(5) { animation-delay: 200ms; }
+.card-stagger:nth-child(6) { animation-delay: 250ms; }
+
+@keyframes card-enter-anim {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== Button Enhancements ===== */
+.btn-lift {
+    @apply transition-transform duration-150 ease-out;
+}
+
+.btn-lift:hover {
+    transform: translateY(-2px);
+}
+
+.btn-lift:active {
+    transform: translateY(0);
+}
+
+/* ===== Input Focus Enhancement ===== */
+.input-glow-focus {
+    @apply transition-shadow duration-200 ease-out;
+}
+
+.input-glow-focus:focus {
+    box-shadow: 0 0 0 3px rgba(166, 130, 255, 0.15);
+}
+
+/* ===== Arcane Dust Particles ===== */
+.arcane-dust {
+    position: relative;
+    overflow: visible;
+}
+
+.arcane-dust::before,
+.arcane-dust::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--color-arcane-periwinkle);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 0 6px var(--color-arcane-periwinkle);
+}
+
+.arcane-dust::before {
+    left: 20%;
+    top: 50%;
+}
+
+.arcane-dust::after {
+    right: 20%;
+    top: 50%;
+}
+
+.arcane-dust:hover::before {
+    animation: dust-float-left 1s ease-out infinite;
+}
+
+.arcane-dust:hover::after {
+    animation: dust-float-right 1.2s ease-out infinite 0.3s;
+}
+
+@keyframes dust-float-left {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-12px, -24px) scale(0.3);
+    }
+}
+
+@keyframes dust-float-right {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(12px, -28px) scale(0.3);
+    }
+}
+
+/* ===== Ethereal Mist Background ===== */
+.ethereal-mist {
+    position: relative;
+    overflow-x: hidden;
+}
+
+.ethereal-mist::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
+    background: radial-gradient(
+        ellipse at 30% 70%,
+        rgba(166, 130, 255, 0.06) 0%,
+        transparent 50%
+    );
+    animation: mist-drift-anim 15s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.ethereal-mist > * {
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes mist-drift-anim {
+    0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(5%, -5%) rotate(2deg);
+    }
+    50% {
+        transform: translate(-3%, 3%) rotate(-1deg);
+    }
+    75% {
+        transform: translate(2%, 2%) rotate(1deg);
+    }
+}
+
+/* Mode-specific mist colors */
+.ethereal-mist-nature::before {
+    background: radial-gradient(
+        ellipse at 30% 70%,
+        rgba(164, 194, 168, 0.06) 0%,
+        transparent 50%
+    );
+}
+
+.ethereal-mist-legendary::before {
+    background: radial-gradient(
+        ellipse at 30% 70%,
+        rgba(210, 187, 92, 0.06) 0%,
+        transparent 50%
+    );
+}
+
+/* ===== Rune Loading Spinner ===== */
+.rune-spinner {
+    position: relative;
+    width: 40px;
+    height: 40px;
+}
+
+.rune-spinner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 2px solid rgba(166, 130, 255, 0.2);
+    border-top-color: var(--color-arcane-periwinkle);
+    border-radius: 50%;
+    animation: rune-spin-anim 1s linear infinite;
+}
+
+.rune-spinner::after {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    background: radial-gradient(
+        circle,
+        var(--color-arcane-periwinkle) 0%,
+        transparent 70%
+    );
+    border-radius: 50%;
+    animation: rune-pulse-anim 1.5s ease-in-out infinite;
+}
+
+@keyframes rune-spin-anim {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes rune-pulse-anim {
+    0%, 100% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Rune spinner size variants */
+.rune-spinner-sm {
+    width: 24px;
+    height: 24px;
+}
+
+.rune-spinner-sm::after {
+    inset: 5px;
+}
+
+.rune-spinner-lg {
+    width: 56px;
+    height: 56px;
+}
+
+.rune-spinner-lg::before {
+    border-width: 3px;
+}
+
+.rune-spinner-lg::after {
+    inset: 12px;
+}
+
+/* ===== Tab Indicator Animation ===== */
+.tab-indicator {
+    @apply absolute bottom-0 h-0.5 rounded-full;
+    @apply bg-gradient-to-r from-arcane-purple to-arcane-periwinkle;
+    @apply transition-all duration-200 ease-out;
+}

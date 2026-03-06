@@ -103,16 +103,61 @@ export default {
             },
             animation: {
                 'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+                'glow-pulse-nature': 'glow-pulse-nature 2s ease-in-out infinite',
+                'glow-pulse-legendary': 'glow-pulse-legendary 2s ease-in-out infinite',
                 'shimmer': 'shimmer 2s linear infinite',
+                'card-enter': 'card-enter 300ms ease-out forwards',
+                'dust-float': 'dust-float 1s ease-out infinite',
+                'dust-float-delayed': 'dust-float 1.2s ease-out infinite 0.3s',
+                'mist-drift': 'mist-drift 15s ease-in-out infinite',
+                'rune-spin': 'rune-spin 1s linear infinite',
+                'rune-pulse': 'rune-pulse 1.5s ease-in-out infinite',
+                'page-enter': 'page-enter 250ms ease-out',
+                'page-leave': 'page-leave 150ms ease-in',
             },
             keyframes: {
                 'glow-pulse': {
                     '0%, 100%': { boxShadow: '0 0 20px rgba(166, 130, 255, 0.3)' },
                     '50%': { boxShadow: '0 0 30px rgba(166, 130, 255, 0.5)' },
                 },
+                'glow-pulse-nature': {
+                    '0%, 100%': { boxShadow: '0 0 20px rgba(164, 194, 168, 0.3)' },
+                    '50%': { boxShadow: '0 0 30px rgba(164, 194, 168, 0.5)' },
+                },
+                'glow-pulse-legendary': {
+                    '0%, 100%': { boxShadow: '0 0 20px rgba(210, 187, 92, 0.3)' },
+                    '50%': { boxShadow: '0 0 30px rgba(210, 187, 92, 0.5)' },
+                },
                 'shimmer': {
                     '0%': { backgroundPosition: '-200% 0' },
                     '100%': { backgroundPosition: '200% 0' },
+                },
+                'card-enter': {
+                    from: { opacity: '0', transform: 'translateY(16px)' },
+                    to: { opacity: '1', transform: 'translateY(0)' },
+                },
+                'dust-float': {
+                    '0%': { opacity: '1', transform: 'translate(0, 0) scale(1)' },
+                    '100%': { opacity: '0', transform: 'translate(-8px, -20px) scale(0.5)' },
+                },
+                'mist-drift': {
+                    '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+                    '50%': { transform: 'translate(3%, -3%) rotate(1deg)' },
+                },
+                'rune-spin': {
+                    to: { transform: 'rotate(360deg)' },
+                },
+                'rune-pulse': {
+                    '0%, 100%': { opacity: '0.5', transform: 'scale(0.8)' },
+                    '50%': { opacity: '1', transform: 'scale(1)' },
+                },
+                'page-enter': {
+                    from: { opacity: '0', transform: 'scale(0.98) translateY(8px)' },
+                    to: { opacity: '1', transform: 'scale(1) translateY(0)' },
+                },
+                'page-leave': {
+                    from: { opacity: '1', transform: 'scale(1) translateY(0)' },
+                    to: { opacity: '0', transform: 'scale(0.98) translateY(-4px)' },
                 },
             },
         },

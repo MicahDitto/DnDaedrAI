@@ -70,11 +70,15 @@ const currentMode = computed<'plan' | 'prep' | 'play'>(() => {
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto">
-
-                <!-- Main Content -->
-                <div class="p-6">
-                    <slot />
-                </div>
+                <!-- Main Content with Page Transition -->
+                <Transition
+                    name="page"
+                    mode="out-in"
+                >
+                    <div :key="page.url" class="p-6">
+                        <slot />
+                    </div>
+                </Transition>
             </main>
         </div>
     </div>
