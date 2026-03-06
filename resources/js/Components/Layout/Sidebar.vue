@@ -151,8 +151,13 @@ const icons: Record<string, string> = {
     <aside class="w-64 bg-graphite-900 text-arcane-grey flex flex-col h-full border-r border-charcoal/30">
         <!-- Logo -->
         <div class="p-4 border-b border-charcoal/30">
-            <Link :href="route('dashboard')" class="flex items-center space-x-2 group">
-                <span class="text-xl font-bold text-gradient-arcane">DnDaedrAI</span>
+            <Link :href="route('dashboard')" class="flex items-center space-x-3 group">
+                <img
+                    src="/images/logo.png"
+                    alt="DnDaedrAI Logo"
+                    class="w-8 h-8 object-contain"
+                />
+                <span class="text-lg font-bold text-gradient-arcane">DnDaedrAI</span>
             </Link>
         </div>
 

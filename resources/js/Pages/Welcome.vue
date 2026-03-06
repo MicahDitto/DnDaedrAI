@@ -14,8 +14,13 @@ defineProps<{
         <!-- Navigation -->
         <nav class="relative z-10 px-6 py-4">
             <div class="max-w-7xl mx-auto flex items-center justify-between">
-                <div class="text-2xl font-bold text-white">
-                    DnDaedrAI
+                <div class="flex items-center space-x-3">
+                    <img
+                        src="/images/logo.png"
+                        alt="DnDaedrAI Logo"
+                        class="w-10 h-10 object-contain"
+                    />
+                    <span class="text-2xl font-bold text-white">DnDaedrAI</span>
                 </div>
                 <div v-if="canLogin" class="flex items-center space-x-4">
                     <Link
@@ -48,15 +53,13 @@ defineProps<{
         <main class="relative z-10">
             <div class="max-w-7xl mx-auto px-6 pt-20 pb-32">
                 <div class="text-center">
-                    <!-- D20 Icon -->
-                    <div class="mb-8 inline-flex items-center justify-center w-24 h-24 rounded-full bg-arcane-flow/20 border border-purple-500/30">
-                        <svg class="w-12 h-12 text-arcane-periwinkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <polygon points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5" />
-                            <line x1="12" y1="2" x2="12" y2="22" />
-                            <line x1="2" y1="8.5" x2="22" y2="8.5" />
-                            <line x1="2" y1="15.5" x2="12" y2="22" />
-                            <line x1="22" y1="15.5" x2="12" y2="22" />
-                        </svg>
+                    <!-- Logo -->
+                    <div class="mb-8">
+                        <img
+                            src="/images/logo.png"
+                            alt="DnDaedrAI Logo"
+                            class="w-32 h-32 mx-auto object-contain"
+                        />
                     </div>
 
                     <h1 class="text-5xl md:text-6xl font-bold text-white mb-6">

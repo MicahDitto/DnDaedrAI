@@ -15,6 +15,7 @@ interface Campaign {
 
 interface Node {
     id: string;
+    slug: string;
     type: string;
     name: string;
     summary: string | null;
@@ -36,13 +37,24 @@ interface Stats {
     sessions: number;
 }
 
-defineProps<{
+const props = defineProps<{
     campaign: Campaign;
     campaigns: Campaign[];
     stats: Stats;
     recentNodes: Node[];
     sessions: GameSession[];
 }>();
+
+const getNodeRoute = (type: string) => {
+    const routes: Record<string, string> = {
+        character: 'campaigns.characters.show',
+        place: 'campaigns.places.show',
+        item: 'campaigns.items.show',
+        faction: 'campaigns.factions.show',
+        plot: 'campaigns.plots.show',
+    };
+    return routes[type] || 'campaigns.characters.show';
+};
 
 const getNodeIcon = (type: string) => {
     const icons: Record<string, string> = {
@@ -90,7 +102,10 @@ const formatDate = (dateString: string) => {
 
         <!-- Stats Cards -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-arcane-purple/30 hover:shadow-glow-arcane-sm">
+            <Link
+                :href="route('campaigns.characters.index', campaign.slug)"
+                class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-arcane-purple/30 hover:shadow-glow-arcane-sm cursor-pointer"
+            >
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-arcane-purple/20 text-arcane-purple">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -102,9 +117,12 @@ const formatDate = (dateString: string) => {
                         <p class="text-2xl font-semibold text-white">{{ stats.characters }}</p>
                     </div>
                 </div>
-            </div>
+            </Link>
 
-            <div class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-nature/30 hover:shadow-glow-nature-sm">
+            <Link
+                :href="route('campaigns.places.index', campaign.slug)"
+                class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-nature/30 hover:shadow-glow-nature-sm cursor-pointer"
+            >
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-nature/20 text-nature">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,9 +134,12 @@ const formatDate = (dateString: string) => {
                         <p class="text-2xl font-semibold text-white">{{ stats.places }}</p>
                     </div>
                 </div>
-            </div>
+            </Link>
 
-            <div class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-arcane-periwinkle/30 hover:shadow-glow-arcane-sm">
+            <Link
+                :href="route('campaigns.plots.index', campaign.slug)"
+                class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-arcane-periwinkle/30 hover:shadow-glow-arcane-sm cursor-pointer"
+            >
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-arcane-periwinkle/20 text-arcane-periwinkle">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -130,9 +151,12 @@ const formatDate = (dateString: string) => {
                         <p class="text-2xl font-semibold text-white">{{ stats.plots }}</p>
                     </div>
                 </div>
-            </div>
+            </Link>
 
-            <div class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-legendary-gold/30 hover:shadow-glow-legendary-sm">
+            <Link
+                :href="route('campaigns.sessions.index', campaign.slug)"
+                class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-legendary-gold/30 hover:shadow-glow-legendary-sm cursor-pointer"
+            >
                 <div class="flex items-center">
                     <div class="p-3 rounded-full bg-legendary-gold/20 text-legendary-gold">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,7 +168,7 @@ const formatDate = (dateString: string) => {
                         <p class="text-2xl font-semibold text-white">{{ stats.sessions }}</p>
                     </div>
                 </div>
-            </div>
+            </Link>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -160,10 +184,11 @@ const formatDate = (dateString: string) => {
                     >
                         No content yet. Start by adding characters, places, or plots!
                     </div>
-                    <div
+                    <Link
                         v-for="node in recentNodes"
                         :key="node.id"
-                        class="p-4 hover:bg-charcoal/30 transition-colors"
+                        :href="route(getNodeRoute(node.type), [campaign.slug, node.slug])"
+                        class="block p-4 hover:bg-charcoal/30 transition-colors cursor-pointer"
                     >
                         <div class="flex items-start">
                             <div class="flex-shrink-0">
@@ -184,7 +209,7 @@ const formatDate = (dateString: string) => {
                                 {{ formatDate(node.created_at) }}
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 </div>
             </div>
 

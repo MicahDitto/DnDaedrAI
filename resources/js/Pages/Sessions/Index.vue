@@ -65,44 +65,32 @@ const getSessionTitle = (session: GameSession) => {
     <Head :title="`Sessions - ${campaign.name}`" />
 
     <CampaignLayout>
-        <template #header>
-            <div class="flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <Link
-                        :href="route('campaigns.show', campaign.slug)"
-                        class="text-arcane-grey hover:text-white transition-colors"
-                    >
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </Link>
-                    <h2 class="font-semibold text-xl text-white leading-tight">
-                        Sessions
-                    </h2>
-                </div>
-                <Link
-                    :href="route('campaigns.sessions.create', campaign.slug)"
-                    class="inline-flex items-center px-4 py-2 bg-arcane-flow border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-glow-arcane-sm hover:shadow-glow-arcane transition-all duration-200"
-                >
-                    + Plan New Session
-                </Link>
-            </div>
-        </template>
 
         <div class="py-6">
             <div class="max-w-4xl mx-auto">
-                <!-- Filters -->
-                <div class="mb-6 flex items-center space-x-4">
-                    <label class="text-sm font-medium text-arcane-grey">Filter by status:</label>
-                    <select
-                        v-model="filterStatus"
-                        class="bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm text-sm"
+                <!-- Filters & Actions -->
+                <div class="mb-6 flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <label class="text-sm font-medium text-arcane-grey">Filter by status:</label>
+                        <select
+                            v-model="filterStatus"
+                            class="bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm text-sm"
+                        >
+                            <option value="">All Sessions</option>
+                            <option v-for="(label, value) in statusOptions" :key="value" :value="value">
+                                {{ label }}
+                            </option>
+                        </select>
+                    </div>
+                    <Link
+                        :href="route('campaigns.sessions.create', campaign.slug)"
+                        class="inline-flex items-center px-4 py-2 bg-arcane-flow border border-transparent rounded-md font-semibold text-sm text-white shadow-glow-arcane-sm hover:shadow-glow-arcane transition-all duration-200"
                     >
-                        <option value="">All Sessions</option>
-                        <option v-for="(label, value) in statusOptions" :key="value" :value="value">
-                            {{ label }}
-                        </option>
-                    </select>
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Add Session
+                    </Link>
                 </div>
 
                 <!-- Empty State -->

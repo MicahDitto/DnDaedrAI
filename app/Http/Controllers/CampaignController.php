@@ -74,7 +74,7 @@ class CampaignController extends Controller
         $recentNodes = $campaign->nodes()
             ->latest()
             ->take(5)
-            ->get(['id', 'type', 'name', 'summary', 'created_at']);
+            ->get(['id', 'slug', 'type', 'name', 'summary', 'created_at']);
 
         // Get upcoming/recent sessions
         $sessions = $campaign->gameSessions()
