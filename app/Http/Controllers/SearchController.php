@@ -30,10 +30,11 @@ class SearchController extends Controller
         $results = [];
 
         // Search Nodes (characters, places, items, factions, plots)
+        // Use ILIKE for case-insensitive search in PostgreSQL
         $nodeQuery = $campaign->nodes()
             ->where(function ($q) use ($query) {
-                $q->where('name', 'LIKE', "%{$query}%")
-                    ->orWhere('summary', 'LIKE', "%{$query}%");
+                $q->where('name', 'ILIKE', "%{$query}%")
+                    ->orWhere('summary', 'ILIKE', "%{$query}%");
             });
 
         if ($type && in_array($type, ['character', 'place', 'item', 'faction', 'plot'])) {
@@ -60,11 +61,11 @@ class SearchController extends Controller
 
         // Search Sessions (if no type filter or type is 'session')
         if (!$type || $type === 'session') {
-            $sessions = $campaign->sessions()
+            $sessions = $campaign->gameSessions()
                 ->where(function ($q) use ($query) {
-                    $q->where('title', 'LIKE', "%{$query}%")
-                        ->orWhere('notes', 'LIKE', "%{$query}%")
-                        ->orWhere('recap', 'LIKE', "%{$query}%");
+                    $q->where('title', 'ILIKE', "%{$query}%")
+                        ->orWhere('notes', 'ILIKE', "%{$query}%")
+                        ->orWhere('recap', 'ILIKE', "%{$query}%");
                 })
                 ->orderBy('number', 'desc')
                 ->limit(10)

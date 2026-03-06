@@ -94,6 +94,7 @@ const performSearch = async () => {
         const response = await fetch(
             route('campaigns.search', props.currentCampaign.slug) + `?q=${encodeURIComponent(searchQuery.value)}`,
             {
+                credentials: 'same-origin',
                 headers: {
                     'Accept': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
