@@ -347,6 +347,9 @@ const handleFocus = () => {
                     <DropdownLink :href="route('profile.edit')">
                         Profile
                     </DropdownLink>
+                    <DropdownLink :href="route('settings.index')">
+                        Settings
+                    </DropdownLink>
                     <DropdownLink :href="route('logout')" method="post" as="button">
                         Log Out
                     </DropdownLink>
