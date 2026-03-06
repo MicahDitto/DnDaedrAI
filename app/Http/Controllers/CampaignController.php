@@ -91,6 +91,34 @@ class CampaignController extends Controller
         ]);
     }
 
+    public function prep(string $slug): Response
+    {
+        $campaign = Auth::user()->campaigns()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $campaigns = Auth::user()->campaigns()->get(['id', 'name', 'slug']);
+
+        return Inertia::render('Campaigns/Prep', [
+            'campaign' => $campaign,
+            'campaigns' => $campaigns,
+        ]);
+    }
+
+    public function play(string $slug): Response
+    {
+        $campaign = Auth::user()->campaigns()
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        $campaigns = Auth::user()->campaigns()->get(['id', 'name', 'slug']);
+
+        return Inertia::render('Campaigns/Play', [
+            'campaign' => $campaign,
+            'campaigns' => $campaigns,
+        ]);
+    }
+
     public function edit(string $slug): Response
     {
         $campaign = Auth::user()->campaigns()

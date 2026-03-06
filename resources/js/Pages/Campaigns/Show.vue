@@ -67,27 +67,6 @@ const formatDate = (dateString: string) => {
     <Head :title="campaign.name" />
 
     <CampaignLayout>
-        <template #header>
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold text-white">{{ campaign.name }}</h1>
-                    <p v-if="campaign.description" class="mt-1 text-sm text-arcane-grey">
-                        {{ campaign.description }}
-                    </p>
-                </div>
-                <Link
-                    :href="route('campaigns.edit', campaign.slug)"
-                    class="inline-flex items-center px-3 py-2 border border-charcoal rounded-md text-sm font-medium text-arcane-grey bg-gunmetal hover:bg-charcoal hover:text-white hover:border-arcane-periwinkle/30 transition-all duration-200"
-                >
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Settings
-                </Link>
-            </div>
-        </template>
-
         <!-- Session 0 Setup Banner -->
         <div
             v-if="campaign.status === 'setup'"

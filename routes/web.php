@@ -44,6 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/campaigns/create', [CampaignController::class, 'create'])->name('campaigns.create');
     Route::post('/campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
     Route::get('/campaigns/{slug}', [CampaignController::class, 'show'])->name('campaigns.show');
+    Route::get('/campaigns/{slug}/prep', [CampaignController::class, 'prep'])->name('campaigns.prep');
+    Route::get('/campaigns/{slug}/play', [CampaignController::class, 'play'])->name('campaigns.play');
     Route::get('/campaigns/{slug}/edit', [CampaignController::class, 'edit'])->name('campaigns.edit');
     Route::put('/campaigns/{slug}', [CampaignController::class, 'update'])->name('campaigns.update');
     Route::delete('/campaigns/{slug}', [CampaignController::class, 'destroy'])->name('campaigns.destroy');
