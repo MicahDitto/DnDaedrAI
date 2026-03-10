@@ -114,24 +114,23 @@ const toggleFaction = (id: string) => {
     <Head :title="`Edit ${plot.name} - ${campaign.name}`" />
 
     <CampaignLayout>
-        <template #header>
-            <div class="flex items-center space-x-4">
-                <Link
-                    :href="route('campaigns.plots.show', [campaign.slug, plot.slug])"
-                    class="text-arcane-grey hover:text-white transition-colors"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </Link>
-                <h2 class="font-semibold text-xl text-white leading-tight">
-                    Edit: {{ plot.name }}
-                </h2>
-            </div>
-        </template>
-
         <div class="py-6">
             <div class="max-w-3xl mx-auto">
+                <!-- Page Header -->
+                <div class="mb-6 flex items-center space-x-4">
+                    <Link
+                        :href="route('campaigns.plots.show', [campaign.slug, plot.slug])"
+                        class="text-arcane-grey hover:text-white transition-colors"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </Link>
+                    <h2 class="font-semibold text-xl text-white leading-tight">
+                        Edit: {{ plot.name }}
+                    </h2>
+                </div>
+
                 <div class="bg-gunmetal overflow-hidden shadow-dark-md sm:rounded-lg border border-arcane-periwinkle/10">
                     <div class="p-6">
                         <form @submit.prevent="submit" class="space-y-6">

@@ -31,14 +31,69 @@ const getTypeColor = (type: string, subtype?: string | null) => {
         return characterColors[subtype || 'neutral'] || characterColors.neutral;
     }
 
-    // Other entity types
-    const typeColors: Record<string, string> = {
-        place: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-        item: 'bg-legendary-amber/20 text-legendary-amber border-legendary-amber/30',
-        faction: 'bg-arcane-purple/20 text-arcane-purple border-arcane-purple/30',
-        plot: 'bg-nature/20 text-nature border-nature/30',
-    };
-    return typeColors[type] || 'bg-charcoal text-arcane-grey border-charcoal';
+    // Place subtypes
+    if (type === 'place') {
+        const placeColors: Record<string, string> = {
+            world: 'bg-arcane-purple/20 text-arcane-purple border-arcane-purple/30',
+            continent: 'bg-arcane-periwinkle/20 text-arcane-periwinkle border-arcane-periwinkle/30',
+            region: 'bg-arcane-periwinkle/30 text-arcane-periwinkle border-arcane-periwinkle/30',
+            city: 'bg-nature/20 text-nature border-nature/30',
+            town: 'bg-nature/30 text-nature border-nature/30',
+            village: 'bg-nature/20 text-nature border-nature/30',
+            dungeon: 'bg-danger/20 text-danger-light border-danger/30',
+            wilderness: 'bg-nature/20 text-nature border-nature/30',
+            building: 'bg-legendary-amber/20 text-legendary-amber border-legendary-amber/30',
+            landmark: 'bg-legendary-gold/20 text-legendary-gold border-legendary-gold/30',
+        };
+        return placeColors[subtype || ''] || 'bg-charcoal text-arcane-grey border-charcoal';
+    }
+
+    // Item subtypes
+    if (type === 'item') {
+        const itemColors: Record<string, string> = {
+            weapon: 'bg-danger/20 text-danger-light border-danger/30',
+            armor: 'bg-arcane-periwinkle/20 text-arcane-periwinkle border-arcane-periwinkle/30',
+            artifact: 'bg-arcane-purple/20 text-arcane-purple border-arcane-purple/30',
+            consumable: 'bg-nature/20 text-nature border-nature/30',
+            treasure: 'bg-legendary-gold/20 text-legendary-gold border-legendary-gold/30',
+            mundane: 'bg-charcoal text-arcane-grey border-charcoal',
+        };
+        return itemColors[subtype || 'mundane'] || itemColors.mundane;
+    }
+
+    // Faction subtypes
+    if (type === 'faction') {
+        const factionColors: Record<string, string> = {
+            guild: 'bg-arcane-periwinkle/20 text-arcane-periwinkle border-arcane-periwinkle/30',
+            government: 'bg-arcane-purple/20 text-arcane-purple border-arcane-purple/30',
+            cult: 'bg-danger/20 text-danger-light border-danger/30',
+            criminal: 'bg-danger/20 text-danger-light border-danger/30',
+            military: 'bg-nature/20 text-nature border-nature/30',
+            merchant: 'bg-legendary-gold/20 text-legendary-gold border-legendary-gold/30',
+            religious: 'bg-legendary-gold/20 text-legendary-gold border-legendary-gold/30',
+            arcane: 'bg-arcane-periwinkle/30 text-arcane-periwinkle border-arcane-periwinkle/30',
+        };
+        return factionColors[subtype || ''] || 'bg-charcoal text-arcane-grey border-charcoal';
+    }
+
+    // Plot subtypes
+    if (type === 'plot') {
+        const plotColors: Record<string, string> = {
+            main: 'bg-legendary-gold/20 text-legendary-gold border-legendary-gold/30',
+            main_quest: 'bg-legendary-gold/20 text-legendary-gold border-legendary-gold/30',
+            side: 'bg-arcane-periwinkle/20 text-arcane-periwinkle border-arcane-periwinkle/30',
+            side_quest: 'bg-arcane-periwinkle/20 text-arcane-periwinkle border-arcane-periwinkle/30',
+            character: 'bg-nature/20 text-nature border-nature/30',
+            character_arc: 'bg-nature/20 text-nature border-nature/30',
+            faction: 'bg-arcane-purple/20 text-arcane-purple border-arcane-purple/30',
+            mystery: 'bg-arcane-purple/20 text-arcane-purple border-arcane-purple/30',
+            conflict: 'bg-danger/20 text-danger-light border-danger/30',
+        };
+        return plotColors[subtype || ''] || 'bg-charcoal text-arcane-grey border-charcoal';
+    }
+
+    // Fallback for unknown types
+    return 'bg-charcoal text-arcane-grey border-charcoal';
 };
 
 const getTypeLabel = (type: string, subtype?: string | null) => {
@@ -52,6 +107,64 @@ const getTypeLabel = (type: string, subtype?: string | null) => {
         };
         return labels[subtype] || subtype;
     }
+
+    if (type === 'place' && subtype) {
+        const labels: Record<string, string> = {
+            world: 'World',
+            continent: 'Continent',
+            region: 'Region',
+            city: 'City',
+            town: 'Town',
+            village: 'Village',
+            dungeon: 'Dungeon',
+            wilderness: 'Wilderness',
+            building: 'Building',
+            landmark: 'Landmark',
+        };
+        return labels[subtype] || subtype;
+    }
+
+    if (type === 'item' && subtype) {
+        const labels: Record<string, string> = {
+            weapon: 'Weapon',
+            armor: 'Armor',
+            artifact: 'Artifact',
+            consumable: 'Consumable',
+            treasure: 'Treasure',
+            mundane: 'Mundane',
+        };
+        return labels[subtype] || subtype;
+    }
+
+    if (type === 'faction' && subtype) {
+        const labels: Record<string, string> = {
+            guild: 'Guild',
+            government: 'Government',
+            cult: 'Cult',
+            criminal: 'Criminal Organization',
+            military: 'Military',
+            merchant: 'Merchant Guild',
+            religious: 'Religious Order',
+            arcane: 'Arcane Order',
+        };
+        return labels[subtype] || subtype;
+    }
+
+    if (type === 'plot' && subtype) {
+        const labels: Record<string, string> = {
+            main: 'Main Quest',
+            main_quest: 'Main Quest',
+            side: 'Side Quest',
+            side_quest: 'Side Quest',
+            character: 'Character Arc',
+            character_arc: 'Character Arc',
+            faction: 'Faction Plot',
+            mystery: 'Mystery',
+            conflict: 'Conflict',
+        };
+        return labels[subtype] || subtype;
+    }
+
     return type.charAt(0).toUpperCase() + type.slice(1);
 };
 

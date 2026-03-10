@@ -51,24 +51,23 @@ const submit = () => {
     <Head :title="`Create Faction - ${campaign.name}`" />
 
     <CampaignLayout>
-        <template #header>
-            <div class="flex items-center space-x-4">
-                <Link
-                    :href="route('campaigns.factions.index', campaign.slug)"
-                    class="text-arcane-grey hover:text-white transition-colors"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </Link>
-                <h2 class="font-semibold text-xl text-white leading-tight">
-                    Create Faction
-                </h2>
-            </div>
-        </template>
-
         <div class="py-6">
             <div class="max-w-3xl mx-auto">
+                <!-- Page Header -->
+                <div class="mb-6 flex items-center space-x-4">
+                    <Link
+                        :href="route('campaigns.factions.index', campaign.slug)"
+                        class="text-arcane-grey hover:text-white transition-colors"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </Link>
+                    <h2 class="font-semibold text-xl text-white leading-tight">
+                        Create Faction
+                    </h2>
+                </div>
+
                 <div class="bg-gunmetal overflow-hidden shadow-dark-md sm:rounded-lg border border-arcane-periwinkle/10">
                     <div class="p-6">
                         <form @submit.prevent="submit" class="space-y-6">
@@ -121,22 +120,6 @@ const submit = () => {
                                             </option>
                                         </select>
                                         <InputError :message="form.errors.confidence" class="mt-2" />
-                                    </div>
-
-                                    <!-- Headquarters -->
-                                    <div>
-                                        <InputLabel for="headquarters_id" value="Headquarters" />
-                                        <select
-                                            id="headquarters_id"
-                                            v-model="form.headquarters_id"
-                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
-                                        >
-                                            <option value="">None</option>
-                                            <option v-for="place in places" :key="place.id" :value="place.id">
-                                                {{ place.name }}
-                                            </option>
-                                        </select>
-                                        <InputError :message="form.errors.headquarters_id" class="mt-2" />
                                     </div>
 
                                     <!-- Summary -->
@@ -219,6 +202,27 @@ const submit = () => {
                                             placeholder="What is the history of this faction?"
                                         />
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Connections Section -->
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Connections</h3>
+
+                                <div>
+                                    <!-- Headquarters -->
+                                    <InputLabel for="headquarters_id" value="Headquarters" />
+                                    <select
+                                        id="headquarters_id"
+                                        v-model="form.headquarters_id"
+                                        class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
+                                    >
+                                        <option value="">None</option>
+                                        <option v-for="place in places" :key="place.id" :value="place.id">
+                                            {{ place.name }}
+                                        </option>
+                                    </select>
+                                    <InputError :message="form.errors.headquarters_id" class="mt-2" />
                                 </div>
                             </div>
 

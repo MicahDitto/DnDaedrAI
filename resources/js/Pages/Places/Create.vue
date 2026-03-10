@@ -51,24 +51,23 @@ const submit = () => {
     <Head :title="`Create Place - ${campaign.name}`" />
 
     <CampaignLayout>
-        <template #header>
-            <div class="flex items-center space-x-4">
-                <Link
-                    :href="route('campaigns.places.index', campaign.slug)"
-                    class="text-arcane-grey hover:text-white transition-colors"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </Link>
-                <h2 class="font-semibold text-xl text-white leading-tight">
-                    Create Place
-                </h2>
-            </div>
-        </template>
-
         <div class="py-6">
             <div class="max-w-3xl mx-auto">
+                <!-- Page Header -->
+                <div class="mb-6 flex items-center space-x-4">
+                    <Link
+                        :href="route('campaigns.places.index', campaign.slug)"
+                        class="text-arcane-grey hover:text-white transition-colors"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </Link>
+                    <h2 class="font-semibold text-xl text-white leading-tight">
+                        Create Place
+                    </h2>
+                </div>
+
                 <div class="bg-gunmetal overflow-hidden shadow-dark-md sm:rounded-lg border border-arcane-periwinkle/10">
                     <div class="p-6">
                         <form @submit.prevent="submit" class="space-y-6">
@@ -106,22 +105,6 @@ const submit = () => {
                                             </option>
                                         </select>
                                         <InputError :message="form.errors.subtype" class="mt-2" />
-                                    </div>
-
-                                    <!-- Parent Place -->
-                                    <div>
-                                        <InputLabel for="parent_id" value="Located In (Parent)" />
-                                        <select
-                                            id="parent_id"
-                                            v-model="form.parent_id"
-                                            class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
-                                        >
-                                            <option value="">None (Top Level)</option>
-                                            <option v-for="place in parentPlaces" :key="place.id" :value="place.id">
-                                                {{ place.name }} ({{ subtypes[place.subtype] || place.subtype }})
-                                            </option>
-                                        </select>
-                                        <InputError :message="form.errors.parent_id" class="mt-2" />
                                     </div>
 
                                     <!-- Confidence -->
@@ -219,6 +202,27 @@ const submit = () => {
                                             placeholder="Notable locations, landmarks, or areas within this place..."
                                         />
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- Connections Section -->
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Connections</h3>
+
+                                <div>
+                                    <!-- Parent Place -->
+                                    <InputLabel for="parent_id" value="Located In (Parent Place)" />
+                                    <select
+                                        id="parent_id"
+                                        v-model="form.parent_id"
+                                        class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
+                                    >
+                                        <option value="">None (Top Level)</option>
+                                        <option v-for="place in parentPlaces" :key="place.id" :value="place.id">
+                                            {{ place.name }} ({{ subtypes[place.subtype] || place.subtype }})
+                                        </option>
+                                    </select>
+                                    <InputError :message="form.errors.parent_id" class="mt-2" />
                                 </div>
                             </div>
 
