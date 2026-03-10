@@ -171,6 +171,54 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.plots.update');
     Route::delete('/campaigns/{campaignSlug}/plots/{nodeSlug}', [NodeController::class, 'plotsDestroy'])
         ->name('campaigns.plots.destroy');
+
+    // Lore routes (within a campaign)
+    Route::get('/campaigns/{campaignSlug}/lore', [NodeController::class, 'loreIndex'])
+        ->name('campaigns.lore.index');
+    Route::get('/campaigns/{campaignSlug}/lore/create', [NodeController::class, 'loreCreate'])
+        ->name('campaigns.lore.create');
+    Route::post('/campaigns/{campaignSlug}/lore', [NodeController::class, 'loreStore'])
+        ->name('campaigns.lore.store');
+    Route::get('/campaigns/{campaignSlug}/lore/{nodeSlug}', [NodeController::class, 'loreShow'])
+        ->name('campaigns.lore.show');
+    Route::get('/campaigns/{campaignSlug}/lore/{nodeSlug}/edit', [NodeController::class, 'loreEdit'])
+        ->name('campaigns.lore.edit');
+    Route::put('/campaigns/{campaignSlug}/lore/{nodeSlug}', [NodeController::class, 'loreUpdate'])
+        ->name('campaigns.lore.update');
+    Route::delete('/campaigns/{campaignSlug}/lore/{nodeSlug}', [NodeController::class, 'loreDestroy'])
+        ->name('campaigns.lore.destroy');
+
+    // Religion routes (within a campaign)
+    Route::get('/campaigns/{campaignSlug}/religions', [NodeController::class, 'religionsIndex'])
+        ->name('campaigns.religions.index');
+    Route::get('/campaigns/{campaignSlug}/religions/create', [NodeController::class, 'religionsCreate'])
+        ->name('campaigns.religions.create');
+    Route::post('/campaigns/{campaignSlug}/religions', [NodeController::class, 'religionsStore'])
+        ->name('campaigns.religions.store');
+    Route::get('/campaigns/{campaignSlug}/religions/{nodeSlug}', [NodeController::class, 'religionsShow'])
+        ->name('campaigns.religions.show');
+    Route::get('/campaigns/{campaignSlug}/religions/{nodeSlug}/edit', [NodeController::class, 'religionsEdit'])
+        ->name('campaigns.religions.edit');
+    Route::put('/campaigns/{campaignSlug}/religions/{nodeSlug}', [NodeController::class, 'religionsUpdate'])
+        ->name('campaigns.religions.update');
+    Route::delete('/campaigns/{campaignSlug}/religions/{nodeSlug}', [NodeController::class, 'religionsDestroy'])
+        ->name('campaigns.religions.destroy');
+
+    // Magic System routes (within a campaign)
+    Route::get('/campaigns/{campaignSlug}/magic', [NodeController::class, 'magicIndex'])
+        ->name('campaigns.magic.index');
+    Route::get('/campaigns/{campaignSlug}/magic/create', [NodeController::class, 'magicCreate'])
+        ->name('campaigns.magic.create');
+    Route::post('/campaigns/{campaignSlug}/magic', [NodeController::class, 'magicStore'])
+        ->name('campaigns.magic.store');
+    Route::get('/campaigns/{campaignSlug}/magic/{nodeSlug}', [NodeController::class, 'magicShow'])
+        ->name('campaigns.magic.show');
+    Route::get('/campaigns/{campaignSlug}/magic/{nodeSlug}/edit', [NodeController::class, 'magicEdit'])
+        ->name('campaigns.magic.edit');
+    Route::put('/campaigns/{campaignSlug}/magic/{nodeSlug}', [NodeController::class, 'magicUpdate'])
+        ->name('campaigns.magic.update');
+    Route::delete('/campaigns/{campaignSlug}/magic/{nodeSlug}', [NodeController::class, 'magicDestroy'])
+        ->name('campaigns.magic.destroy');
 });
 
 require __DIR__.'/auth.php';

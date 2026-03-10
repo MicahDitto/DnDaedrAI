@@ -103,6 +103,21 @@ class Node extends Model
         return $query->ofType('plot');
     }
 
+    public function scopeLore($query)
+    {
+        return $query->ofType('lore');
+    }
+
+    public function scopeReligions($query)
+    {
+        return $query->ofType('religion');
+    }
+
+    public function scopeMagicSystems($query)
+    {
+        return $query->ofType('magic_system');
+    }
+
     public function scopeVisible($query)
     {
         return $query->where('is_secret', false);

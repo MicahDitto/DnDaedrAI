@@ -92,6 +92,51 @@ const getTypeColor = (type: string, subtype?: string | null) => {
         return plotColors[subtype || ''] || 'bg-charcoal text-arcane-grey border-charcoal';
     }
 
+    // Lore subtypes
+    if (type === 'lore') {
+        const loreColors: Record<string, string> = {
+            myth: 'bg-arcane-purple/20 text-arcane-purple border-arcane-purple/30',
+            legend: 'bg-legendary-gold/20 text-legendary-gold border-legendary-gold/30',
+            prophecy: 'bg-arcane-periwinkle/20 text-arcane-periwinkle border-arcane-periwinkle/30',
+            historical_event: 'bg-nature/20 text-nature border-nature/30',
+            folktale: 'bg-legendary-amber/20 text-legendary-amber border-legendary-amber/30',
+            creation_story: 'bg-arcane-lavender/20 text-arcane-lavender border-arcane-lavender/30',
+            cautionary_tale: 'bg-danger/20 text-danger-light border-danger/30',
+            epic: 'bg-arcane-purple/30 text-arcane-purple border-arcane-purple/30',
+        };
+        return loreColors[subtype || ''] || 'bg-charcoal text-arcane-grey border-charcoal';
+    }
+
+    // Religion subtypes
+    if (type === 'religion') {
+        const religionColors: Record<string, string> = {
+            pantheon: 'bg-arcane-purple/20 text-arcane-purple border-arcane-purple/30',
+            monotheistic: 'bg-legendary-gold/20 text-legendary-gold border-legendary-gold/30',
+            dualistic: 'bg-arcane-periwinkle/20 text-arcane-periwinkle border-arcane-periwinkle/30',
+            animist: 'bg-nature/20 text-nature border-nature/30',
+            ancestor_worship: 'bg-legendary-amber/20 text-legendary-amber border-legendary-amber/30',
+            cult: 'bg-danger/20 text-danger-light border-danger/30',
+            philosophy: 'bg-arcane-lavender/20 text-arcane-lavender border-arcane-lavender/30',
+            dead_religion: 'bg-charcoal text-arcane-grey border-charcoal',
+        };
+        return religionColors[subtype || ''] || 'bg-charcoal text-arcane-grey border-charcoal';
+    }
+
+    // Magic System subtypes
+    if (type === 'magic_system') {
+        const magicColors: Record<string, string> = {
+            school: 'bg-arcane-periwinkle/20 text-arcane-periwinkle border-arcane-periwinkle/30',
+            source: 'bg-arcane-purple/20 text-arcane-purple border-arcane-purple/30',
+            tradition: 'bg-legendary-gold/20 text-legendary-gold border-legendary-gold/30',
+            discipline: 'bg-nature/20 text-nature border-nature/30',
+            artifact_magic: 'bg-legendary-amber/20 text-legendary-amber border-legendary-amber/30',
+            divine_magic: 'bg-arcane-lavender/20 text-arcane-lavender border-arcane-lavender/30',
+            primal_magic: 'bg-nature/30 text-nature border-nature/30',
+            forbidden: 'bg-danger/20 text-danger-light border-danger/30',
+        };
+        return magicColors[subtype || ''] || 'bg-charcoal text-arcane-grey border-charcoal';
+    }
+
     // Fallback for unknown types
     return 'bg-charcoal text-arcane-grey border-charcoal';
 };

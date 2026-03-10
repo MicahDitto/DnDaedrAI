@@ -102,10 +102,13 @@ const navItems = computed(() => {
             children: [
                 { label: 'Factions', href: slug ? route('campaigns.factions.index', slug) : '#' },
                 { label: '+ New Faction', href: slug ? route('campaigns.factions.create', slug) : '#', isAction: true },
+                { label: 'Lore & Legends', href: slug ? route('campaigns.lore.index', slug) : '#' },
+                { label: '+ New Lore', href: slug ? route('campaigns.lore.create', slug) : '#', isAction: true },
+                { label: 'Religions', href: slug ? route('campaigns.religions.index', slug) : '#' },
+                { label: '+ New Religion', href: slug ? route('campaigns.religions.create', slug) : '#', isAction: true },
+                { label: 'Magic Systems', href: slug ? route('campaigns.magic.index', slug) : '#' },
+                { label: '+ New Magic', href: slug ? route('campaigns.magic.create', slug) : '#', isAction: true },
                 { label: 'History & Timeline', href: '#' },
-                { label: 'Lore & Legends', href: '#' },
-                { label: 'Religions', href: '#' },
-                { label: 'Magic System', href: '#' },
             ],
         },
         {

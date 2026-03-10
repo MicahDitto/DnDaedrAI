@@ -17,6 +17,9 @@ const getEntityTypeLabel = (type: string) => {
         item: 'Item',
         faction: 'Faction',
         plot: 'Plot',
+        lore: 'Lore & Legend',
+        religion: 'Religion',
+        magic_system: 'Magic System',
     };
     return labels[type] || type.charAt(0).toUpperCase() + type.slice(1);
 };

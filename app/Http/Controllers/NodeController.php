@@ -62,6 +62,36 @@ class NodeController extends Controller
                 'mystery' => 'Mystery',
                 'conflict' => 'Conflict',
             ],
+            'lore' => [
+                'myth' => 'Myth',
+                'legend' => 'Legend',
+                'prophecy' => 'Prophecy',
+                'historical_event' => 'Historical Event',
+                'folktale' => 'Folktale',
+                'creation_story' => 'Creation Story',
+                'cautionary_tale' => 'Cautionary Tale',
+                'epic' => 'Epic',
+            ],
+            'religion' => [
+                'pantheon' => 'Pantheon',
+                'monotheistic' => 'Monotheistic',
+                'dualistic' => 'Dualistic',
+                'animist' => 'Animist',
+                'ancestor_worship' => 'Ancestor Worship',
+                'cult' => 'Cult',
+                'philosophy' => 'Philosophy',
+                'dead_religion' => 'Dead Religion',
+            ],
+            'magic_system' => [
+                'school' => 'School',
+                'source' => 'Source',
+                'tradition' => 'Tradition',
+                'discipline' => 'Discipline',
+                'artifact_magic' => 'Artifact Magic',
+                'divine_magic' => 'Divine Magic',
+                'primal_magic' => 'Primal Magic',
+                'forbidden' => 'Forbidden',
+            ],
             default => [],
         };
     }
@@ -1359,5 +1389,854 @@ class NodeController extends Controller
 
         return redirect()->route('campaigns.plots.index', $campaign->slug)
             ->with('success', 'Plot deleted successfully.');
+    }
+
+    // Lore & Legends
+    public function loreIndex(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $lore = $campaign->nodes()
+            ->lore()
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Lore/Index', [
+            'campaign' => $campaign,
+            'lore' => $lore,
+            'subtypes' => $this->getSubtypes('lore'),
+        ]);
+    }
+
+    public function loreCreate(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        // Get places for origin selection
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get religions for related religion selection
+        $religions = $campaign->nodes()
+            ->religions()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        return Inertia::render('Lore/Create', [
+            'campaign' => $campaign,
+            'subtypes' => $this->getSubtypes('lore'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'places' => $places,
+            'religions' => $religions,
+        ]);
+    }
+
+    public function loreStore(Request $request, string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('lore'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.narrative' => 'nullable|string',
+            'content.origin' => 'nullable|string',
+            'content.variations' => 'nullable|string',
+            'content.truth_level' => 'nullable|string',
+            'content.cultural_significance' => 'nullable|string',
+            'content.known_by' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'origin_place_id' => 'nullable|uuid|exists:nodes,id',
+            'related_religion_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = [];
+        if (!empty($validated['origin_place_id'])) {
+            $metadata['origin_place_id'] = $validated['origin_place_id'];
+        }
+        if (!empty($validated['related_religion_id'])) {
+            $metadata['related_religion_id'] = $validated['related_religion_id'];
+        }
+
+        $node = $campaign->nodes()->create([
+            'type' => 'lore',
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Create edge to origin place if specified
+        if (!empty($validated['origin_place_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $node->id,
+                'target_node_id' => $validated['origin_place_id'],
+                'type' => 'originates_from',
+                'label' => 'Originates from',
+            ]);
+        }
+
+        // Create edge to related religion if specified
+        if (!empty($validated['related_religion_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $node->id,
+                'target_node_id' => $validated['related_religion_id'],
+                'type' => 'related_to',
+                'label' => 'Related to',
+            ]);
+        }
+
+        return redirect()->route('campaigns.lore.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $node->slug,
+        ])->with('success', 'Lore created successfully.');
+    }
+
+    public function loreShow(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $lore = $campaign->nodes()
+            ->lore()
+            ->where('slug', $nodeSlug)
+            ->with(['tags', 'outgoingEdges.targetNode', 'incomingEdges.sourceNode'])
+            ->firstOrFail();
+
+        // Get origin place
+        $originEdge = $lore->outgoingEdges()
+            ->where('type', 'originates_from')
+            ->with('targetNode')
+            ->first();
+        $originPlace = $originEdge?->targetNode;
+
+        // Get related religion
+        $religionEdge = $lore->outgoingEdges()
+            ->where('type', 'related_to')
+            ->with('targetNode')
+            ->first();
+        $relatedReligion = $religionEdge?->targetNode;
+
+        return Inertia::render('Lore/Show', [
+            'campaign' => $campaign,
+            'lore' => $lore,
+            'originPlace' => $originPlace,
+            'relatedReligion' => $relatedReligion,
+        ]);
+    }
+
+    public function loreEdit(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $lore = $campaign->nodes()
+            ->lore()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        $religions = $campaign->nodes()
+            ->religions()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get current origin place from edges
+        $currentOriginPlace = $lore->outgoingEdges()
+            ->where('type', 'originates_from')
+            ->first();
+
+        // Get current related religion from edges
+        $currentRelatedReligion = $lore->outgoingEdges()
+            ->where('type', 'related_to')
+            ->first();
+
+        return Inertia::render('Lore/Edit', [
+            'campaign' => $campaign,
+            'lore' => $lore,
+            'subtypes' => $this->getSubtypes('lore'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'places' => $places,
+            'religions' => $religions,
+            'currentOriginPlaceId' => $currentOriginPlace?->target_node_id,
+            'currentRelatedReligionId' => $currentRelatedReligion?->target_node_id,
+        ]);
+    }
+
+    public function loreUpdate(Request $request, string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $lore = $campaign->nodes()
+            ->lore()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('lore'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.narrative' => 'nullable|string',
+            'content.origin' => 'nullable|string',
+            'content.variations' => 'nullable|string',
+            'content.truth_level' => 'nullable|string',
+            'content.cultural_significance' => 'nullable|string',
+            'content.known_by' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'origin_place_id' => 'nullable|uuid|exists:nodes,id',
+            'related_religion_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = $lore->metadata ?? [];
+        if (!empty($validated['origin_place_id'])) {
+            $metadata['origin_place_id'] = $validated['origin_place_id'];
+        } else {
+            unset($metadata['origin_place_id']);
+        }
+        if (!empty($validated['related_religion_id'])) {
+            $metadata['related_religion_id'] = $validated['related_religion_id'];
+        } else {
+            unset($metadata['related_religion_id']);
+        }
+
+        $lore->update([
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']),
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Update origin place edge
+        $lore->outgoingEdges()->where('type', 'originates_from')->delete();
+        if (!empty($validated['origin_place_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $lore->id,
+                'target_node_id' => $validated['origin_place_id'],
+                'type' => 'originates_from',
+                'label' => 'Originates from',
+            ]);
+        }
+
+        // Update related religion edge
+        $lore->outgoingEdges()->where('type', 'related_to')->delete();
+        if (!empty($validated['related_religion_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $lore->id,
+                'target_node_id' => $validated['related_religion_id'],
+                'type' => 'related_to',
+                'label' => 'Related to',
+            ]);
+        }
+
+        return redirect()->route('campaigns.lore.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $lore->slug,
+        ])->with('success', 'Lore updated successfully.');
+    }
+
+    public function loreDestroy(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $lore = $campaign->nodes()
+            ->lore()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $lore->delete();
+
+        return redirect()->route('campaigns.lore.index', $campaign->slug)
+            ->with('success', 'Lore deleted successfully.');
+    }
+
+    // Religions
+    public function religionsIndex(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $religions = $campaign->nodes()
+            ->religions()
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Religions/Index', [
+            'campaign' => $campaign,
+            'religions' => $religions,
+            'subtypes' => $this->getSubtypes('religion'),
+        ]);
+    }
+
+    public function religionsCreate(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        // Get places for headquarters/holy site selection
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get characters for founder selection
+        $characters = $campaign->nodes()
+            ->characters()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        return Inertia::render('Religions/Create', [
+            'campaign' => $campaign,
+            'subtypes' => $this->getSubtypes('religion'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'places' => $places,
+            'characters' => $characters,
+        ]);
+    }
+
+    public function religionsStore(Request $request, string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('religion'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.beliefs' => 'nullable|string',
+            'content.practices' => 'nullable|string',
+            'content.hierarchy' => 'nullable|string',
+            'content.symbols' => 'nullable|string',
+            'content.holy_sites' => 'nullable|string',
+            'content.history' => 'nullable|string',
+            'content.relationships' => 'nullable|string',
+            'content.taboos' => 'nullable|string',
+            'content.afterlife' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'headquarters_id' => 'nullable|uuid|exists:nodes,id',
+            'founded_by_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = [];
+        if (!empty($validated['headquarters_id'])) {
+            $metadata['headquarters_id'] = $validated['headquarters_id'];
+        }
+        if (!empty($validated['founded_by_id'])) {
+            $metadata['founded_by_id'] = $validated['founded_by_id'];
+        }
+
+        $node = $campaign->nodes()->create([
+            'type' => 'religion',
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Create edge to headquarters if specified
+        if (!empty($validated['headquarters_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $node->id,
+                'target_node_id' => $validated['headquarters_id'],
+                'type' => 'headquartered_in',
+                'label' => 'Holy site at',
+            ]);
+        }
+
+        // Create edge to founder if specified
+        if (!empty($validated['founded_by_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $node->id,
+                'target_node_id' => $validated['founded_by_id'],
+                'type' => 'founded_by',
+                'label' => 'Founded by',
+            ]);
+        }
+
+        return redirect()->route('campaigns.religions.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $node->slug,
+        ])->with('success', 'Religion created successfully.');
+    }
+
+    public function religionsShow(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $religion = $campaign->nodes()
+            ->religions()
+            ->where('slug', $nodeSlug)
+            ->with(['tags', 'outgoingEdges.targetNode', 'incomingEdges.sourceNode'])
+            ->firstOrFail();
+
+        // Get headquarters/holy site
+        $headquartersEdge = $religion->outgoingEdges()
+            ->where('type', 'headquartered_in')
+            ->with('targetNode')
+            ->first();
+        $headquarters = $headquartersEdge?->targetNode;
+
+        // Get founder
+        $founderEdge = $religion->outgoingEdges()
+            ->where('type', 'founded_by')
+            ->with('targetNode')
+            ->first();
+        $founder = $founderEdge?->targetNode;
+
+        // Get related lore
+        $relatedLore = $campaign->nodes()
+            ->lore()
+            ->whereHas('outgoingEdges', function ($query) use ($religion) {
+                $query->where('target_node_id', $religion->id)
+                    ->where('type', 'related_to');
+            })
+            ->get();
+
+        return Inertia::render('Religions/Show', [
+            'campaign' => $campaign,
+            'religion' => $religion,
+            'headquarters' => $headquarters,
+            'founder' => $founder,
+            'relatedLore' => $relatedLore,
+        ]);
+    }
+
+    public function religionsEdit(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $religion = $campaign->nodes()
+            ->religions()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        $characters = $campaign->nodes()
+            ->characters()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get current headquarters from edges
+        $currentHeadquarters = $religion->outgoingEdges()
+            ->where('type', 'headquartered_in')
+            ->first();
+
+        // Get current founder from edges
+        $currentFounder = $religion->outgoingEdges()
+            ->where('type', 'founded_by')
+            ->first();
+
+        return Inertia::render('Religions/Edit', [
+            'campaign' => $campaign,
+            'religion' => $religion,
+            'subtypes' => $this->getSubtypes('religion'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'places' => $places,
+            'characters' => $characters,
+            'currentHeadquartersId' => $currentHeadquarters?->target_node_id,
+            'currentFounderId' => $currentFounder?->target_node_id,
+        ]);
+    }
+
+    public function religionsUpdate(Request $request, string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $religion = $campaign->nodes()
+            ->religions()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('religion'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.beliefs' => 'nullable|string',
+            'content.practices' => 'nullable|string',
+            'content.hierarchy' => 'nullable|string',
+            'content.symbols' => 'nullable|string',
+            'content.holy_sites' => 'nullable|string',
+            'content.history' => 'nullable|string',
+            'content.relationships' => 'nullable|string',
+            'content.taboos' => 'nullable|string',
+            'content.afterlife' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'headquarters_id' => 'nullable|uuid|exists:nodes,id',
+            'founded_by_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = $religion->metadata ?? [];
+        if (!empty($validated['headquarters_id'])) {
+            $metadata['headquarters_id'] = $validated['headquarters_id'];
+        } else {
+            unset($metadata['headquarters_id']);
+        }
+        if (!empty($validated['founded_by_id'])) {
+            $metadata['founded_by_id'] = $validated['founded_by_id'];
+        } else {
+            unset($metadata['founded_by_id']);
+        }
+
+        $religion->update([
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']),
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Update headquarters edge
+        $religion->outgoingEdges()->where('type', 'headquartered_in')->delete();
+        if (!empty($validated['headquarters_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $religion->id,
+                'target_node_id' => $validated['headquarters_id'],
+                'type' => 'headquartered_in',
+                'label' => 'Holy site at',
+            ]);
+        }
+
+        // Update founder edge
+        $religion->outgoingEdges()->where('type', 'founded_by')->delete();
+        if (!empty($validated['founded_by_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $religion->id,
+                'target_node_id' => $validated['founded_by_id'],
+                'type' => 'founded_by',
+                'label' => 'Founded by',
+            ]);
+        }
+
+        return redirect()->route('campaigns.religions.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $religion->slug,
+        ])->with('success', 'Religion updated successfully.');
+    }
+
+    public function religionsDestroy(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $religion = $campaign->nodes()
+            ->religions()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $religion->delete();
+
+        return redirect()->route('campaigns.religions.index', $campaign->slug)
+            ->with('success', 'Religion deleted successfully.');
+    }
+
+    // Magic Systems
+    public function magicIndex(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $magicSystems = $campaign->nodes()
+            ->magicSystems()
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Magic/Index', [
+            'campaign' => $campaign,
+            'magicSystems' => $magicSystems,
+            'subtypes' => $this->getSubtypes('magic_system'),
+        ]);
+    }
+
+    public function magicCreate(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        // Get places for taught_at selection
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get factions for regulated_by selection
+        $factions = $campaign->nodes()
+            ->factions()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        return Inertia::render('Magic/Create', [
+            'campaign' => $campaign,
+            'subtypes' => $this->getSubtypes('magic_system'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'places' => $places,
+            'factions' => $factions,
+        ]);
+    }
+
+    public function magicStore(Request $request, string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('magic_system'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.source' => 'nullable|string',
+            'content.practitioners' => 'nullable|string',
+            'content.abilities' => 'nullable|string',
+            'content.limitations' => 'nullable|string',
+            'content.components' => 'nullable|string',
+            'content.learning' => 'nullable|string',
+            'content.history' => 'nullable|string',
+            'content.social_perception' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'taught_at_id' => 'nullable|uuid|exists:nodes,id',
+            'regulated_by_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = [];
+        if (!empty($validated['taught_at_id'])) {
+            $metadata['taught_at_id'] = $validated['taught_at_id'];
+        }
+        if (!empty($validated['regulated_by_id'])) {
+            $metadata['regulated_by_id'] = $validated['regulated_by_id'];
+        }
+
+        $node = $campaign->nodes()->create([
+            'type' => 'magic_system',
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Create edge to taught_at if specified
+        if (!empty($validated['taught_at_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $node->id,
+                'target_node_id' => $validated['taught_at_id'],
+                'type' => 'taught_at',
+                'label' => 'Taught at',
+            ]);
+        }
+
+        // Create edge to regulated_by if specified
+        if (!empty($validated['regulated_by_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $node->id,
+                'target_node_id' => $validated['regulated_by_id'],
+                'type' => 'regulated_by',
+                'label' => 'Regulated by',
+            ]);
+        }
+
+        return redirect()->route('campaigns.magic.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $node->slug,
+        ])->with('success', 'Magic system created successfully.');
+    }
+
+    public function magicShow(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $magicSystem = $campaign->nodes()
+            ->magicSystems()
+            ->where('slug', $nodeSlug)
+            ->with(['tags', 'outgoingEdges.targetNode', 'incomingEdges.sourceNode'])
+            ->firstOrFail();
+
+        // Get taught_at place
+        $taughtAtEdge = $magicSystem->outgoingEdges()
+            ->where('type', 'taught_at')
+            ->with('targetNode')
+            ->first();
+        $taughtAt = $taughtAtEdge?->targetNode;
+
+        // Get regulated_by faction
+        $regulatedByEdge = $magicSystem->outgoingEdges()
+            ->where('type', 'regulated_by')
+            ->with('targetNode')
+            ->first();
+        $regulatedBy = $regulatedByEdge?->targetNode;
+
+        return Inertia::render('Magic/Show', [
+            'campaign' => $campaign,
+            'magicSystem' => $magicSystem,
+            'taughtAt' => $taughtAt,
+            'regulatedBy' => $regulatedBy,
+        ]);
+    }
+
+    public function magicEdit(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $magicSystem = $campaign->nodes()
+            ->magicSystems()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $places = $campaign->nodes()
+            ->places()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        $factions = $campaign->nodes()
+            ->factions()
+            ->orderBy('name')
+            ->get(['id', 'name', 'subtype']);
+
+        // Get current taught_at from edges
+        $currentTaughtAt = $magicSystem->outgoingEdges()
+            ->where('type', 'taught_at')
+            ->first();
+
+        // Get current regulated_by from edges
+        $currentRegulatedBy = $magicSystem->outgoingEdges()
+            ->where('type', 'regulated_by')
+            ->first();
+
+        return Inertia::render('Magic/Edit', [
+            'campaign' => $campaign,
+            'magicSystem' => $magicSystem,
+            'subtypes' => $this->getSubtypes('magic_system'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'places' => $places,
+            'factions' => $factions,
+            'currentTaughtAtId' => $currentTaughtAt?->target_node_id,
+            'currentRegulatedById' => $currentRegulatedBy?->target_node_id,
+        ]);
+    }
+
+    public function magicUpdate(Request $request, string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $magicSystem = $campaign->nodes()
+            ->magicSystems()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('magic_system'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.source' => 'nullable|string',
+            'content.practitioners' => 'nullable|string',
+            'content.abilities' => 'nullable|string',
+            'content.limitations' => 'nullable|string',
+            'content.components' => 'nullable|string',
+            'content.learning' => 'nullable|string',
+            'content.history' => 'nullable|string',
+            'content.social_perception' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'taught_at_id' => 'nullable|uuid|exists:nodes,id',
+            'regulated_by_id' => 'nullable|uuid|exists:nodes,id',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $metadata = $magicSystem->metadata ?? [];
+        if (!empty($validated['taught_at_id'])) {
+            $metadata['taught_at_id'] = $validated['taught_at_id'];
+        } else {
+            unset($metadata['taught_at_id']);
+        }
+        if (!empty($validated['regulated_by_id'])) {
+            $metadata['regulated_by_id'] = $validated['regulated_by_id'];
+        } else {
+            unset($metadata['regulated_by_id']);
+        }
+
+        $magicSystem->update([
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']),
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'metadata' => $metadata,
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        // Update taught_at edge
+        $magicSystem->outgoingEdges()->where('type', 'taught_at')->delete();
+        if (!empty($validated['taught_at_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $magicSystem->id,
+                'target_node_id' => $validated['taught_at_id'],
+                'type' => 'taught_at',
+                'label' => 'Taught at',
+            ]);
+        }
+
+        // Update regulated_by edge
+        $magicSystem->outgoingEdges()->where('type', 'regulated_by')->delete();
+        if (!empty($validated['regulated_by_id'])) {
+            $campaign->edges()->create([
+                'source_node_id' => $magicSystem->id,
+                'target_node_id' => $validated['regulated_by_id'],
+                'type' => 'regulated_by',
+                'label' => 'Regulated by',
+            ]);
+        }
+
+        return redirect()->route('campaigns.magic.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $magicSystem->slug,
+        ])->with('success', 'Magic system updated successfully.');
+    }
+
+    public function magicDestroy(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $magicSystem = $campaign->nodes()
+            ->magicSystems()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $magicSystem->delete();
+
+        return redirect()->route('campaigns.magic.index', $campaign->slug)
+            ->with('success', 'Magic system deleted successfully.');
     }
 }
