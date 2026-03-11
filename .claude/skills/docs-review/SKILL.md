@@ -1,7 +1,7 @@
 ---
 name: docs-review
 description: Product consultant that syncs documentation with codebase reality and helps align docs with your vision for the app.
-user_invocable: true
+user-invocable: true
 ---
 
 # Docs Review

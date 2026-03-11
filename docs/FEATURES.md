@@ -445,12 +445,26 @@ These appear in the sidebar but have no functionality:
 | Timeline View | Medium | Chronological events |
 | Map Integration | Low | Location mapping |
 
+### UX Improvements 📋
+
+| Feature | Priority | Description |
+|---------|----------|-------------|
+| Inline Editing | High | Edit fields directly on Show pages without navigating away |
+| Reduce Navigation | High | Fewer clicks to perform common actions |
+| Unified Entity Layout | Medium | Consistent card/detail layout across all entity types |
+
+---
+
+## Backlog
+
+Features deprioritized for now:
+
 ### Collaboration 📋
 
 | Feature | Priority | Description |
 |---------|----------|-------------|
-| Player Accounts | Low | Read-only player access |
-| Shared Campaigns | Low | Multi-DM support |
+| Player Accounts | Future | Read-only player access |
+| Shared Campaigns | Future | Multi-DM support |
 
 ---
 

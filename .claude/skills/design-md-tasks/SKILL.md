@@ -1,7 +1,7 @@
 ---
 name: design-md-tasks
 description: Scans Markdown documentation in the repository, extracts actionable implementation tasks, and helps maintain a local nightshift work queue and review notes.
-user_invocable: true
+user-invocable: true
 ---
 
 # Design MD Tasks
