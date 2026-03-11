@@ -1,0 +1,291 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "${ROOT_DIR}" ]]; then
+  echo "Not inside a git repository."
+  exit 1
+fi
+
+cd "$ROOT_DIR"
+
+if ! command -v claude >/dev/null 2>&1; then
+  echo "Claude CLI is not installed or not on PATH."
+  exit 1
+fi
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "python3 is required."
+  exit 1
+fi
+
+if [[ -n "$(git status --porcelain)" ]]; then
+  echo "Working directory is dirty. Commit or stash changes first."
+  exit 1
+fi
+
+ITERATIONS="${1:-10}"
+
+detect_base_branch() {
+  local base=""
+
+  if git symbolic-ref refs/remotes/origin/HEAD >/dev/null 2>&1; then
+    base="$(git symbolic-ref --short refs/remotes/origin/HEAD | sed 's#^origin/##')"
+  elif git show-ref --verify --quiet refs/heads/main; then
+    base="main"
+  elif git show-ref --verify --quiet refs/heads/master; then
+    base="master"
+  else
+    base="$(git branch --show-current)"
+  fi
+
+  echo "$base"
+}
+
+slugify() {
+  python3 - "$1" <<'PY'
+import re
+import sys
+
+text = sys.argv[1].strip().lower()
+text = re.sub(r"[^a-z0-9]+", "-", text)
+text = re.sub(r"-{2,}", "-", text).strip("-")
+print(text[:48] or "task")
+PY
+}
+
+BASE_BRANCH="$(detect_base_branch)"
+SESSION_ID="$(date +%Y%m%d-%H%M%S)"
+STATE_DIR="$ROOT_DIR/.git/nightshift/$SESSION_ID"
+TASK_FILE="$STATE_DIR/tasks.json"
+REVIEW_FILE="$STATE_DIR/nightshift-review.md"
+STATUS_FILE="$STATE_DIR/status.log"
+
+mkdir -p "$STATE_DIR"
+
+cat > "$REVIEW_FILE" <<EOF
+# Nightshift Review — $SESSION_ID
+
+- Repository: $(basename "$ROOT_DIR")
+- Base branch: $BASE_BRANCH
+- Started at: $(date)
+
+## Morning Review Checklist
+
+- Review completed branches
+- Review design questions and decisions needed
+- Decide which branches to merge, continue, or discard
+
+## Session Overview
+
+EOF
+
+touch "$STATUS_FILE"
+
+echo "Nightshift session: $SESSION_ID"
+echo "Base branch: $BASE_BRANCH"
+echo "State dir: $STATE_DIR"
+echo "Review doc: $REVIEW_FILE"
+echo
+
+bootstrap_tasks() {
+  echo "Bootstrapping task queue from Markdown docs..."
+
+  claude -p --dangerously-skip-permissions "$(cat <<EOF
+Use the design-md-tasks skill.
+
+Your job is to scan this repository's Markdown documentation and build a local work queue from it.
+
+Important constraints:
+1. Only use Markdown files in the repository as the source of truth.
+2. Prefer files in docs/, design/, specs/, architecture/, ADRs, README-style planning docs, and any other .md files that describe intended work.
+3. Ignore vendor/, node_modules/, storage/, .git/, coverage/, dist/, build/, and generated docs.
+4. Find actionable engineering/design TODOs, unfinished features, implementation follow-ups, explicit TODO/FIXME/CHECKME notes, unchecked task lists, and strong implied next steps.
+5. Skip vague aspirations unless they clearly map to code work.
+6. De-duplicate similar tasks.
+7. Create a JSON array at this exact path:
+   $TASK_FILE
+
+Each task object must use this exact shape:
+{
+  "id": "NS-001",
+  "title": "short actionable title",
+  "source_file": "relative/path/to/file.md",
+  "source_context": "1-3 sentence summary of where this came from",
+  "implementation_hint": "brief note on likely code area or approach",
+  "branch_slug": "kebab-case-short-slug",
+  "status": "todo",
+  "design_questions": []
+}
+
+Rules for the task list:
+- status must start as "todo"
+- branch_slug must be filesystem-safe
+- Order tasks from highest-confidence/highest-value first
+- Include at most 20 tasks
+- If you find no actionable tasks, write [] to $TASK_FILE
+
+Then append to this review file:
+$REVIEW_FILE
+
+Append:
+1. A short summary of the documentation areas you scanned
+2. A short summary of the top opportunities you found
+3. Any broad themes or design gaps you noticed
+
+Do not modify repository files during bootstrap besides the task file path above and the review file above.
+EOF
+)"
+}
+
+has_todo_tasks() {
+  python3 - "$TASK_FILE" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+if not path.exists():
+    print("0")
+    raise SystemExit(0)
+
+data = json.loads(path.read_text() or "[]")
+print("1" if any(task.get("status") == "todo" for task in data) else "0")
+PY
+}
+
+next_task_json() {
+  python3 - "$TASK_FILE" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+path = Path(sys.argv[1])
+data = json.loads(path.read_text() or "[]")
+for task in data:
+    if task.get("status") == "todo":
+        print(json.dumps(task))
+        break
+PY
+}
+
+if [[ ! -f "$TASK_FILE" ]]; then
+  bootstrap_tasks
+fi
+
+if [[ "$(has_todo_tasks)" != "1" ]]; then
+  echo "No actionable tasks found in Markdown docs."
+  echo >> "$REVIEW_FILE"
+  echo "## Result" >> "$REVIEW_FILE"
+  echo >> "$REVIEW_FILE"
+  echo "No actionable tasks were found in the Markdown documentation." >> "$REVIEW_FILE"
+  exit 0
+fi
+
+for ((i=1; i<=ITERATIONS; i++)); do
+  if [[ "$(has_todo_tasks)" != "1" ]]; then
+    echo "No remaining todo tasks."
+    break
+  fi
+
+  TASK_JSON="$(next_task_json)"
+  if [[ -z "$TASK_JSON" ]]; then
+    echo "Unable to load next task."
+    exit 1
+  fi
+
+  TASK_ID="$(python3 -c 'import json,sys; print(json.loads(sys.argv[1])["id"])' "$TASK_JSON")"
+  TASK_TITLE="$(python3 -c 'import json,sys; print(json.loads(sys.argv[1])["title"])' "$TASK_JSON")"
+  TASK_SOURCE_FILE="$(python3 -c 'import json,sys; print(json.loads(sys.argv[1])["source_file"])' "$TASK_JSON")"
+  TASK_BRANCH_SLUG="$(python3 -c 'import json,sys; print(json.loads(sys.argv[1])["branch_slug"])' "$TASK_JSON")"
+
+  SAFE_SLUG="$(slugify "$TASK_BRANCH_SLUG")"
+  BRANCH_NAME="nightshift/${SESSION_ID}-${SAFE_SLUG}"
+
+  echo "=== Iteration $i of $ITERATIONS ==="
+  echo "Task: $TASK_ID — $TASK_TITLE"
+  echo "Source: $TASK_SOURCE_FILE"
+  echo "Branch: $BRANCH_NAME"
+  echo
+
+  git checkout "$BASE_BRANCH" >/dev/null 2>&1
+  git pull --ff-only origin "$BASE_BRANCH" >/dev/null 2>&1 || true
+  git checkout -b "$BRANCH_NAME"
+
+  printf '%s | %s | %s\n' "$(date)" "$TASK_ID" "$BRANCH_NAME" >> "$STATUS_FILE"
+
+  claude -p --dangerously-skip-permissions "$(cat <<EOF
+You are working inside a git repository.
+
+Use the design-md-tasks skill.
+
+You must work on exactly one queued task from this local task file:
+$TASK_FILE
+
+The task to work on is:
+$TASK_JSON
+
+The local review file for this session is:
+$REVIEW_FILE
+
+Required behavior:
+1. Read the task from the JSON and treat the Markdown documentation as the task source of truth.
+2. Work only on this single task.
+3. Implement the change in code if it is actionable and reasonably unblocked.
+4. Write or update tests when appropriate.
+5. Run formatter(s) only if the repo clearly provides them.
+6. Run focused tests first; run broader tests if reasonable.
+7. If you hit a design question or ambiguity that requires human input:
+   - append a "Decision Needed" section to $REVIEW_FILE
+   - include task id, branch name ($BRANCH_NAME), the question, why it matters, and your recommended options
+   - update this task's status in $TASK_FILE to "needs_review"
+   - add the design question text into the task's design_questions array
+   - commit only if you made coherent safe progress; otherwise leave the branch without a commit
+   - then stop working on this task
+8. If the task is completed:
+   - update its status in $TASK_FILE to "completed"
+   - append a "Completed Task" section to $REVIEW_FILE with:
+     - task id
+     - title
+     - branch name
+     - what changed
+     - tests run
+     - anything I should review in the morning
+   - commit your changes with message:
+     nightshift($TASK_ID): $TASK_TITLE
+9. If the task turns out not to be actionable from the docs:
+   - update its status in $TASK_FILE to "skipped"
+   - append a short note to $REVIEW_FILE explaining why
+10. Do not start another task.
+11. Do not merge branches.
+12. Do not modify the task ids of other tasks.
+
+Be practical:
+- Prefer safe, scoped changes
+- Avoid huge refactors unless the task clearly calls for them
+- If something is unclear, document the decision needed and move on cleanly
+EOF
+)" || true
+
+  if [[ -n "$(git status --porcelain)" ]]; then
+    echo "Claude left uncommitted changes on $BRANCH_NAME."
+    echo "Keeping branch for review."
+  fi
+
+  if git rev-parse --verify origin >/dev/null 2>&1; then
+    git push -u origin "$BRANCH_NAME" >/dev/null 2>&1 || true
+  fi
+
+  git checkout "$BASE_BRANCH" >/dev/null 2>&1
+  echo
+done
+
+echo "Nightshift finished."
+echo "Review doc: $REVIEW_FILE"
+echo
+echo "Completed / reviewed branches created during this session:"
+git for-each-ref --format='%(refname:short)' "refs/heads/nightshift/${SESSION_ID}-*" || true
+echo
+echo "Open the review doc in the morning:"
+echo "$REVIEW_FILE"
