@@ -73,6 +73,21 @@ class Node extends Model
         )->withPivot(['type', 'label', 'strength', 'metadata', 'is_secret']);
     }
 
+    public function media(): HasMany
+    {
+        return $this->hasMany(Media::class)->orderBy('order');
+    }
+
+    public function featuredImage()
+    {
+        return $this->hasOne(Media::class)->where('collection', 'featured');
+    }
+
+    public function galleryImages(): HasMany
+    {
+        return $this->hasMany(Media::class)->where('collection', 'gallery')->orderBy('order');
+    }
+
     public function scopeOfType($query, string $type)
     {
         return $query->where('type', $type);

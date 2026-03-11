@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campaign;
+use App\Models\Media;
 use App\Models\Node;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -113,12 +115,22 @@ class NodeController extends Controller
 
         $characters = $campaign->nodes()
             ->characters()
+            ->with('featuredImage')
             ->orderBy('name')
             ->get();
 
+        // Transform characters to include featured image URL
+        $charactersData = $characters->map(function ($character) {
+            $data = $character->toArray();
+            $data['featured_image_url'] = $character->featuredImage
+                ? Storage::url($character->featuredImage->path)
+                : null;
+            return $data;
+        });
+
         return Inertia::render('Characters/Index', [
             'campaign' => $campaign,
-            'characters' => $characters,
+            'characters' => $charactersData,
             'subtypes' => $this->getSubtypes('character'),
         ]);
     }
@@ -151,6 +163,8 @@ class NodeController extends Controller
             'content.stats' => 'nullable|array',
             'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
             'is_secret' => 'boolean',
+            'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,svg|max:5120',
+            'gallery_images.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,svg|max:5120',
         ]);
 
         $node = $campaign->nodes()->create([
@@ -162,6 +176,18 @@ class NodeController extends Controller
             'confidence' => $validated['confidence'],
             'is_secret' => $validated['is_secret'] ?? false,
         ]);
+
+        // Handle featured image
+        if ($request->hasFile('featured_image')) {
+            $this->storeFeaturedImage($node, $request->file('featured_image'));
+        }
+
+        // Handle gallery images
+        if ($request->hasFile('gallery_images')) {
+            foreach ($request->file('gallery_images') as $index => $file) {
+                $this->storeGalleryImage($node, $file, $index);
+            }
+        }
 
         return redirect()->route('campaigns.characters.show', [
             'campaignSlug' => $campaign->slug,
@@ -176,12 +202,26 @@ class NodeController extends Controller
         $character = $campaign->nodes()
             ->characters()
             ->where('slug', $nodeSlug)
-            ->with(['tags', 'outgoingEdges.targetNode', 'incomingEdges.sourceNode'])
+            ->with(['tags', 'outgoingEdges.targetNode', 'incomingEdges.sourceNode', 'featuredImage', 'galleryImages'])
             ->firstOrFail();
+
+        // Transform character for frontend
+        $characterData = $character->toArray();
+        $characterData['featured_image'] = $character->featuredImage ? [
+            'id' => $character->featuredImage->id,
+            'url' => Storage::url($character->featuredImage->path),
+            'filename' => $character->featuredImage->filename,
+        ] : null;
+        $characterData['gallery_images'] = $character->galleryImages->map(fn($img) => [
+            'id' => $img->id,
+            'url' => Storage::url($img->path),
+            'filename' => $img->filename,
+            'order' => $img->order,
+        ])->toArray();
 
         return Inertia::render('Characters/Show', [
             'campaign' => $campaign,
-            'character' => $character,
+            'character' => $characterData,
         ]);
     }
 
@@ -224,6 +264,8 @@ class NodeController extends Controller
             'content.stats' => 'nullable|array',
             'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
             'is_secret' => 'boolean',
+            'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,svg|max:5120',
+            'gallery_images.*' => 'nullable|image|mimes:jpg,jpeg,png,gif,webp,svg|max:5120',
         ]);
 
         $character->update([
@@ -235,6 +277,26 @@ class NodeController extends Controller
             'confidence' => $validated['confidence'],
             'is_secret' => $validated['is_secret'] ?? false,
         ]);
+
+        // Handle featured image replacement
+        if ($request->hasFile('featured_image')) {
+            // Delete old featured image
+            $oldFeatured = $character->featuredImage;
+            if ($oldFeatured) {
+                Storage::delete($oldFeatured->path);
+                $oldFeatured->delete();
+            }
+            // Store new one
+            $this->storeFeaturedImage($character, $request->file('featured_image'));
+        }
+
+        // Handle new gallery images
+        if ($request->hasFile('gallery_images')) {
+            $currentCount = $character->galleryImages()->count();
+            foreach ($request->file('gallery_images') as $index => $file) {
+                $this->storeGalleryImage($character, $file, $currentCount + $index);
+            }
+        }
 
         return redirect()->route('campaigns.characters.show', [
             'campaignSlug' => $campaign->slug,
@@ -2238,5 +2300,64 @@ class NodeController extends Controller
 
         return redirect()->route('campaigns.magic.index', $campaign->slug)
             ->with('success', 'Magic system deleted successfully.');
+    }
+
+    /**
+     * Store a featured image for a node.
+     */
+    private function storeFeaturedImage(Node $node, $file): Media
+    {
+        $path = $file->store("campaigns/{$node->campaign_id}/nodes/{$node->id}", config('filesystems.default'));
+
+        return $node->media()->create([
+            'collection' => 'featured',
+            'filename' => $file->getClientOriginalName(),
+            'path' => $path,
+            'mime_type' => $file->getMimeType(),
+            'size' => $file->getSize(),
+            'metadata' => [
+                'original_name' => $file->getClientOriginalName(),
+            ],
+        ]);
+    }
+
+    /**
+     * Store a gallery image for a node.
+     */
+    private function storeGalleryImage(Node $node, $file, int $order): Media
+    {
+        $path = $file->store("campaigns/{$node->campaign_id}/nodes/{$node->id}/gallery", config('filesystems.default'));
+
+        return $node->media()->create([
+            'collection' => 'gallery',
+            'filename' => $file->getClientOriginalName(),
+            'path' => $path,
+            'mime_type' => $file->getMimeType(),
+            'size' => $file->getSize(),
+            'order' => $order,
+            'metadata' => [
+                'original_name' => $file->getClientOriginalName(),
+            ],
+        ]);
+    }
+
+    /**
+     * Delete an image from a node.
+     */
+    public function destroyImage(Request $request, string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+        $node = $campaign->nodes()->where('slug', $nodeSlug)->firstOrFail();
+
+        $mediaId = $request->input('media_id');
+        $media = $node->media()->findOrFail($mediaId);
+
+        // Delete file from storage
+        Storage::delete($media->path);
+
+        // Delete database record
+        $media->delete();
+
+        return back()->with('success', 'Image deleted successfully');
     }
 }

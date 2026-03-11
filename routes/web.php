@@ -83,6 +83,8 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.characters.update');
     Route::delete('/campaigns/{campaignSlug}/characters/{nodeSlug}', [NodeController::class, 'charactersDestroy'])
         ->name('campaigns.characters.destroy');
+    Route::delete('/campaigns/{campaignSlug}/characters/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
+        ->name('campaigns.characters.images.destroy');
 
     // Place routes (within a campaign)
     Route::get('/campaigns/{campaignSlug}/places', [NodeController::class, 'placesIndex'])
@@ -99,6 +101,8 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.places.update');
     Route::delete('/campaigns/{campaignSlug}/places/{nodeSlug}', [NodeController::class, 'placesDestroy'])
         ->name('campaigns.places.destroy');
+    Route::delete('/campaigns/{campaignSlug}/places/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
+        ->name('campaigns.places.images.destroy');
 
     // Session 0 Questionnaire routes
     Route::get('/campaigns/{campaignSlug}/setup', [QuestionnaireController::class, 'show'])
@@ -139,6 +143,8 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.factions.update');
     Route::delete('/campaigns/{campaignSlug}/factions/{nodeSlug}', [NodeController::class, 'factionsDestroy'])
         ->name('campaigns.factions.destroy');
+    Route::delete('/campaigns/{campaignSlug}/factions/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
+        ->name('campaigns.factions.images.destroy');
 
     // Item routes (within a campaign)
     Route::get('/campaigns/{campaignSlug}/items', [NodeController::class, 'itemsIndex'])
@@ -155,6 +161,8 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.items.update');
     Route::delete('/campaigns/{campaignSlug}/items/{nodeSlug}', [NodeController::class, 'itemsDestroy'])
         ->name('campaigns.items.destroy');
+    Route::delete('/campaigns/{campaignSlug}/items/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
+        ->name('campaigns.items.images.destroy');
 
     // Plot routes (within a campaign)
     Route::get('/campaigns/{campaignSlug}/plots', [NodeController::class, 'plotsIndex'])
@@ -171,6 +179,8 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.plots.update');
     Route::delete('/campaigns/{campaignSlug}/plots/{nodeSlug}', [NodeController::class, 'plotsDestroy'])
         ->name('campaigns.plots.destroy');
+    Route::delete('/campaigns/{campaignSlug}/plots/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
+        ->name('campaigns.plots.images.destroy');
 
     // Lore routes (within a campaign)
     Route::get('/campaigns/{campaignSlug}/lore', [NodeController::class, 'loreIndex'])
@@ -187,6 +197,8 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.lore.update');
     Route::delete('/campaigns/{campaignSlug}/lore/{nodeSlug}', [NodeController::class, 'loreDestroy'])
         ->name('campaigns.lore.destroy');
+    Route::delete('/campaigns/{campaignSlug}/lore/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
+        ->name('campaigns.lore.images.destroy');
 
     // Religion routes (within a campaign)
     Route::get('/campaigns/{campaignSlug}/religions', [NodeController::class, 'religionsIndex'])
@@ -203,6 +215,8 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.religions.update');
     Route::delete('/campaigns/{campaignSlug}/religions/{nodeSlug}', [NodeController::class, 'religionsDestroy'])
         ->name('campaigns.religions.destroy');
+    Route::delete('/campaigns/{campaignSlug}/religions/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
+        ->name('campaigns.religions.images.destroy');
 
     // Magic System routes (within a campaign)
     Route::get('/campaigns/{campaignSlug}/magic', [NodeController::class, 'magicIndex'])
@@ -219,6 +233,8 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.magic.update');
     Route::delete('/campaigns/{campaignSlug}/magic/{nodeSlug}', [NodeController::class, 'magicDestroy'])
         ->name('campaigns.magic.destroy');
+    Route::delete('/campaigns/{campaignSlug}/magic/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
+        ->name('campaigns.magic.images.destroy');
 });
 
 require __DIR__.'/auth.php';
