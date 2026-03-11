@@ -165,6 +165,106 @@ This document lists all features in DnDaedrAI, their current status, and impleme
 
 ---
 
+### Lore Management ✅
+
+| Feature | Status | Details |
+|---------|--------|---------|
+| Create Lore | ✅ | Full form with all fields |
+| List Lore | ✅ | Grid with subtype badges |
+| View Lore | ✅ | Details + relationships |
+| Edit Lore | ✅ | All fields editable |
+| Delete Lore | ✅ | With confirmation |
+| Lore Subtypes | ✅ | 8 types for different lore |
+
+**Lore Subtypes:**
+- myth
+- legend
+- prophecy
+- historical_event
+- folktale
+- creation_story
+- cautionary_tale
+- epic
+
+**Content Fields:**
+- Narrative
+- Origin
+- Variations
+- Truth Level
+- Cultural Significance
+- Known By
+- Secrets
+
+**Files:** `NodeController.php` (loreX methods), `Pages/Lore/*`
+
+---
+
+### Religion Management ✅
+
+| Feature | Status | Details |
+|---------|--------|---------|
+| Create Religion | ✅ | Full form with all fields |
+| List Religions | ✅ | Grid with subtype badges |
+| View Religion | ✅ | Details + relationships |
+| Edit Religion | ✅ | All fields editable |
+| Delete Religion | ✅ | With confirmation |
+| Religion Subtypes | ✅ | 8 types for different faiths |
+
+**Religion Subtypes:**
+- pantheon
+- monotheistic
+- dualistic
+- animist
+- ancestor_worship
+- cult
+- philosophy
+- dead_religion
+
+**Content Fields:**
+- Description
+- Beliefs
+- Practices
+- Organization
+- History
+- Secrets
+
+**Files:** `NodeController.php` (religionsX methods), `Pages/Religions/*`
+
+---
+
+### Magic System Management ✅
+
+| Feature | Status | Details |
+|---------|--------|---------|
+| Create Magic System | ✅ | Full form with all fields |
+| List Magic Systems | ✅ | Grid with subtype badges |
+| View Magic System | ✅ | Details + relationships |
+| Edit Magic System | ✅ | All fields editable |
+| Delete Magic System | ✅ | With confirmation |
+| Magic Subtypes | ✅ | 8 types for different magic |
+
+**Magic Subtypes:**
+- school
+- source
+- tradition
+- discipline
+- artifact_magic
+- divine_magic
+- primal_magic
+- forbidden
+
+**Content Fields:**
+- Description
+- Rules
+- Limitations
+- Practitioners
+- History
+- Secrets
+
+**Files:** `NodeController.php` (magicX methods), `Pages/Magic/*`
+
+---
+
 ### Relationship Management ✅
 
 | Feature | Status | Details |
@@ -287,14 +387,14 @@ This document lists all features in DnDaedrAI, their current status, and impleme
 
 These appear in the sidebar but have no functionality:
 
-### Worldbuilding Section ❌
+### Worldbuilding Section 🚧
 
 | Feature | Status | Location |
 |---------|--------|----------|
 | History & Timeline | ❌ | Sidebar link → # |
-| Lore & Legends | ❌ | Sidebar link → # |
-| Religions | ❌ | Sidebar link → # |
-| Magic System | ❌ | Sidebar link → # |
+| Lore & Legends | ✅ | Full CRUD implemented |
+| Religions | ✅ | Full CRUD implemented |
+| Magic System | ✅ | Full CRUD implemented |
 
 ### Tools Section ❌
 
