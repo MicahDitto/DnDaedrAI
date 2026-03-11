@@ -100,75 +100,119 @@ const formatDate = (dateString: string) => {
             </div>
         </div>
 
-        <!-- Stats Cards -->
+        <!-- Stats Cards with Quick Actions -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <Link
-                :href="route('campaigns.characters.index', campaign.slug)"
-                class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-arcane-purple/30 hover:shadow-glow-arcane-sm cursor-pointer"
-            >
+            <div class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-arcane-purple/30 hover:shadow-glow-arcane-sm">
                 <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-arcane-purple/20 text-arcane-purple">
+                    <Link
+                        :href="route('campaigns.characters.index', campaign.slug)"
+                        class="p-3 rounded-full bg-arcane-purple/20 text-arcane-purple hover:bg-arcane-purple/30 transition-colors"
+                    >
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
-                    </div>
-                    <div class="ml-4">
+                    </Link>
+                    <Link
+                        :href="route('campaigns.characters.index', campaign.slug)"
+                        class="ml-4 flex-1"
+                    >
                         <p class="text-sm font-medium text-arcane-grey">Characters</p>
                         <p class="text-2xl font-semibold text-white">{{ stats.characters }}</p>
-                    </div>
+                    </Link>
+                    <Link
+                        :href="route('campaigns.characters.create', campaign.slug)"
+                        class="p-3 rounded-full border border-charcoal bg-charcoal/50 hover:border-arcane-purple hover:bg-arcane-purple/20 text-arcane-grey hover:text-arcane-purple transition-all"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </Link>
                 </div>
-            </Link>
+            </div>
 
-            <Link
-                :href="route('campaigns.places.index', campaign.slug)"
-                class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-nature/30 hover:shadow-glow-nature-sm cursor-pointer"
-            >
+            <div class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-nature/30 hover:shadow-glow-nature-sm">
                 <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-nature/20 text-nature">
+                    <Link
+                        :href="route('campaigns.places.index', campaign.slug)"
+                        class="p-3 rounded-full bg-nature/20 text-nature hover:bg-nature/30 transition-colors"
+                    >
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                    </div>
-                    <div class="ml-4">
+                    </Link>
+                    <Link
+                        :href="route('campaigns.places.index', campaign.slug)"
+                        class="ml-4 flex-1"
+                    >
                         <p class="text-sm font-medium text-arcane-grey">Places</p>
                         <p class="text-2xl font-semibold text-white">{{ stats.places }}</p>
-                    </div>
+                    </Link>
+                    <Link
+                        :href="route('campaigns.places.create', campaign.slug)"
+                        class="p-3 rounded-full border border-charcoal bg-charcoal/50 hover:border-nature hover:bg-nature/20 text-arcane-grey hover:text-nature transition-all"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </Link>
                 </div>
-            </Link>
+            </div>
 
-            <Link
-                :href="route('campaigns.plots.index', campaign.slug)"
-                class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-arcane-periwinkle/30 hover:shadow-glow-arcane-sm cursor-pointer"
-            >
+            <div class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-arcane-periwinkle/30 hover:shadow-glow-arcane-sm">
                 <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-arcane-periwinkle/20 text-arcane-periwinkle">
+                    <Link
+                        :href="route('campaigns.plots.index', campaign.slug)"
+                        class="p-3 rounded-full bg-arcane-periwinkle/20 text-arcane-periwinkle hover:bg-arcane-periwinkle/30 transition-colors"
+                    >
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                         </svg>
-                    </div>
-                    <div class="ml-4">
+                    </Link>
+                    <Link
+                        :href="route('campaigns.plots.index', campaign.slug)"
+                        class="ml-4 flex-1"
+                    >
                         <p class="text-sm font-medium text-arcane-grey">Plots</p>
                         <p class="text-2xl font-semibold text-white">{{ stats.plots }}</p>
-                    </div>
+                    </Link>
+                    <Link
+                        :href="route('campaigns.plots.create', campaign.slug)"
+                        class="p-3 rounded-full border border-charcoal bg-charcoal/50 hover:border-arcane-periwinkle hover:bg-arcane-periwinkle/20 text-arcane-grey hover:text-arcane-periwinkle transition-all"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </Link>
                 </div>
-            </Link>
+            </div>
 
-            <Link
-                :href="route('campaigns.sessions.index', campaign.slug)"
-                class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-legendary-gold/30 hover:shadow-glow-legendary-sm cursor-pointer"
-            >
+            <div class="card-stagger card-lift bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10 hover:border-legendary-gold/30 hover:shadow-glow-legendary-sm">
                 <div class="flex items-center">
-                    <div class="p-3 rounded-full bg-legendary-gold/20 text-legendary-gold">
+                    <Link
+                        :href="route('campaigns.sessions.index', campaign.slug)"
+                        class="p-3 rounded-full bg-legendary-gold/20 text-legendary-gold hover:bg-legendary-gold/30 transition-colors"
+                    >
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
-                    </div>
-                    <div class="ml-4">
+                    </Link>
+                    <Link
+                        :href="route('campaigns.sessions.index', campaign.slug)"
+                        class="ml-4 flex-1"
+                    >
                         <p class="text-sm font-medium text-arcane-grey">Sessions</p>
                         <p class="text-2xl font-semibold text-white">{{ stats.sessions }}</p>
-                    </div>
+                    </Link>
+                    <Link
+                        :href="route('campaigns.sessions.create', campaign.slug)"
+                        class="p-3 rounded-full border border-charcoal bg-charcoal/50 hover:border-legendary-gold hover:bg-legendary-gold/20 text-arcane-grey hover:text-legendary-gold transition-all"
+                    >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </Link>
                 </div>
-            </Link>
+            </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -217,9 +261,12 @@ const formatDate = (dateString: string) => {
             <div class="bg-gunmetal rounded-lg shadow-dark-md border border-arcane-periwinkle/10">
                 <div class="px-6 py-4 border-b border-charcoal/50 flex justify-between items-center">
                     <h2 class="text-lg font-semibold text-white">Sessions</h2>
-                    <button class="text-sm text-arcane-periwinkle hover:text-white font-medium transition-colors">
-                        + Plan Session
-                    </button>
+                    <Link
+                        :href="route('campaigns.sessions.index', campaign.slug)"
+                        class="text-sm text-arcane-periwinkle hover:text-white font-medium transition-colors"
+                    >
+                        View All
+                    </Link>
                 </div>
                 <div class="divide-y divide-charcoal/30">
                     <div
@@ -258,44 +305,5 @@ const formatDate = (dateString: string) => {
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="mt-8 bg-gunmetal rounded-lg shadow-dark-md p-6 border border-arcane-periwinkle/10">
-            <h2 class="text-lg font-semibold text-white mb-4">Quick Actions</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Link
-                    :href="route('campaigns.characters.create', campaign.slug)"
-                    class="arcane-dust flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-charcoal hover:border-arcane-purple hover:bg-arcane-purple/10 transition-all duration-200 group card-lift"
-                >
-                    <svg class="w-8 h-8 text-arcane-grey group-hover:text-arcane-purple transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                    </svg>
-                    <span class="mt-2 text-sm font-medium text-arcane-grey group-hover:text-white transition-colors">Add Character</span>
-                </Link>
-
-                <Link
-                    :href="route('campaigns.places.create', campaign.slug)"
-                    class="arcane-dust flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-charcoal hover:border-nature hover:bg-nature/10 transition-all duration-200 group card-lift"
-                >
-                    <svg class="w-8 h-8 text-arcane-grey group-hover:text-nature transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span class="mt-2 text-sm font-medium text-arcane-grey group-hover:text-white transition-colors">Add Place</span>
-                </Link>
-
-                <button class="arcane-dust flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-charcoal hover:border-arcane-periwinkle hover:bg-arcane-periwinkle/10 transition-all duration-200 group card-lift">
-                    <svg class="w-8 h-8 text-arcane-grey group-hover:text-arcane-periwinkle transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                    <span class="mt-2 text-sm font-medium text-arcane-grey group-hover:text-white transition-colors">Add Plot</span>
-                </button>
-
-                <button class="arcane-dust flex flex-col items-center p-4 rounded-lg border-2 border-dashed border-charcoal hover:border-legendary-gold hover:bg-legendary-gold/10 transition-all duration-200 group card-lift">
-                    <svg class="w-8 h-8 text-arcane-grey group-hover:text-legendary-gold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span class="mt-2 text-sm font-medium text-arcane-grey group-hover:text-white transition-colors">Plan Session</span>
-                </button>
-            </div>
-        </div>
     </CampaignLayout>
 </template>
