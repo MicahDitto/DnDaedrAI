@@ -35,6 +35,17 @@ interface Character {
     subtype: string;
     summary: string | null;
     image_url?: string | null;
+    featured_image?: {
+        id: string;
+        url: string;
+        filename: string;
+    } | null;
+    gallery_images?: Array<{
+        id: string;
+        url: string;
+        filename: string;
+        order: number;
+    }>;
     content: {
         appearance?: string;
         personality?: string;
@@ -68,6 +79,15 @@ const deleteCharacter = () => {
     router.delete(route('campaigns.characters.destroy', [props.campaign.slug, props.character.slug]));
 };
 
+const deleteImage = (mediaId: string) => {
+    if (confirm('Are you sure you want to delete this image?')) {
+        router.delete(route('campaigns.characters.images.destroy', [props.campaign.slug, props.character.slug]), {
+            data: { media_id: mediaId },
+            preserveScroll: true,
+        });
+    }
+};
+
 const hasSecrets = !!props.character.content?.secrets;
 </script>
 
@@ -84,7 +104,7 @@ const hasSecrets = !!props.character.content?.secrets;
                     <div class="lg:col-span-4 space-y-6">
                         <!-- Portrait/Image -->
                         <EntityImageCard
-                            :image-url="character.image_url"
+                            :image-url="character.featured_image?.url ?? character.image_url ?? null"
                             :entity-name="character.name"
                             entity-type="character"
                         />
@@ -146,6 +166,32 @@ const hasSecrets = !!props.character.content?.secrets;
                             :content="character.content?.voice_notes"
                             icon="voice"
                         />
+
+                        <!-- Gallery -->
+                        <div v-if="character.gallery_images && character.gallery_images.length > 0" class="bg-gunmetal rounded-lg shadow-dark-md border border-arcane-periwinkle/10">
+                            <div class="px-6 py-4 border-b border-charcoal/50">
+                                <h2 class="text-lg font-semibold text-white">Gallery</h2>
+                            </div>
+                            <div class="p-6">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div v-for="image in character.gallery_images" :key="image.id" class="relative group">
+                                        <img
+                                            :src="image.url"
+                                            :alt="image.filename"
+                                            class="w-full h-48 object-cover rounded-lg border border-arcane-periwinkle/10 hover:border-arcane-purple/30 transition-colors"
+                                        />
+                                        <button
+                                            @click="deleteImage(image.id)"
+                                            class="absolute top-2 right-2 p-2 bg-danger/80 hover:bg-danger rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- DM Secrets (conditionally shown) -->
                         <Transition

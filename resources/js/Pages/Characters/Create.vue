@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import CampaignLayout from '@/Layouts/CampaignLayout.vue';
 import InputLabel from '@/Components/InputLabel.vue';
@@ -31,10 +32,46 @@ const form = useForm({
     },
     confidence: 'canon',
     is_secret: false,
+    featured_image: null as File | null,
+    gallery_images: [] as File[],
 });
 
+const featuredImagePreview = ref<string | null>(null);
+const galleryImagePreviews = ref<string[]>([]);
+
+const handleFeaturedImageChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (file) {
+        form.featured_image = file;
+        featuredImagePreview.value = URL.createObjectURL(file);
+    }
+};
+
+const clearFeaturedImage = () => {
+    form.featured_image = null;
+    featuredImagePreview.value = null;
+};
+
+const handleGalleryImagesChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const files = Array.from(target.files || []);
+    form.gallery_images = [...form.gallery_images, ...files];
+    galleryImagePreviews.value = [
+        ...galleryImagePreviews.value,
+        ...files.map(file => URL.createObjectURL(file))
+    ];
+};
+
+const removeGalleryImage = (index: number) => {
+    form.gallery_images.splice(index, 1);
+    galleryImagePreviews.value.splice(index, 1);
+};
+
 const submit = () => {
-    form.post(route('campaigns.characters.store', props.campaign.slug));
+    form.post(route('campaigns.characters.store', props.campaign.slug), {
+        forceFormData: true,
+    });
 };
 </script>
 
@@ -213,6 +250,76 @@ const submit = () => {
                                             class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="What secrets does this character have? What don't the players know yet?"
                                         />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Featured Image Upload -->
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Featured Image</h3>
+
+                                <div class="space-y-4">
+                                    <!-- File Input -->
+                                    <div>
+                                        <InputLabel for="featured_image" value="Upload Image" />
+                                        <input
+                                            id="featured_image"
+                                            type="file"
+                                            accept="image/*"
+                                            @change="handleFeaturedImageChange"
+                                            class="mt-1 block w-full text-sm text-arcane-grey file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-arcane-purple/20 file:text-arcane-purple hover:file:bg-arcane-purple/30 file:cursor-pointer"
+                                        />
+                                        <InputError :message="form.errors.featured_image" class="mt-2" />
+                                    </div>
+
+                                    <!-- Preview -->
+                                    <div v-if="featuredImagePreview" class="relative w-48 h-48">
+                                        <img :src="featuredImagePreview" alt="Preview" class="w-full h-full object-cover rounded-lg border border-arcane-periwinkle/20" />
+                                        <button
+                                            type="button"
+                                            @click="clearFeaturedImage"
+                                            class="absolute top-2 right-2 p-1 bg-danger/80 hover:bg-danger rounded-full text-white transition-colors"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gallery Images Upload -->
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Gallery Images</h3>
+
+                                <div class="space-y-4">
+                                    <div>
+                                        <InputLabel for="gallery_images" value="Upload Images" />
+                                        <input
+                                            id="gallery_images"
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            @change="handleGalleryImagesChange"
+                                            class="mt-1 block w-full text-sm text-arcane-grey file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-arcane-purple/20 file:text-arcane-purple hover:file:bg-arcane-purple/30 file:cursor-pointer"
+                                        />
+                                        <InputError :message="form.errors.gallery_images" class="mt-2" />
+                                    </div>
+
+                                    <!-- Gallery Previews -->
+                                    <div v-if="galleryImagePreviews.length" class="grid grid-cols-3 gap-4">
+                                        <div v-for="(preview, index) in galleryImagePreviews" :key="index" class="relative">
+                                            <img :src="preview" alt="Gallery preview" class="w-full h-32 object-cover rounded-lg border border-arcane-periwinkle/20" />
+                                            <button
+                                                type="button"
+                                                @click="removeGalleryImage(index)"
+                                                class="absolute top-2 right-2 p-1 bg-danger/80 hover:bg-danger rounded-full text-white transition-colors"
+                                            >
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

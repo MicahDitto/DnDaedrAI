@@ -12,6 +12,7 @@ interface Character {
     confidence: string;
     is_secret: boolean;
     created_at: string;
+    featured_image_url?: string | null;
 }
 
 interface Campaign {
@@ -139,6 +140,21 @@ const getConfidenceIcon = (confidence: string) => {
                         :href="route('campaigns.characters.show', [campaign.slug, character.slug])"
                         class="bg-gunmetal overflow-hidden shadow-dark-md sm:rounded-lg border border-arcane-periwinkle/10 hover:shadow-glow-arcane-sm hover:border-arcane-periwinkle/30 transition-all duration-200"
                     >
+                        <!-- Image Thumbnail -->
+                        <div v-if="character.featured_image_url" class="h-48 overflow-hidden bg-charcoal">
+                            <img
+                                :src="character.featured_image_url"
+                                :alt="character.name"
+                                class="w-full h-full object-cover"
+                            />
+                        </div>
+                        <div v-else class="h-48 bg-charcoal flex items-center justify-center">
+                            <svg class="w-16 h-16 text-arcane-grey" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+
+                        <!-- Card Content -->
                         <div class="p-6">
                             <div class="flex justify-between items-start mb-3">
                                 <h3 class="text-lg font-semibold text-white flex items-center">

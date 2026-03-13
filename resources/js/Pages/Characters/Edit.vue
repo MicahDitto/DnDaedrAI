@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
 import CampaignLayout from '@/Layouts/CampaignLayout.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -21,6 +22,17 @@ interface Character {
     };
     confidence: string;
     is_secret: boolean;
+    featured_image?: {
+        id: string;
+        url: string;
+        filename: string;
+    } | null;
+    gallery_images?: Array<{
+        id: string;
+        url: string;
+        filename: string;
+        order: number;
+    }>;
 }
 
 interface Campaign {
@@ -49,10 +61,64 @@ const form = useForm({
     },
     confidence: props.character.confidence,
     is_secret: props.character.is_secret,
+    featured_image: null as File | null,
+    gallery_images: [] as File[],
 });
 
+const featuredImagePreview = ref<string | null>(null);
+const galleryImagePreviews = ref<string[]>([]);
+
+const handleFeaturedImageChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (file) {
+        form.featured_image = file;
+        featuredImagePreview.value = URL.createObjectURL(file);
+    }
+};
+
+const clearFeaturedImage = () => {
+    form.featured_image = null;
+    featuredImagePreview.value = null;
+};
+
+const deleteFeaturedImage = () => {
+    if (props.character.featured_image && confirm('Are you sure you want to delete this image?')) {
+        router.delete(route('campaigns.characters.images.destroy', [props.campaign.slug, props.character.slug]), {
+            data: { media_id: props.character.featured_image.id },
+            preserveScroll: true,
+        });
+    }
+};
+
+const handleGalleryImagesChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    const files = Array.from(target.files || []);
+    form.gallery_images = [...form.gallery_images, ...files];
+    galleryImagePreviews.value = [
+        ...galleryImagePreviews.value,
+        ...files.map(file => URL.createObjectURL(file))
+    ];
+};
+
+const removeGalleryImage = (index: number) => {
+    form.gallery_images.splice(index, 1);
+    galleryImagePreviews.value.splice(index, 1);
+};
+
+const deleteGalleryImage = (mediaId: string) => {
+    if (confirm('Are you sure you want to delete this image?')) {
+        router.delete(route('campaigns.characters.images.destroy', [props.campaign.slug, props.character.slug]), {
+            data: { media_id: mediaId },
+            preserveScroll: true,
+        });
+    }
+};
+
 const submit = () => {
-    form.put(route('campaigns.characters.update', [props.campaign.slug, props.character.slug]));
+    form.put(route('campaigns.characters.update', [props.campaign.slug, props.character.slug]), {
+        forceFormData: true,
+    });
 };
 </script>
 
@@ -230,6 +296,113 @@ const submit = () => {
                                             class="mt-1 block w-full bg-charcoal border-charcoal text-slate-200 placeholder-slate-400 focus:border-arcane-periwinkle focus:ring-arcane-periwinkle rounded-md shadow-dark-sm"
                                             placeholder="What secrets does this character have? What don't the players know yet?"
                                         />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Featured Image Upload -->
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Featured Image</h3>
+
+                                <div class="space-y-4">
+                                    <!-- Current Featured Image -->
+                                    <div v-if="character.featured_image && !featuredImagePreview" class="relative w-48 h-48">
+                                        <img :src="character.featured_image.url" alt="Current featured image" class="w-full h-full object-cover rounded-lg border border-arcane-periwinkle/20" />
+                                        <button
+                                            type="button"
+                                            @click="deleteFeaturedImage"
+                                            class="absolute top-2 right-2 p-1 bg-danger/80 hover:bg-danger rounded-full text-white transition-colors"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <!-- File Input -->
+                                    <div>
+                                        <InputLabel for="featured_image" :value="character.featured_image ? 'Replace Image' : 'Upload Image'" />
+                                        <input
+                                            id="featured_image"
+                                            type="file"
+                                            accept="image/*"
+                                            @change="handleFeaturedImageChange"
+                                            class="mt-1 block w-full text-sm text-arcane-grey file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-arcane-purple/20 file:text-arcane-purple hover:file:bg-arcane-purple/30 file:cursor-pointer"
+                                        />
+                                        <InputError :message="form.errors.featured_image" class="mt-2" />
+                                    </div>
+
+                                    <!-- New Image Preview -->
+                                    <div v-if="featuredImagePreview" class="relative w-48 h-48">
+                                        <img :src="featuredImagePreview" alt="Preview" class="w-full h-full object-cover rounded-lg border border-arcane-periwinkle/20" />
+                                        <button
+                                            type="button"
+                                            @click="clearFeaturedImage"
+                                            class="absolute top-2 right-2 p-1 bg-danger/80 hover:bg-danger rounded-full text-white transition-colors"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Gallery Images Upload -->
+                            <div class="border-b border-charcoal/50 pb-6">
+                                <h3 class="text-lg font-medium text-white mb-4">Gallery Images</h3>
+
+                                <div class="space-y-4">
+                                    <!-- Current Gallery Images -->
+                                    <div v-if="character.gallery_images && character.gallery_images.length > 0" class="space-y-2">
+                                        <p class="text-sm text-arcane-grey">Current Images</p>
+                                        <div class="grid grid-cols-3 gap-4">
+                                            <div v-for="image in character.gallery_images" :key="image.id" class="relative">
+                                                <img :src="image.url" alt="Gallery image" class="w-full h-32 object-cover rounded-lg border border-arcane-periwinkle/20" />
+                                                <button
+                                                    type="button"
+                                                    @click="deleteGalleryImage(image.id)"
+                                                    class="absolute top-2 right-2 p-1 bg-danger/80 hover:bg-danger rounded-full text-white transition-colors"
+                                                >
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Add New Gallery Images -->
+                                    <div>
+                                        <InputLabel for="gallery_images" value="Add More Images" />
+                                        <input
+                                            id="gallery_images"
+                                            type="file"
+                                            accept="image/*"
+                                            multiple
+                                            @change="handleGalleryImagesChange"
+                                            class="mt-1 block w-full text-sm text-arcane-grey file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-arcane-purple/20 file:text-arcane-purple hover:file:bg-arcane-purple/30 file:cursor-pointer"
+                                        />
+                                        <InputError :message="form.errors.gallery_images" class="mt-2" />
+                                    </div>
+
+                                    <!-- New Gallery Images Previews -->
+                                    <div v-if="galleryImagePreviews.length" class="space-y-2">
+                                        <p class="text-sm text-arcane-grey">New Images to Upload</p>
+                                        <div class="grid grid-cols-3 gap-4">
+                                            <div v-for="(preview, index) in galleryImagePreviews" :key="index" class="relative">
+                                                <img :src="preview" alt="Gallery preview" class="w-full h-32 object-cover rounded-lg border border-arcane-periwinkle/20" />
+                                                <button
+                                                    type="button"
+                                                    @click="removeGalleryImage(index)"
+                                                    class="absolute top-2 right-2 p-1 bg-danger/80 hover:bg-danger rounded-full text-white transition-colors"
+                                                >
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

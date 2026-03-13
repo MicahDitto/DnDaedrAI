@@ -2307,7 +2307,7 @@ class NodeController extends Controller
      */
     private function storeFeaturedImage(Node $node, $file): Media
     {
-        $path = $file->store("campaigns/{$node->campaign_id}/nodes/{$node->id}", config('filesystems.default'));
+        $path = $file->store("campaigns/{$node->campaign_id}/nodes/{$node->id}", 'public');
 
         return $node->media()->create([
             'collection' => 'featured',
@@ -2326,7 +2326,7 @@ class NodeController extends Controller
      */
     private function storeGalleryImage(Node $node, $file, int $order): Media
     {
-        $path = $file->store("campaigns/{$node->campaign_id}/nodes/{$node->id}/gallery", config('filesystems.default'));
+        $path = $file->store("campaigns/{$node->campaign_id}/nodes/{$node->id}/gallery", 'public');
 
         return $node->media()->create([
             'collection' => 'gallery',
