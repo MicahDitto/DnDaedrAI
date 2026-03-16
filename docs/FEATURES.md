@@ -301,7 +301,7 @@ This document lists all features in DnDaedrAI, their current status, and impleme
 | Session Plan | ✅ | DM preparation notes |
 | Session Notes | ✅ | During-session notes |
 | Session Recap | ✅ | Post-session summary |
-| Session Outcomes | 🚧 | Array field exists, minimal UI |
+| Session Outcomes | ✅ | Summary, key decisions, and consequences tracking |
 
 **Files:** `SessionController.php`, `Pages/Sessions/*`
 
