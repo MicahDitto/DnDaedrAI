@@ -4,6 +4,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import Sidebar from '@/Components/Layout/Sidebar.vue';
 import TopBar from '@/Components/Layout/TopBar.vue';
 import ModeTabsNav from '@/Components/Layout/ModeTabsNav.vue';
+import Toast from '@/Components/Toast.vue';
 import type { PageProps } from '@/types';
 
 interface Campaign {
@@ -71,5 +72,8 @@ const currentMode = computed<'plan' | 'prep' | 'play'>(() => {
                 </Transition>
             </main>
         </div>
+
+        <!-- Toast Notifications -->
+        <Toast />
     </div>
 </template>
