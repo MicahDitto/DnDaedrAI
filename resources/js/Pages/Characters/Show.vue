@@ -6,6 +6,7 @@ import EntityInfoCard from '@/Components/Entity/EntityInfoCard.vue';
 import EntityImageCard from '@/Components/Entity/EntityImageCard.vue';
 import DmControlsCard from '@/Components/Entity/DmControlsCard.vue';
 import DetailSection from '@/Components/Entity/DetailSection.vue';
+import EditableDetailSection from '@/Components/Entity/EditableDetailSection.vue';
 import { ref } from 'vue';
 
 interface Edge {
@@ -142,29 +143,49 @@ const hasSecrets = !!props.character.content?.secrets;
                             @delete="showDeleteModal = true"
                         />
 
-                        <!-- Detail Sections -->
-                        <DetailSection
+                        <!-- Detail Sections (Inline Editable) -->
+                        <EditableDetailSection
                             title="Appearance"
                             :content="character.content?.appearance"
                             icon="appearance"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="character.slug"
+                            entity-type="character"
+                            field-name="appearance"
+                            :entity-data="character"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Personality"
                             :content="character.content?.personality"
                             icon="personality"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="character.slug"
+                            entity-type="character"
+                            field-name="personality"
+                            :entity-data="character"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Motivation / Goals"
                             :content="character.content?.motivation"
                             icon="motivation"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="character.slug"
+                            entity-type="character"
+                            field-name="motivation"
+                            :entity-data="character"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Voice / Mannerisms"
                             :content="character.content?.voice_notes"
                             icon="voice"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="character.slug"
+                            entity-type="character"
+                            field-name="voice_notes"
+                            :entity-data="character"
                         />
 
                         <!-- Gallery -->
