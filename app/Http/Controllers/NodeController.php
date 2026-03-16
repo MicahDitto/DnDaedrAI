@@ -108,6 +108,34 @@ class NodeController extends Controller
         ];
     }
 
+    protected function makeBreadcrumbs(Campaign $campaign, string $section, ?string $subsection = null, ?string $itemName = null): array
+    {
+        $breadcrumbs = [];
+
+        // Add section breadcrumb (e.g., "Characters")
+        $breadcrumbs[] = [
+            'label' => ucfirst($section),
+            'href' => route("campaigns.{$section}.index", $campaign->slug),
+        ];
+
+        // Add subsection if provided (e.g., "Create" or entity name)
+        if ($subsection) {
+            $breadcrumbs[] = [
+                'label' => $subsection,
+                'href' => $itemName ? route("campaigns.{$section}.show", [$campaign->slug, Str::slug($subsection)]) : null,
+            ];
+        }
+
+        // Add item name if provided (e.g., "Edit")
+        if ($itemName) {
+            $breadcrumbs[] = [
+                'label' => $itemName,
+            ];
+        }
+
+        return $breadcrumbs;
+    }
+
     // Characters
     public function charactersIndex(string $campaignSlug)
     {
@@ -143,6 +171,7 @@ class NodeController extends Controller
             'campaign' => $campaign,
             'subtypes' => $this->getSubtypes('character'),
             'confidenceLevels' => $this->getConfidenceLevels(),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'characters', 'Create'),
         ]);
     }
 
@@ -222,6 +251,7 @@ class NodeController extends Controller
         return Inertia::render('Characters/Show', [
             'campaign' => $campaign,
             'character' => $characterData,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'characters', $character->name),
         ]);
     }
 
@@ -239,6 +269,7 @@ class NodeController extends Controller
             'character' => $character,
             'subtypes' => $this->getSubtypes('character'),
             'confidenceLevels' => $this->getConfidenceLevels(),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'characters', $character->name, 'Edit'),
         ]);
     }
 

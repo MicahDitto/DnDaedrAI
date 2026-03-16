@@ -4,6 +4,8 @@ import { Link, usePage } from '@inertiajs/vue3';
 import Sidebar from '@/Components/Layout/Sidebar.vue';
 import TopBar from '@/Components/Layout/TopBar.vue';
 import ModeTabsNav from '@/Components/Layout/ModeTabsNav.vue';
+import Breadcrumbs from '@/Components/Layout/Breadcrumbs.vue';
+import type { BreadcrumbItem } from '@/Components/Layout/Breadcrumbs.vue';
 import Toast from '@/Components/Toast.vue';
 import type { PageProps } from '@/types';
 
@@ -16,6 +18,7 @@ interface Campaign {
 interface CampaignPageProps extends PageProps {
     campaigns?: Campaign[];
     campaign?: Campaign;
+    breadcrumbs?: BreadcrumbItem[];
 }
 
 const page = usePage<CampaignPageProps>();
@@ -23,6 +26,7 @@ const page = usePage<CampaignPageProps>();
 const user = computed(() => page.props.auth.user);
 const campaigns = computed(() => (page.props as CampaignPageProps).campaigns || []);
 const currentCampaign = computed(() => (page.props as CampaignPageProps).campaign);
+const breadcrumbs = computed(() => (page.props as CampaignPageProps).breadcrumbs || []);
 
 const currentMode = computed<'plan' | 'prep' | 'play'>(() => {
     const url = page.url;
@@ -46,15 +50,21 @@ const currentMode = computed<'plan' | 'prep' | 'play'>(() => {
                 :current-campaign="currentCampaign"
             />
 
-            <!-- Page Header with Mode Tabs -->
+            <!-- Page Header with Mode Tabs and Breadcrumbs -->
             <div v-if="currentCampaign" class="bg-gunmetal border-b border-charcoal/30 px-6 py-4">
-                <div class="flex items-center gap-8">
-                    <h1 class="text-2xl font-bold text-white tracking-tight">
-                        {{ currentCampaign.name }}
-                    </h1>
-                    <ModeTabsNav
-                        :campaign="currentCampaign"
-                        :current-mode="currentMode"
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-8">
+                        <h1 class="text-2xl font-bold text-white tracking-tight">
+                            {{ currentCampaign.name }}
+                        </h1>
+                        <ModeTabsNav
+                            :campaign="currentCampaign"
+                            :current-mode="currentMode"
+                        />
+                    </div>
+                    <Breadcrumbs
+                        v-if="breadcrumbs.length > 0"
+                        :items="breadcrumbs"
                     />
                 </div>
             </div>
