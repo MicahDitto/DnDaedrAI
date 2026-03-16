@@ -26,6 +26,34 @@ class SessionController extends Controller
         ];
     }
 
+    protected function makeBreadcrumbs(Campaign $campaign, ?string $sessionTitle = null, ?string $action = null): array
+    {
+        $breadcrumbs = [];
+
+        // Add sessions breadcrumb
+        $breadcrumbs[] = [
+            'label' => 'Sessions',
+            'href' => route('campaigns.sessions.index', $campaign->slug),
+        ];
+
+        // Add session title if provided
+        if ($sessionTitle) {
+            $breadcrumbs[] = [
+                'label' => $sessionTitle,
+                'href' => $action ? route('campaigns.sessions.show', [$campaign->slug, $sessionTitle]) : null,
+            ];
+        }
+
+        // Add action if provided (e.g., "Edit")
+        if ($action) {
+            $breadcrumbs[] = [
+                'label' => $action,
+            ];
+        }
+
+        return $breadcrumbs;
+    }
+
     public function index(string $campaignSlug)
     {
         $campaign = $this->getCampaign($campaignSlug);
@@ -56,6 +84,7 @@ class SessionController extends Controller
             'campaign' => $campaign,
             'nextNumber' => $nextNumber,
             'statusOptions' => $this->getStatusOptions(),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'Create'),
         ]);
     }
 
@@ -124,12 +153,15 @@ class SessionController extends Controller
             ->orderBy('number')
             ->first();
 
+        $sessionTitle = $session->title ?: "Session {$session->number}";
+
         return Inertia::render('Sessions/Show', [
             'campaign' => $campaign,
             'session' => $session,
             'previousSession' => $previousSession,
             'nextSession' => $nextSession,
             'statusOptions' => $this->getStatusOptions(),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, $sessionTitle),
         ]);
     }
 
@@ -141,10 +173,13 @@ class SessionController extends Controller
             ->where('number', $number)
             ->firstOrFail();
 
+        $sessionTitle = $session->title ?: "Session {$session->number}";
+
         return Inertia::render('Sessions/Edit', [
             'campaign' => $campaign,
             'session' => $session,
             'statusOptions' => $this->getStatusOptions(),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, $sessionTitle, 'Edit'),
         ]);
     }
 
