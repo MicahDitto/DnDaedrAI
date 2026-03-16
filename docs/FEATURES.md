@@ -378,7 +378,7 @@ This document lists all features in DnDaedrAI, their current status, and impleme
 |---------|--------|---------|
 | Collapsible Sidebar | ✅ | Expandable sections |
 | Active State | ✅ | Highlighted current page |
-| Breadcrumb Support | 🚧 | Space exists, not implemented |
+| Breadcrumb Navigation | ✅ | Full breadcrumbs on all entity and session pages |
 | Mobile Navigation | 🚧 | Basic responsive, needs work |
 
 ---
