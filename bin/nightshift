@@ -215,8 +215,7 @@ for ((i=1; i<=ITERATIONS; i++)); do
 
   printf '%s | %s | %s\n' "$(date)" "$TASK_ID" "$BRANCH_NAME" >> "$STATUS_FILE"
 
-  # Create task prompt file
-  cat > /tmp/claude/nightshift-prompt.txt <<PROMPT
+  claude -p --dangerously-skip-permissions "$(cat <<EOF
 You are working inside a git repository.
 
 Use the design-md-tasks skill.
@@ -238,15 +237,15 @@ Required behavior:
 5. Run formatter(s) only if the repo clearly provides them.
 6. Run focused tests first; run broader tests if reasonable.
 7. If you hit a design question or ambiguity that requires human input:
-   - append a Decision Needed section to $REVIEW_FILE
+   - append a "Decision Needed" section to $REVIEW_FILE
    - include task id, branch name ($BRANCH_NAME), the question, why it matters, and your recommended options
-   - update this task status in $TASK_FILE to needs_review
+   - update this task's status in $TASK_FILE to "needs_review"
    - add the design question text into the task design_questions array
    - commit only if you made coherent safe progress; otherwise leave the branch without a commit
    - then stop working on this task
 8. If the task is completed:
-   - update its status in $TASK_FILE to completed
-   - append a Completed Task section to $REVIEW_FILE with:
+   - update its status in $TASK_FILE to "completed"
+   - append a "Completed Task" section to $REVIEW_FILE with:
      - task id
      - title
      - branch name
@@ -256,7 +255,7 @@ Required behavior:
    - commit your changes with message:
      nightshift($TASK_ID): $TASK_TITLE
 9. If the task turns out not to be actionable from the docs:
-   - update its status in $TASK_FILE to skipped
+   - update its status in $TASK_FILE to "skipped"
    - append a short note to $REVIEW_FILE explaining why
 10. Do not start another task.
 11. Do not merge branches.
@@ -266,9 +265,8 @@ Be practical:
 - Prefer safe, scoped changes
 - Avoid huge refactors unless the task clearly calls for them
 - If something is unclear, document the decision needed and move on cleanly
-PROMPT
-
-  claude -p --dangerously-skip-permissions "$(cat /tmp/claude/nightshift-prompt.txt)" || true
+EOF
+)" || true
 
   if [[ -n "$(git status --porcelain)" ]]; then
     echo "Claude left uncommitted changes on $BRANCH_NAME."

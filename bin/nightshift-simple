@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# Simple nightshift runner - just calls the original 10 times
+for i in {1..10}; do
+  echo "=== Pass $i of 10 at $(date) ==="
+
+  # Check if there's work directory
+  if [[ -n "$(git status --porcelain)" ]]; then
+    echo "Working directory dirty, skipping this pass"
+    sleep 60
+    continue
+  fi
+
+  # Run one task
+  timeout 3600 claude -p --dangerously-skip-permissions "Use /design-md-tasks to find and work on ONE task from the docs. When done, commit your work." || echo "Claude failed or timed out"
+
+  sleep 60  # Wait 1 min between tasks
+done
+
+echo "Simple nightshift complete at $(date)"
