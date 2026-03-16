@@ -385,32 +385,14 @@ This document lists all features in DnDaedrAI, their current status, and impleme
 
 ## Placeholder Features
 
-These appear in the sidebar but have no functionality:
-
 ### Worldbuilding Section 🚧
 
 | Feature | Status | Location |
 |---------|--------|----------|
-| History & Timeline | ❌ | Sidebar link → # |
+| History & Timeline | ❌ | Sidebar link → # (placeholder) |
 | Lore & Legends | ✅ | Full CRUD implemented |
 | Religions | ✅ | Full CRUD implemented |
 | Magic System | ✅ | Full CRUD implemented |
-
-### Tools Section ❌
-
-| Feature | Status | Location |
-|---------|--------|----------|
-| Random Generators | ❌ | Sidebar link → # |
-| Encounter Builder | ❌ | Sidebar link → # |
-| NPC Quick-Gen | ❌ | Sidebar link → # |
-
-### Notes Section ❌
-
-| Feature | Status | Location |
-|---------|--------|----------|
-| Session Notes | ❌ | Sidebar link → # |
-| DM Journal | ❌ | Sidebar link → # |
-| Scratch Pad | ❌ | Sidebar link → # |
 
 ---
 
@@ -473,10 +455,10 @@ Features deprioritized for now:
 | Issue | Priority | Description |
 |-------|----------|-------------|
 | Toast Notifications | ✅ Complete | Flash messages displayed via Toast component |
+| Sidebar Cleanup | ✅ Complete | Removed non-functional Tools and Notes sections |
 | Loading States | Medium | Inconsistent loading indicators |
 | Error Handling | Medium | Better error messages |
 | Test Coverage | Medium | No tests currently |
-| Mobile Responsive | Low | Sidebar needs mobile treatment |
 
 ---
 

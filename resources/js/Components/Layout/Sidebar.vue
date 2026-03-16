@@ -27,8 +27,6 @@ const expandedSections = ref<Record<string, boolean>>({
     items: false,
     plots: false,
     worldbuilding: false,
-    tools: false,
-    notes: false,
 });
 
 const toggleSection = (section: string) => {
@@ -117,28 +115,6 @@ const navItems = computed(() => {
                 { label: 'Magic Systems', href: slug ? route('campaigns.magic.index', slug) : '#' },
                 { label: '+ New Magic', href: slug ? route('campaigns.magic.create', slug) : '#', isAction: true },
                 { label: 'History & Timeline', href: '#' },
-            ],
-        },
-        {
-            key: 'tools',
-            label: 'Tools',
-            icon: 'dice',
-            expandable: true,
-            children: [
-                { label: 'Random Generators', href: '#' },
-                { label: 'Encounter Builder', href: '#' },
-                { label: 'NPC Quick-Gen', href: '#' },
-            ],
-        },
-        {
-            key: 'notes',
-            label: 'Notes',
-            icon: 'note',
-            expandable: true,
-            children: [
-                { label: 'Session Notes', href: '#' },
-                { label: 'DM Journal', href: '#' },
-                { label: 'Scratch Pad', href: '#' },
             ],
         },
     ];
