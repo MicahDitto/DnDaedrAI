@@ -1,20 +1,40 @@
 #!/usr/bin/env bash
 
-# Simple nightshift runner - just calls the original 10 times
-for i in {1..10}; do
-  echo "=== Pass $i of 10 at $(date) ==="
+# Simple nightshift runner - runs for up to 8 hours
+START_TIME=$(date +%s)
+MAX_DURATION=$((8 * 60 * 60))  # 8 hours in seconds
+PASS=1
 
-  # Check if there's work directory
+echo "Starting nightshift at $(date)"
+echo "Will run for up to 8 hours"
+echo
+
+while true; do
+  ELAPSED=$(($(date +%s) - START_TIME))
+
+  if [[ $ELAPSED -ge $MAX_DURATION ]]; then
+    echo "Reached 8-hour limit at $(date)"
+    break
+  fi
+
+  echo "=== Pass $PASS at $(date) (elapsed: $((ELAPSED / 60)) minutes) ==="
+
+  # Check if working directory is clean
   if [[ -n "$(git status --porcelain)" ]]; then
     echo "Working directory dirty, skipping this pass"
     sleep 60
+    PASS=$((PASS + 1))
     continue
   fi
 
-  # Run one task
-  timeout 3600 claude -p --dangerously-skip-permissions "Use /design-md-tasks to find and work on ONE task from the docs. When done, commit your work." || echo "Claude failed or timed out"
+  # Run one task (no timeout - let it run as long as needed)
+  claude -p --dangerously-skip-permissions "Use /design-md-tasks to find and work on ONE task from the docs. When done, commit your work." || echo "Claude failed"
 
+  PASS=$((PASS + 1))
   sleep 60  # Wait 1 min between tasks
 done
 
-echo "Simple nightshift complete at $(date)"
+echo
+echo "Nightshift complete at $(date)"
+TOTAL_ELAPSED=$(($(date +%s) - START_TIME))
+echo "Total runtime: $((TOTAL_ELAPSED / 60)) minutes"
