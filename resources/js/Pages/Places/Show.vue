@@ -5,7 +5,7 @@ import RelationshipManager from '@/Components/RelationshipManager.vue';
 import EntityInfoCard from '@/Components/Entity/EntityInfoCard.vue';
 import EntityImageCard from '@/Components/Entity/EntityImageCard.vue';
 import DmControlsCard from '@/Components/Entity/DmControlsCard.vue';
-import DetailSection from '@/Components/Entity/DetailSection.vue';
+import EditableDetailSection from '@/Components/Entity/EditableDetailSection.vue';
 import DeleteConfirmModal from '@/Components/Entity/DeleteConfirmModal.vue';
 import { ref } from 'vue';
 
@@ -241,29 +241,49 @@ const getSubtypeLabel = (subtype: string) => {
                             @delete="showDeleteModal = true"
                         />
 
-                        <!-- Detail Sections -->
-                        <DetailSection
+                        <!-- Detail Sections (Inline Editable) -->
+                        <EditableDetailSection
                             title="Description"
                             :content="place.content?.description"
                             icon="description"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="place.slug"
+                            entity-type="place"
+                            field-name="description"
+                            :entity-data="place"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Culture & Society"
                             :content="place.content?.culture"
                             icon="culture"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="place.slug"
+                            entity-type="place"
+                            field-name="culture"
+                            :entity-data="place"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="History"
                             :content="place.content?.history"
                             icon="history"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="place.slug"
+                            entity-type="place"
+                            field-name="history"
+                            :entity-data="place"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Points of Interest"
                             :content="place.content?.points_of_interest"
                             icon="points"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="place.slug"
+                            entity-type="place"
+                            field-name="points_of_interest"
+                            :entity-data="place"
                         />
 
                         <!-- DM Secrets (conditionally shown) -->
@@ -275,12 +295,17 @@ const getSubtypeLabel = (subtype: string) => {
                             leave-from-class="opacity-100 translate-y-0"
                             leave-to-class="opacity-0 translate-y-2"
                         >
-                            <DetailSection
+                            <EditableDetailSection
                                 v-if="showSecrets"
                                 title="DM Secrets"
                                 :content="place.content?.secrets"
                                 icon="secret"
                                 variant="danger"
+                                :campaign-slug="campaign.slug"
+                                :entity-slug="place.slug"
+                                entity-type="place"
+                                field-name="secrets"
+                                :entity-data="place"
                             />
                         </Transition>
                     </div>
