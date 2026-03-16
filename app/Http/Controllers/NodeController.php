@@ -160,6 +160,7 @@ class NodeController extends Controller
             'campaign' => $campaign,
             'characters' => $charactersData,
             'subtypes' => $this->getSubtypes('character'),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'characters'),
         ]);
     }
 
@@ -371,6 +372,7 @@ class NodeController extends Controller
             'campaign' => $campaign,
             'places' => $places,
             'subtypes' => $this->getSubtypes('place'),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'places'),
         ]);
     }
 
@@ -389,6 +391,7 @@ class NodeController extends Controller
             'subtypes' => $this->getSubtypes('place'),
             'confidenceLevels' => $this->getConfidenceLevels(),
             'parentPlaces' => $parentPlaces,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'places', 'Create'),
         ]);
     }
 
@@ -477,6 +480,7 @@ class NodeController extends Controller
             'place' => $place,
             'childPlaces' => $childPlaces,
             'characters' => $characters,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'places', $place->name),
         ]);
     }
 
@@ -508,6 +512,7 @@ class NodeController extends Controller
             'confidenceLevels' => $this->getConfidenceLevels(),
             'parentPlaces' => $parentPlaces,
             'currentParentId' => $currentParent?->target_node_id,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'places', $place->name, 'Edit'),
         ]);
     }
 
@@ -600,6 +605,7 @@ class NodeController extends Controller
             'campaign' => $campaign,
             'factions' => $factions,
             'subtypes' => $this->getSubtypes('faction'),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'factions'),
         ]);
     }
 
@@ -618,6 +624,7 @@ class NodeController extends Controller
             'subtypes' => $this->getSubtypes('faction'),
             'confidenceLevels' => $this->getConfidenceLevels(),
             'places' => $places,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'factions', 'Create'),
         ]);
     }
 
@@ -736,6 +743,7 @@ class NodeController extends Controller
             'headquarters' => $headquarters,
             'alliedFactions' => $alliedFactions,
             'rivalFactions' => $rivalFactions,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'factions', $faction->name),
         ]);
     }
 
@@ -765,6 +773,7 @@ class NodeController extends Controller
             'confidenceLevels' => $this->getConfidenceLevels(),
             'places' => $places,
             'currentHeadquartersId' => $currentHeadquarters?->target_node_id,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'factions', $faction->name, 'Edit'),
         ]);
     }
 
@@ -857,6 +866,7 @@ class NodeController extends Controller
             'campaign' => $campaign,
             'items' => $items,
             'subtypes' => $this->getSubtypes('item'),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'items'),
         ]);
     }
 
@@ -882,6 +892,7 @@ class NodeController extends Controller
             'confidenceLevels' => $this->getConfidenceLevels(),
             'characters' => $characters,
             'places' => $places,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'items', 'Create'),
         ]);
     }
 
@@ -978,6 +989,7 @@ class NodeController extends Controller
             'item' => $item,
             'owner' => $owner,
             'location' => $location,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'items', $item->name),
         ]);
     }
 
@@ -1019,6 +1031,7 @@ class NodeController extends Controller
             'places' => $places,
             'currentOwnerId' => $currentOwner?->target_node_id,
             'currentLocationId' => $currentLocation?->target_node_id,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'items', $item->name, 'Edit'),
         ]);
     }
 
@@ -1126,6 +1139,7 @@ class NodeController extends Controller
             'campaign' => $campaign,
             'plots' => $plots,
             'subtypes' => $this->getSubtypes('plot'),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'plots'),
         ]);
     }
 
@@ -1158,6 +1172,7 @@ class NodeController extends Controller
             'characters' => $characters,
             'places' => $places,
             'factions' => $factions,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'plots', 'Create'),
         ]);
     }
 
@@ -1292,6 +1307,7 @@ class NodeController extends Controller
             'involvedCharacters' => $involvedCharacters,
             'involvedPlaces' => $involvedPlaces,
             'involvedFactions' => $involvedFactions,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'plots', $plot->name),
         ]);
     }
 
@@ -1354,6 +1370,7 @@ class NodeController extends Controller
             'currentInvolvedCharacterIds' => $currentInvolvedCharacterIds,
             'currentInvolvedPlaceIds' => $currentInvolvedPlaceIds,
             'currentInvolvedFactionIds' => $currentInvolvedFactionIds,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'plots', $plot->name, 'Edit'),
         ]);
     }
 
@@ -1498,6 +1515,7 @@ class NodeController extends Controller
             'campaign' => $campaign,
             'lore' => $lore,
             'subtypes' => $this->getSubtypes('lore'),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'lore'),
         ]);
     }
 
@@ -1523,6 +1541,7 @@ class NodeController extends Controller
             'confidenceLevels' => $this->getConfidenceLevels(),
             'places' => $places,
             'religions' => $religions,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'lore', 'Create'),
         ]);
     }
 
@@ -1622,6 +1641,7 @@ class NodeController extends Controller
             'lore' => $lore,
             'originPlace' => $originPlace,
             'relatedReligion' => $relatedReligion,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'lore', $lore->name),
         ]);
     }
 
@@ -1663,6 +1683,7 @@ class NodeController extends Controller
             'religions' => $religions,
             'currentOriginPlaceId' => $currentOriginPlace?->target_node_id,
             'currentRelatedReligionId' => $currentRelatedReligion?->target_node_id,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'lore', $lore->name, 'Edit'),
         ]);
     }
 
@@ -1773,6 +1794,7 @@ class NodeController extends Controller
             'campaign' => $campaign,
             'religions' => $religions,
             'subtypes' => $this->getSubtypes('religion'),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'religions'),
         ]);
     }
 
@@ -1798,6 +1820,7 @@ class NodeController extends Controller
             'confidenceLevels' => $this->getConfidenceLevels(),
             'places' => $places,
             'characters' => $characters,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'religions', 'Create'),
         ]);
     }
 
@@ -1911,6 +1934,7 @@ class NodeController extends Controller
             'headquarters' => $headquarters,
             'founder' => $founder,
             'relatedLore' => $relatedLore,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'religions', $religion->name),
         ]);
     }
 
@@ -1952,6 +1976,7 @@ class NodeController extends Controller
             'characters' => $characters,
             'currentHeadquartersId' => $currentHeadquarters?->target_node_id,
             'currentFounderId' => $currentFounder?->target_node_id,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'religions', $religion->name, 'Edit'),
         ]);
     }
 
@@ -2066,6 +2091,7 @@ class NodeController extends Controller
             'campaign' => $campaign,
             'magicSystems' => $magicSystems,
             'subtypes' => $this->getSubtypes('magic_system'),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'magic'),
         ]);
     }
 
@@ -2091,6 +2117,7 @@ class NodeController extends Controller
             'confidenceLevels' => $this->getConfidenceLevels(),
             'places' => $places,
             'factions' => $factions,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'magic', 'Create'),
         ]);
     }
 
@@ -2193,6 +2220,7 @@ class NodeController extends Controller
             'magicSystem' => $magicSystem,
             'taughtAt' => $taughtAt,
             'regulatedBy' => $regulatedBy,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'magic', $magicSystem->name),
         ]);
     }
 
@@ -2233,6 +2261,7 @@ class NodeController extends Controller
             'places' => $places,
             'factions' => $factions,
             'currentTaughtAtId' => $currentTaughtAt?->target_node_id,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'magic', $magicSystem->name, 'Edit'),
             'currentRegulatedById' => $currentRegulatedBy?->target_node_id,
         ]);
     }
