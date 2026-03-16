@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import Sidebar from '@/Components/Layout/Sidebar.vue';
 import TopBar from '@/Components/Layout/TopBar.vue';
@@ -34,21 +34,62 @@ const currentMode = computed<'plan' | 'prep' | 'play'>(() => {
     if (url.includes('/prep')) return 'prep';
     return 'plan';
 });
+
+const isSidebarOpen = ref(false);
+
+const toggleSidebar = () => {
+    isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+const closeSidebar = () => {
+    isSidebarOpen.value = false;
+};
 </script>
 
 <template>
     <div class="flex h-screen bg-graphite">
+        <!-- Mobile Sidebar Overlay -->
+        <div
+            v-if="isSidebarOpen"
+            @click="closeSidebar"
+            class="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden"
+        />
+
         <!-- Sidebar -->
-        <Sidebar :campaign="currentCampaign" />
+        <div
+            :class="[
+                'fixed lg:static inset-y-0 left-0 z-50 lg:z-auto',
+                'transition-transform duration-300 ease-in-out lg:transition-none',
+                isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+            ]"
+        >
+            <Sidebar :campaign="currentCampaign" @close="closeSidebar" />
+        </div>
 
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col overflow-hidden">
-            <!-- Top Bar -->
-            <TopBar
-                :user="user"
-                :campaigns="campaigns"
-                :current-campaign="currentCampaign"
-            />
+            <!-- Top Bar with Hamburger -->
+            <div class="flex items-center bg-gunmetal border-b border-charcoal/30">
+                <!-- Hamburger Menu Button (Mobile Only) -->
+                <button
+                    @click="toggleSidebar"
+                    class="lg:hidden p-4 text-arcane-grey hover:text-white transition-colors"
+                    aria-label="Toggle sidebar"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+
+                <!-- TopBar Component -->
+                <div class="flex-1">
+                    <TopBar
+                        :user="user"
+                        :campaigns="campaigns"
+                        :current-campaign="currentCampaign"
+                    />
+                </div>
+            </div>
 
             <!-- Page Header with Mode Tabs and Breadcrumbs -->
             <div v-if="currentCampaign" class="bg-gunmetal border-b border-charcoal/30 px-6 py-4">

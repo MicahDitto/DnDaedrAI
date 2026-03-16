@@ -12,6 +12,14 @@ const props = defineProps<{
     campaign?: Campaign;
 }>();
 
+const emit = defineEmits<{
+    close: [];
+}>();
+
+const handleLinkClick = () => {
+    emit('close');
+};
+
 const expandedSections = ref<Record<string, boolean>>({
     sessions: true,
     characters: false,
@@ -151,10 +159,10 @@ const icons: Record<string, string> = {
 </script>
 
 <template>
-    <aside class="w-64 bg-graphite-900 text-arcane-grey flex flex-col h-full border-r border-charcoal/30">
+    <aside class="w-64 bg-graphite-900 text-arcane-grey flex flex-col h-full border-r border-charcoal/30 shadow-xl lg:shadow-none">
         <!-- Logo -->
         <div class="p-4 border-b border-charcoal/30">
-            <Link :href="route('dashboard')" class="flex items-center space-x-3 group">
+            <Link :href="route('dashboard')" @click="handleLinkClick" class="flex items-center space-x-3 group">
                 <img
                     src="/images/logo.png"
                     alt="DnDaedrAI Logo"
@@ -171,6 +179,7 @@ const icons: Record<string, string> = {
                 <template v-if="!item.expandable">
                     <Link
                         :href="item.href"
+                        @click="handleLinkClick"
                         class="flex items-center px-4 py-2 text-sm hover:bg-gunmetal hover:text-white transition-colors"
                     >
                         <svg class="w-5 h-5 mr-3 transition-all hover:icon-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,6 +221,7 @@ const icons: Record<string, string> = {
                             v-for="child in item.children"
                             :key="child.label"
                             :href="child.href"
+                            @click="handleLinkClick"
                             class="block px-4 py-1.5 text-sm hover:bg-gunmetal hover:text-white transition-colors"
                             :class="{ 'text-arcane-periwinkle': 'isAction' in child && child.isAction }"
                         >
@@ -226,6 +236,7 @@ const icons: Record<string, string> = {
         <div class="border-t border-charcoal/30 p-4">
             <Link
                 :href="route('settings.index')"
+                @click="handleLinkClick"
                 class="flex items-center text-sm hover:text-white transition-colors"
             >
                 <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
