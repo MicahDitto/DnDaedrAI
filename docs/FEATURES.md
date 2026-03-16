@@ -472,7 +472,7 @@ Features deprioritized for now:
 
 | Issue | Priority | Description |
 |-------|----------|-------------|
-| Toast Notifications | High | Flash messages not displayed |
+| Toast Notifications | ✅ Complete | Flash messages displayed via Toast component |
 | Loading States | Medium | Inconsistent loading indicators |
 | Error Handling | Medium | Better error messages |
 | Test Coverage | Medium | No tests currently |
