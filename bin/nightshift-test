@@ -2,12 +2,12 @@
 
 set -Eeuo pipefail
 
-# Simple nightshift runner with GitHub integration
+# Simple nightshift runner with GitHub integration - TEST VERSION (5 minutes)
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT_DIR"
 
 START_TIME=$(date +%s)
-MAX_DURATION=$((8 * 60 * 60))  # 8 hours in seconds
+MAX_DURATION=$((5 * 60))  # 5 minutes for testing
 PASS=1
 SESSION_ID="$(date +%Y%m%d-%H%M%S)"
 STATE_DIR="$ROOT_DIR/.git/nightshift/$SESSION_ID"
@@ -62,10 +62,14 @@ This file tracks what nightshift accomplished during this session.
 
 EOF
 
-echo "Nightshift session: $SESSION_ID"
+echo "╔════════════════════════════════════════════════════╗"
+echo "║         NIGHTSHIFT TEST RUN (5 minutes)           ║"
+echo "╚════════════════════════════════════════════════════╝"
+echo ""
+echo "Session ID: $SESSION_ID"
 echo "Review file: $REVIEW_FILE"
-echo "Starting nightshift at $(date)"
-echo "Will run for up to 8 hours"
+echo "Started: $(date)"
+echo "Duration: 5 minutes maximum"
 echo
 
 # Fetch GitHub issues at start
