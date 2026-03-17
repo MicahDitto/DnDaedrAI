@@ -5,7 +5,7 @@ import RelationshipManager from '@/Components/RelationshipManager.vue';
 import EntityInfoCard from '@/Components/Entity/EntityInfoCard.vue';
 import EntityImageCard from '@/Components/Entity/EntityImageCard.vue';
 import DmControlsCard from '@/Components/Entity/DmControlsCard.vue';
-import DetailSection from '@/Components/Entity/DetailSection.vue';
+import EditableDetailSection from '@/Components/Entity/EditableDetailSection.vue';
 import DeleteConfirmModal from '@/Components/Entity/DeleteConfirmModal.vue';
 import { ref } from 'vue';
 
@@ -178,23 +178,38 @@ const hasSecrets = !!props.item.content?.secrets;
                             @delete="showDeleteModal = true"
                         />
 
-                        <!-- Detail Sections -->
-                        <DetailSection
+                        <!-- Detail Sections (Inline Editable) -->
+                        <EditableDetailSection
                             title="Description"
                             :content="item.content?.description"
                             icon="description"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="item.slug"
+                            entity-type="item"
+                            field-name="description"
+                            :entity-data="item"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Properties & Abilities"
                             :content="item.content?.properties"
                             icon="properties"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="item.slug"
+                            entity-type="item"
+                            field-name="properties"
+                            :entity-data="item"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="History & Lore"
                             :content="item.content?.history"
                             icon="history"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="item.slug"
+                            entity-type="item"
+                            field-name="history"
+                            :entity-data="item"
                         />
 
                         <!-- DM Secrets (conditionally shown) -->
@@ -206,12 +221,17 @@ const hasSecrets = !!props.item.content?.secrets;
                             leave-from-class="opacity-100 translate-y-0"
                             leave-to-class="opacity-0 translate-y-2"
                         >
-                            <DetailSection
+                            <EditableDetailSection
                                 v-if="showSecrets"
                                 title="DM Secrets"
                                 :content="item.content?.secrets"
                                 icon="secret"
                                 variant="danger"
+                                :campaign-slug="campaign.slug"
+                                :entity-slug="item.slug"
+                                entity-type="item"
+                                field-name="secrets"
+                                :entity-data="item"
                             />
                         </Transition>
                     </div>
