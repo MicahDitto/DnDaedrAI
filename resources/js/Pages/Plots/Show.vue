@@ -5,7 +5,7 @@ import RelationshipManager from '@/Components/RelationshipManager.vue';
 import EntityInfoCard from '@/Components/Entity/EntityInfoCard.vue';
 import EntityImageCard from '@/Components/Entity/EntityImageCard.vue';
 import DmControlsCard from '@/Components/Entity/DmControlsCard.vue';
-import DetailSection from '@/Components/Entity/DetailSection.vue';
+import EditableDetailSection from '@/Components/Entity/EditableDetailSection.vue';
 import DeleteConfirmModal from '@/Components/Entity/DeleteConfirmModal.vue';
 import { ref } from 'vue';
 
@@ -211,29 +211,49 @@ const hasSecrets = !!props.plot.content?.secrets;
                             @delete="showDeleteModal = true"
                         />
 
-                        <!-- Detail Sections -->
-                        <DetailSection
+                        <!-- Detail Sections (Inline Editable) -->
+                        <EditableDetailSection
                             title="Description"
                             :content="plot.content?.description"
                             icon="description"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="plot.slug"
+                            entity-type="plot"
+                            field-name="description"
+                            :entity-data="plot"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Objectives"
                             :content="plot.content?.objectives"
                             icon="goals"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="plot.slug"
+                            entity-type="plot"
+                            field-name="objectives"
+                            :entity-data="plot"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Stakes"
                             :content="plot.content?.stakes"
                             icon="stakes"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="plot.slug"
+                            entity-type="plot"
+                            field-name="stakes"
+                            :entity-data="plot"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Current Progress"
                             :content="plot.content?.progress"
                             icon="progress"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="plot.slug"
+                            entity-type="plot"
+                            field-name="progress"
+                            :entity-data="plot"
                         />
 
                         <!-- DM Secrets (conditionally shown) -->
@@ -245,12 +265,17 @@ const hasSecrets = !!props.plot.content?.secrets;
                             leave-from-class="opacity-100 translate-y-0"
                             leave-to-class="opacity-0 translate-y-2"
                         >
-                            <DetailSection
+                            <EditableDetailSection
                                 v-if="showSecrets"
                                 title="DM Secrets"
                                 :content="plot.content?.secrets"
                                 icon="secret"
                                 variant="danger"
+                                :campaign-slug="campaign.slug"
+                                :entity-slug="plot.slug"
+                                entity-type="plot"
+                                field-name="secrets"
+                                :entity-data="plot"
                             />
                         </Transition>
                     </div>
