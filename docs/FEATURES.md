@@ -6,6 +6,10 @@ This document lists all features in DnDaedrAI, their current status, and impleme
 
 **Tracking:** This document is the feature source of truth. Implementation tasks are also tracked in [GitHub Project #4](https://github.com/users/MicahDitto/projects/4/views/8) for project management and automated workflows.
 
+**🎨 For UX Vision:** See [UI_REQUIREMENTS.md](./UI_REQUIREMENTS.md) for the 3-mode system design philosophy and future vision.
+
+**🔄 For Automated Workflow:** See [NIGHTSHIFT.md](./NIGHTSHIFT.md) for the automated development workflow.
+
 **Legend:**
 - ✅ Complete - Fully implemented and working
 - 🚧 Partial - Basic functionality exists, needs enhancement
@@ -15,7 +19,7 @@ This document lists all features in DnDaedrAI, their current status, and impleme
 **Workflow:**
 - Features marked 📋 Planned may have corresponding GitHub issues
 - Nightshift automation discovers tasks from this document and GitHub Project #4
-- See [docs/NIGHTSHIFT.md](./NIGHTSHIFT.md) for the automated development workflow
+- After completing a feature, update the status marker here
 
 ---
 
@@ -434,13 +438,13 @@ This document lists all features in DnDaedrAI, their current status, and impleme
 | Timeline View | Medium | Chronological events |
 | Map Integration | Low | Location mapping |
 
-### UX Improvements 📋
+### UX Improvements
 
-| Feature | Priority | Description |
-|---------|----------|-------------|
-| Inline Editing | High | Edit fields directly on Show pages without navigating away |
-| Reduce Navigation | High | Fewer clicks to perform common actions |
-| Unified Entity Layout | Medium | Consistent card/detail layout across all entity types |
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Inline Editing | ✅ | Edit fields directly on Show pages (implemented for Characters, Places, Items, Factions, Plots) |
+| Reduce Navigation | 🚧 | Fewer clicks to perform common actions (breadcrumbs complete, more improvements planned) |
+| Unified Entity Layout | 📋 | Consistent card/detail layout across all entity types |
 
 ---
 

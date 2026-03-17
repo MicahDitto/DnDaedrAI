@@ -1,5 +1,11 @@
 # UI Requirements & Vision Document
 
+**📊 For Implementation Status:** See [FEATURES.md](./FEATURES.md) for current completion status of all features.
+
+**🔄 For Automated Workflow:** See [NIGHTSHIFT.md](./NIGHTSHIFT.md) for the automated development workflow.
+
+---
+
 ## Overview
 
 This document defines the user experience vision for DnDaedrAI's three-mode system. The application follows a **connected flow** where Plan → Prep → Play represents a natural campaign lifecycle progression, with each mode building upon the previous.
@@ -102,18 +108,16 @@ This document defines the user experience vision for DnDaedrAI's three-mode syst
 
 ### Key Features
 
-#### 1. Campaign Dashboard (Current: Partial)
-**Status:** Exists but needs enhancement
+#### 1. Campaign Dashboard
 
-| Feature | Current | Target |
-|---------|---------|--------|
-| Stats Cards | ✅ Clickable cards | Add trend indicators |
-| Recent Activity | ✅ Basic list | Add activity type icons, time-relative dates |
-| Sessions List | ✅ Basic list | Add "Go to Prep" quick action |
-| Quick Actions | ✅ Add Character/Place | Add AI generation options |
+| Feature | Target Enhancement |
+|---------|-------------------|
+| Stats Cards | Add trend indicators |
+| Recent Activity | Add activity type icons, time-relative dates |
+| Sessions List | Add "Go to Prep" quick action |
+| Quick Actions | Add AI generation options |
 
-#### 2. World Graph Visualization (New)
-**Status:** Not started
+#### 2. World Graph Visualization
 
 - Interactive node-link diagram of campaign entities
 - Click nodes to view/edit entities
@@ -127,8 +131,7 @@ This document defines the user experience vision for DnDaedrAI's three-mode syst
 - Store layout positions per-user
 - Server-side relationship data already exists (edges table)
 
-#### 3. AI Content Generation (New)
-**Status:** Settings exist, generation not implemented
+#### 3. AI Content Generation
 
 | Generator | Input | Output |
 |-----------|-------|--------|
@@ -142,10 +145,9 @@ This document defines the user experience vision for DnDaedrAI's three-mode syst
 - "AI Assist" panel that can generate and fill fields
 - Review before accepting generated content
 
-#### 4. Entity Management (Current: Complete)
-**Status:** Full CRUD exists for all entity types
+#### 4. Entity Management
 
-**Enhancements Needed:**
+**Enhancement Opportunities:**
 - Bulk operations (select multiple, tag, delete)
 - Better empty states with guided actions
 - Inline editing for quick updates
@@ -220,8 +222,9 @@ This document defines the user experience vision for DnDaedrAI's three-mode syst
 
 ### Key Features
 
-#### 1. AI Copilot Chat (New - Core Feature)
-**Status:** Not started - This is the centerpiece of Play mode
+#### 1. AI Copilot Chat
+
+**The centerpiece of Play mode.**
 
 **Capabilities:**
 | Prompt Type | Example | AI Response |
@@ -246,8 +249,7 @@ This document defines the user experience vision for DnDaedrAI's three-mode syst
 - Regenerate option
 - Context indicator showing what AI "knows"
 
-#### 2. Quick Reference Panel (New)
-**Status:** Not started
+#### 2. Quick Reference Panel
 
 - Collapsible sidebar with pinned entities
 - Search that opens inline preview (not full navigation)
@@ -255,16 +257,14 @@ This document defines the user experience vision for DnDaedrAI's three-mode syst
 - Shows entity summary + key details
 - One-click to expand full details in modal
 
-#### 3. Scene Tracker (New)
-**Status:** Not started
+#### 3. Scene Tracker
 
 - Current location display
 - Active NPCs in scene
 - Relevant plot points
 - Automatically suggests based on location/NPCs
 
-#### 4. Live Session Notes (New)
-**Status:** Session notes exist but not live-capture
+#### 4. Live Session Notes
 
 - Quick-capture text box
 - Auto-timestamps entries
@@ -272,8 +272,7 @@ This document defines the user experience vision for DnDaedrAI's three-mode syst
 - Persists to session record
 - AI can summarize into recap post-session
 
-#### 5. Sidebar Collapse (Enhancement)
-**Status:** Sidebar exists, no collapse
+#### 5. Sidebar Collapse
 
 - Minimize sidebar to icons only in Play mode
 - Maximize screen real estate for AI chat
@@ -356,16 +355,14 @@ This document defines the user experience vision for DnDaedrAI's three-mode syst
 
 ### Key Features
 
-#### 1. Session Workspace (New)
-**Status:** Session CRUD exists, prep workspace does not
+#### 1. Session Workspace
 
 - Session-specific view with all prep materials
 - Select/link entities from campaign
 - Create scene outlines
 - Expected story beats (checkboxes)
 
-#### 2. Entity Staging (New)
-**Status:** Not started
+#### 2. Entity Staging
 
 - Pull entities from Plan mode
 - Create session-specific notes per entity
@@ -373,16 +370,14 @@ This document defines the user experience vision for DnDaedrAI's three-mode syst
 - "What might this NPC do?" preparation
 - Secret information to reveal
 
-#### 3. Scene Builder (New)
-**Status:** Not started
+#### 3. Scene Builder
 
 - Define expected scenes
 - Link location, NPCs, items per scene
 - Write boxed text / descriptions
 - Branch points for player choices
 
-#### 4. Start Session Flow (New)
-**Status:** Not started
+#### 4. Start Session Flow
 
 - "Start Session" button transitions to Play mode
 - Loads prepped entities into Play mode context

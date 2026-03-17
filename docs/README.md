@@ -1,5 +1,7 @@
 # DnDaedrAI
 
+**📚 Documentation Index:** See [INDEX.md](./INDEX.md) for a complete guide to navigating all documentation.
+
 A D&D campaign management application with AI-assisted content generation. Built for Dungeon Masters who want to organize their campaigns, track characters, manage world-building, and (soon) leverage AI to generate NPCs, encounters, and story content.
 
 ## Tech Stack

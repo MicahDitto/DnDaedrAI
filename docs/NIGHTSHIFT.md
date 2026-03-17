@@ -1,5 +1,11 @@
 # Nightshift Workflow Guide
 
+**📊 For Feature Status:** See [FEATURES.md](./FEATURES.md) for current completion status of all features.
+
+**🎨 For UX Vision:** See [UI_REQUIREMENTS.md](./UI_REQUIREMENTS.md) for the 3-mode system design philosophy.
+
+---
+
 ## Overview
 
 Nightshift is an automated development workflow that runs overnight to implement features, fix bugs, and make progress on planned work while you sleep. It discovers tasks from documentation and GitHub issues, implements them in isolated branches, and produces a comprehensive review document for morning approval.
