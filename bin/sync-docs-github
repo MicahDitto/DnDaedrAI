@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+
+ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+if [[ -z "${ROOT_DIR}" ]]; then
+  echo "Not inside a git repository."
+  exit 1
+fi
+
+cd "$ROOT_DIR"
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "GitHub CLI (gh) is not installed or not on PATH."
+  echo "Install with: brew install gh"
+  exit 1
+fi
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "jq is not installed or not on PATH."
+  echo "Install with: brew install jq"
+  exit 1
+fi
+
+FEATURES_FILE="docs/FEATURES.md"
+
+if [[ ! -f "$FEATURES_FILE" ]]; then
+  echo "FEATURES.md not found at: $FEATURES_FILE"
+  exit 1
+fi
+
+echo "=== GitHub ↔ FEATURES.md Sync Check ==="
+echo
+echo "Checking consistency between GitHub Project #4 and FEATURES.md..."
+echo
+
+# Fetch GitHub Project issues
+echo "Fetching issues from GitHub Project #4..."
+GITHUB_ISSUES=$(gh project item-list 4 --owner "@me" --format json 2>/dev/null || echo '{"items":[]}')
+
+# Extract issue titles and numbers
+ISSUE_COUNT=$(echo "$GITHUB_ISSUES" | jq '.items | length')
+echo "Found $ISSUE_COUNT issues in GitHub Project #4"
+echo
+
+# Read FEATURES.md and extract planned features
+echo "Extracting planned features from FEATURES.md..."
+PLANNED_FEATURES=$(grep -E '^\| .* \| 📋' "$FEATURES_FILE" | cut -d'|' -f2 | sed 's/^ *//;s/ *$//' || echo "")
+
+if [[ -z "$PLANNED_FEATURES" ]]; then
+  echo "No planned features (📋) found in FEATURES.md"
+else
+  PLANNED_COUNT=$(echo "$PLANNED_FEATURES" | wc -l | tr -d ' ')
+  echo "Found $PLANNED_COUNT planned features in FEATURES.md"
+fi
+echo
+
+# Generate report
+echo "=== Sync Report ==="
+echo
+
+# Check for GitHub issues not mentioned in FEATURES.md
+echo "## GitHub Issues Not in FEATURES.md"
+echo
+
+if [[ "$ISSUE_COUNT" -eq 0 ]]; then
+  echo "No issues in GitHub Project #4"
+else
+  MISSING_IN_FEATURES=0
+
+  echo "$GITHUB_ISSUES" | jq -r '.items[] | "\(.content.number)|\(.content.title)"' | while IFS='|' read -r number title; do
+    # Check if this issue title appears in FEATURES.md
+    if ! grep -qi "$title" "$FEATURES_FILE" 2>/dev/null; then
+      echo "  - Issue #$number: $title"
+      MISSING_IN_FEATURES=$((MISSING_IN_FEATURES + 1))
+    fi
+  done
+
+  if [[ $MISSING_IN_FEATURES -eq 0 ]]; then
+    echo "  ✅ All GitHub issues are documented in FEATURES.md"
+  fi
+fi
+
+echo
+
+# Check for planned features without GitHub issues
+echo "## Planned Features Without GitHub Issues"
+echo
+
+if [[ -z "$PLANNED_FEATURES" ]]; then
+  echo "  No planned features in FEATURES.md"
+else
+  MISSING_IN_GITHUB=0
+
+  echo "$PLANNED_FEATURES" | while read -r feature; do
+    # Skip empty lines
+    [[ -z "$feature" ]] && continue
+
+    # Check if any GitHub issue title matches this feature
+    FOUND=false
+    if [[ "$ISSUE_COUNT" -gt 0 ]]; then
+      while read -r issue_title; do
+        if echo "$issue_title" | grep -qi "$feature" 2>/dev/null; then
+          FOUND=true
+          break
+        fi
+      done < <(echo "$GITHUB_ISSUES" | jq -r '.items[].content.title')
+    fi
+
+    if [[ "$FOUND" == "false" ]]; then
+      echo "  - $feature"
+      MISSING_IN_GITHUB=$((MISSING_IN_GITHUB + 1))
+    fi
+  done
+
+  if [[ $MISSING_IN_GITHUB -eq 0 ]]; then
+    echo "  ✅ All planned features have corresponding GitHub issues"
+  fi
+fi
+
+echo
+
+# Summary
+echo "=== Summary ==="
+echo
+echo "GitHub Project #4: $ISSUE_COUNT issues"
+if [[ -n "$PLANNED_FEATURES" ]]; then
+  echo "FEATURES.md: $PLANNED_COUNT planned features"
+else
+  echo "FEATURES.md: 0 planned features"
+fi
+echo
+echo "Recommendations:"
+echo "1. Create GitHub issues for planned features without them"
+echo "2. Add FEATURES.md entries for GitHub issues"
+echo "3. Keep both sources in sync for best nightshift results"
+echo
+echo "See: docs/NIGHTSHIFT.md for automated workflow details"

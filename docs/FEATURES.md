@@ -4,11 +4,18 @@
 
 This document lists all features in DnDaedrAI, their current status, and implementation details.
 
+**Tracking:** This document is the feature source of truth. Implementation tasks are also tracked in [GitHub Project #4](https://github.com/users/MicahDitto/projects/4/views/8) for project management and automated workflows.
+
 **Legend:**
 - ✅ Complete - Fully implemented and working
 - 🚧 Partial - Basic functionality exists, needs enhancement
 - 📋 Planned - In the roadmap, not yet started
 - ❌ Placeholder - UI exists but no functionality
+
+**Workflow:**
+- Features marked 📋 Planned may have corresponding GitHub issues
+- Nightshift automation discovers tasks from this document and GitHub Project #4
+- See [docs/NIGHTSHIFT.md](./NIGHTSHIFT.md) for the automated development workflow
 
 ---
 

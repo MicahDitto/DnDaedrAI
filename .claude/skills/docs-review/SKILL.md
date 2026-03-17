@@ -42,7 +42,25 @@ After showing the audit results:
 3. Add new sections for undocumented features
 4. Remove or archive obsolete entries
 
-### Phase 3: Design Consultation
+### Phase 3: GitHub Integration Check
+
+Check consistency with GitHub Project #4:
+
+1. Run the sync tool: `bin/sync-docs-github`
+2. Review the output for:
+   - GitHub issues not documented in FEATURES.md
+   - Planned features without corresponding GitHub issues
+3. Suggest creating GitHub issues for planned features
+4. Suggest adding FEATURES.md entries for undocumented issues
+5. Verify that feature priorities align with GitHub Project status
+
+**GitHub Workflow:**
+- Planned features (📋) should have GitHub issues for tracking
+- GitHub issues should reference related FEATURES.md entries
+- Completed features should have closed GitHub issues
+- Design decisions from nightshift create "design-decision" labeled issues
+
+### Phase 4: Design Consultation
 
 Engage in a conversation about the app direction:
 
@@ -58,14 +76,16 @@ Engage in a conversation about the app direction:
 - Add notes about user preferences
 - Flag features for removal if no longer wanted
 - Identify features that should be broken into smaller tasks
+- Create GitHub issues for high-priority planned features
 
-### Phase 4: Nightshift Alignment
+### Phase 5: Nightshift Alignment
 
 Ensure task extraction will work correctly:
 1. Verify placeholder features (❌) have clear, actionable descriptions
 2. Check that planned features (📋) are scoped for single sessions
 3. Suggest breaking down large features into implementable chunks
 4. Confirm the Technical Debt section has concrete tasks
+5. Verify GitHub issues have clear descriptions for nightshift to use
 
 ## Feature Detection Patterns
 
@@ -112,6 +132,11 @@ After a docs-review session:
 2. All ❌ and 📋 items should be extractable as tasks
 3. Priorities should match user's current interests
 4. No completed features should appear as pending work
+5. GitHub issues should be in sync with FEATURES.md
+6. High-priority planned features should have GitHub issues created
+7. Run `bin/sync-docs-github` to verify consistency
+
+**See:** [docs/NIGHTSHIFT.md](../../../docs/NIGHTSHIFT.md) for the automated workflow
 
 ## Output
 
