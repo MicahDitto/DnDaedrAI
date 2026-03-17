@@ -5,7 +5,7 @@ import RelationshipManager from '@/Components/RelationshipManager.vue';
 import EntityInfoCard from '@/Components/Entity/EntityInfoCard.vue';
 import EntityImageCard from '@/Components/Entity/EntityImageCard.vue';
 import DmControlsCard from '@/Components/Entity/DmControlsCard.vue';
-import DetailSection from '@/Components/Entity/DetailSection.vue';
+import EditableDetailSection from '@/Components/Entity/EditableDetailSection.vue';
 import DeleteConfirmModal from '@/Components/Entity/DeleteConfirmModal.vue';
 import { ref } from 'vue';
 
@@ -226,35 +226,60 @@ const hasSecrets = !!props.faction.content?.secrets;
                             @delete="showDeleteModal = true"
                         />
 
-                        <!-- Detail Sections -->
-                        <DetailSection
+                        <!-- Detail Sections (Inline Editable) -->
+                        <EditableDetailSection
                             title="Description"
                             :content="faction.content?.description"
                             icon="description"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="faction.slug"
+                            entity-type="faction"
+                            field-name="description"
+                            :entity-data="faction"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Goals & Objectives"
                             :content="faction.content?.goals"
                             icon="goals"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="faction.slug"
+                            entity-type="faction"
+                            field-name="goals"
+                            :entity-data="faction"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Methods & Operations"
                             :content="faction.content?.methods"
                             icon="methods"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="faction.slug"
+                            entity-type="faction"
+                            field-name="methods"
+                            :entity-data="faction"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Resources & Assets"
                             :content="faction.content?.resources"
                             icon="resources"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="faction.slug"
+                            entity-type="faction"
+                            field-name="resources"
+                            :entity-data="faction"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="History"
                             :content="faction.content?.history"
                             icon="history"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="faction.slug"
+                            entity-type="faction"
+                            field-name="history"
+                            :entity-data="faction"
                         />
 
                         <!-- DM Secrets (conditionally shown) -->
@@ -266,12 +291,17 @@ const hasSecrets = !!props.faction.content?.secrets;
                             leave-from-class="opacity-100 translate-y-0"
                             leave-to-class="opacity-0 translate-y-2"
                         >
-                            <DetailSection
+                            <EditableDetailSection
                                 v-if="showSecrets"
                                 title="DM Secrets"
                                 :content="faction.content?.secrets"
                                 icon="secret"
                                 variant="danger"
+                                :campaign-slug="campaign.slug"
+                                :entity-slug="faction.slug"
+                                entity-type="faction"
+                                field-name="secrets"
+                                :entity-data="faction"
                             />
                         </Transition>
                     </div>
