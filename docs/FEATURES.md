@@ -394,16 +394,45 @@ This document lists all features in DnDaedrAI, their current status, and impleme
 
 ---
 
+### History & Timeline Management ✅
+
+| Feature | Status | Details |
+|---------|--------|---------|
+| Create Timeline | ✅ | Full form with all fields |
+| List Timelines | ✅ | Grid with subtype badges |
+| View Timeline | ✅ | Details + relationships |
+| Edit Timeline | ✅ | All fields editable |
+| Delete Timeline | ✅ | With confirmation |
+| Timeline Subtypes | ✅ | 8 types for different eras |
+| Secret Timelines | ✅ | is_secret flag, eye icon |
+| Confidence Levels | ✅ | Canon, Likely, Rumor, Unknown |
+
+**Timeline Subtypes:**
+- age (Age/Era)
+- epoch
+- dynasty
+- period (Historical Period)
+- event (Major Event)
+- calendar (Calendar System)
+- chronicle
+- annals
+
+**Content Fields:**
+- Description
+- Start Date
+- End Date
+- Key Events
+- Duration
+- Significance
+- Secrets
+
+**Files:** `NodeController.php` (timelinesX methods), `Pages/Timelines/*`
+
+---
+
 ## Placeholder Features
 
-### Worldbuilding Section 🚧
-
-| Feature | Status | Location |
-|---------|--------|----------|
-| History & Timeline | ❌ | Sidebar link → # (placeholder) |
-| Lore & Legends | ✅ | Full CRUD implemented |
-| Religions | ✅ | Full CRUD implemented |
-| Magic System | ✅ | Full CRUD implemented |
+This section is now empty - all worldbuilding features are complete! 🎉
 
 ---
 
