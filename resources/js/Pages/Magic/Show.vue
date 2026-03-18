@@ -5,7 +5,7 @@ import RelationshipManager from '@/Components/RelationshipManager.vue';
 import EntityInfoCard from '@/Components/Entity/EntityInfoCard.vue';
 import EntityImageCard from '@/Components/Entity/EntityImageCard.vue';
 import DmControlsCard from '@/Components/Entity/DmControlsCard.vue';
-import DetailSection from '@/Components/Entity/DetailSection.vue';
+import EditableDetailSection from '@/Components/Entity/EditableDetailSection.vue';
 import DeleteConfirmModal from '@/Components/Entity/DeleteConfirmModal.vue';
 import { ref } from 'vue';
 
@@ -174,58 +174,103 @@ const hasSecrets = !!props.magicSystem.content?.secrets;
                         />
 
                         <!-- Detail Sections -->
-                        <DetailSection
+                        <EditableDetailSection
                             title="Description"
                             :content="magicSystem.content?.description"
                             icon="description"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="magicSystem.slug"
+                            entity-type="magic_system"
+                            field-name="description"
+                            :entity-data="magicSystem"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Source of Power"
                             :content="magicSystem.content?.source"
                             icon="source"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="magicSystem.slug"
+                            entity-type="magic_system"
+                            field-name="source"
+                            :entity-data="magicSystem"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Abilities & Powers"
                             :content="magicSystem.content?.abilities"
                             icon="abilities"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="magicSystem.slug"
+                            entity-type="magic_system"
+                            field-name="abilities"
+                            :entity-data="magicSystem"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Limitations & Costs"
                             :content="magicSystem.content?.limitations"
                             icon="limitations"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="magicSystem.slug"
+                            entity-type="magic_system"
+                            field-name="limitations"
+                            :entity-data="magicSystem"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Components & Requirements"
                             :content="magicSystem.content?.components"
                             icon="components"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="magicSystem.slug"
+                            entity-type="magic_system"
+                            field-name="components"
+                            :entity-data="magicSystem"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Practitioners"
                             :content="magicSystem.content?.practitioners"
                             icon="practitioners"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="magicSystem.slug"
+                            entity-type="magic_system"
+                            field-name="practitioners"
+                            :entity-data="magicSystem"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Learning & Training"
                             :content="magicSystem.content?.learning"
                             icon="learning"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="magicSystem.slug"
+                            entity-type="magic_system"
+                            field-name="learning"
+                            :entity-data="magicSystem"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="History"
                             :content="magicSystem.content?.history"
                             icon="history"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="magicSystem.slug"
+                            entity-type="magic_system"
+                            field-name="history"
+                            :entity-data="magicSystem"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Social Perception"
                             :content="magicSystem.content?.social_perception"
                             icon="social"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="magicSystem.slug"
+                            entity-type="magic_system"
+                            field-name="social_perception"
+                            :entity-data="magicSystem"
                         />
 
                         <!-- DM Secrets (conditionally shown) -->
@@ -237,12 +282,17 @@ const hasSecrets = !!props.magicSystem.content?.secrets;
                             leave-from-class="opacity-100 translate-y-0"
                             leave-to-class="opacity-0 translate-y-2"
                         >
-                            <DetailSection
+                            <EditableDetailSection
                                 v-if="showSecrets"
                                 title="Hidden Knowledge"
                                 :content="magicSystem.content?.secrets"
                                 icon="secret"
                                 variant="danger"
+                                :campaign-slug="campaign.slug"
+                                :entity-slug="magicSystem.slug"
+                                entity-type="magic_system"
+                                field-name="secrets"
+                                :entity-data="magicSystem"
                             />
                         </Transition>
                     </div>

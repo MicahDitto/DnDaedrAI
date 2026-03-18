@@ -5,7 +5,7 @@ import RelationshipManager from '@/Components/RelationshipManager.vue';
 import EntityInfoCard from '@/Components/Entity/EntityInfoCard.vue';
 import EntityImageCard from '@/Components/Entity/EntityImageCard.vue';
 import DmControlsCard from '@/Components/Entity/DmControlsCard.vue';
-import DetailSection from '@/Components/Entity/DetailSection.vue';
+import EditableDetailSection from '@/Components/Entity/EditableDetailSection.vue';
 import DeleteConfirmModal from '@/Components/Entity/DeleteConfirmModal.vue';
 import { ref } from 'vue';
 
@@ -201,64 +201,114 @@ const hasSecrets = !!props.religion.content?.secrets;
                         />
 
                         <!-- Detail Sections -->
-                        <DetailSection
+                        <EditableDetailSection
                             title="Description"
                             :content="religion.content?.description"
                             icon="description"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="description"
+                            :entity-data="religion"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Core Beliefs"
                             :content="religion.content?.beliefs"
                             icon="beliefs"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="beliefs"
+                            :entity-data="religion"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Practices & Rituals"
                             :content="religion.content?.practices"
                             icon="practices"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="practices"
+                            :entity-data="religion"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Hierarchy & Structure"
                             :content="religion.content?.hierarchy"
                             icon="hierarchy"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="hierarchy"
+                            :entity-data="religion"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Sacred Symbols"
                             :content="religion.content?.symbols"
                             icon="symbols"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="symbols"
+                            :entity-data="religion"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Holy Sites"
                             :content="religion.content?.holy_sites"
                             icon="points"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="holy_sites"
+                            :entity-data="religion"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Taboos & Forbidden Practices"
                             :content="religion.content?.taboos"
                             icon="taboos"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="taboos"
+                            :entity-data="religion"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Afterlife Beliefs"
                             :content="religion.content?.afterlife"
                             icon="afterlife"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="afterlife"
+                            :entity-data="religion"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="History"
                             :content="religion.content?.history"
                             icon="history"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="history"
+                            :entity-data="religion"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Relations with Other Religions"
                             :content="religion.content?.relationships"
                             icon="relationships"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="religion.slug"
+                            entity-type="religion"
+                            field-name="relationships"
+                            :entity-data="religion"
                         />
 
                         <!-- DM Secrets (conditionally shown) -->
@@ -270,12 +320,17 @@ const hasSecrets = !!props.religion.content?.secrets;
                             leave-from-class="opacity-100 translate-y-0"
                             leave-to-class="opacity-0 translate-y-2"
                         >
-                            <DetailSection
+                            <EditableDetailSection
                                 v-if="showSecrets"
                                 title="DM Secrets"
                                 :content="religion.content?.secrets"
                                 icon="secret"
                                 variant="danger"
+                                :campaign-slug="campaign.slug"
+                                :entity-slug="religion.slug"
+                                entity-type="religion"
+                                field-name="secrets"
+                                :entity-data="religion"
                             />
                         </Transition>
                     </div>

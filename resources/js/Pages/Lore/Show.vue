@@ -5,7 +5,7 @@ import RelationshipManager from '@/Components/RelationshipManager.vue';
 import EntityInfoCard from '@/Components/Entity/EntityInfoCard.vue';
 import EntityImageCard from '@/Components/Entity/EntityImageCard.vue';
 import DmControlsCard from '@/Components/Entity/DmControlsCard.vue';
-import DetailSection from '@/Components/Entity/DetailSection.vue';
+import EditableDetailSection from '@/Components/Entity/EditableDetailSection.vue';
 import DeleteConfirmModal from '@/Components/Entity/DeleteConfirmModal.vue';
 import { ref } from 'vue';
 
@@ -171,34 +171,59 @@ const hasSecrets = !!props.lore.content?.secrets || !!props.lore.content?.truth_
                         />
 
                         <!-- Detail Sections -->
-                        <DetailSection
+                        <EditableDetailSection
                             title="The Story"
                             :content="lore.content?.narrative"
                             icon="narrative"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="lore.slug"
+                            entity-type="lore"
+                            field-name="narrative"
+                            :entity-data="lore"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Origin"
                             :content="lore.content?.origin"
                             icon="origin"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="lore.slug"
+                            entity-type="lore"
+                            field-name="origin"
+                            :entity-data="lore"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Variations"
                             :content="lore.content?.variations"
                             icon="variations"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="lore.slug"
+                            entity-type="lore"
+                            field-name="variations"
+                            :entity-data="lore"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Cultural Significance"
                             :content="lore.content?.cultural_significance"
                             icon="culture"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="lore.slug"
+                            entity-type="lore"
+                            field-name="cultural_significance"
+                            :entity-data="lore"
                         />
 
-                        <DetailSection
+                        <EditableDetailSection
                             title="Known By"
                             :content="lore.content?.known_by"
                             icon="known_by"
+                            :campaign-slug="campaign.slug"
+                            :entity-slug="lore.slug"
+                            entity-type="lore"
+                            field-name="known_by"
+                            :entity-data="lore"
                         />
 
                         <!-- DM Secrets (conditionally shown) -->
@@ -211,17 +236,27 @@ const hasSecrets = !!props.lore.content?.secrets || !!props.lore.content?.truth_
                             leave-to-class="opacity-0 translate-y-2"
                         >
                             <div v-if="showSecrets" class="space-y-6">
-                                <DetailSection
+                                <EditableDetailSection
                                     title="Truth Level"
                                     :content="lore.content?.truth_level"
                                     icon="truth"
                                     variant="danger"
+                                    :campaign-slug="campaign.slug"
+                                    :entity-slug="lore.slug"
+                                    entity-type="lore"
+                                    field-name="truth_level"
+                                    :entity-data="lore"
                                 />
-                                <DetailSection
+                                <EditableDetailSection
                                     title="Hidden Truths"
                                     :content="lore.content?.secrets"
                                     icon="secret"
                                     variant="danger"
+                                    :campaign-slug="campaign.slug"
+                                    :entity-slug="lore.slug"
+                                    entity-type="lore"
+                                    field-name="secrets"
+                                    :entity-data="lore"
                                 />
                             </div>
                         </Transition>
