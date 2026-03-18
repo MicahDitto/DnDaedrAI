@@ -235,6 +235,24 @@ Route::middleware('auth')->group(function () {
         ->name('campaigns.magic.destroy');
     Route::delete('/campaigns/{campaignSlug}/magic/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
         ->name('campaigns.magic.images.destroy');
+
+    // Timeline routes (within a campaign)
+    Route::get('/campaigns/{campaignSlug}/timelines', [NodeController::class, 'timelinesIndex'])
+        ->name('campaigns.timelines.index');
+    Route::get('/campaigns/{campaignSlug}/timelines/create', [NodeController::class, 'timelinesCreate'])
+        ->name('campaigns.timelines.create');
+    Route::post('/campaigns/{campaignSlug}/timelines', [NodeController::class, 'timelinesStore'])
+        ->name('campaigns.timelines.store');
+    Route::get('/campaigns/{campaignSlug}/timelines/{nodeSlug}', [NodeController::class, 'timelinesShow'])
+        ->name('campaigns.timelines.show');
+    Route::get('/campaigns/{campaignSlug}/timelines/{nodeSlug}/edit', [NodeController::class, 'timelinesEdit'])
+        ->name('campaigns.timelines.edit');
+    Route::put('/campaigns/{campaignSlug}/timelines/{nodeSlug}', [NodeController::class, 'timelinesUpdate'])
+        ->name('campaigns.timelines.update');
+    Route::delete('/campaigns/{campaignSlug}/timelines/{nodeSlug}', [NodeController::class, 'timelinesDestroy'])
+        ->name('campaigns.timelines.destroy');
+    Route::delete('/campaigns/{campaignSlug}/timelines/{nodeSlug}/images', [NodeController::class, 'destroyImage'])
+        ->name('campaigns.timelines.images.destroy');
 });
 
 require __DIR__.'/auth.php';

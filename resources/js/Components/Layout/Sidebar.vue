@@ -114,7 +114,8 @@ const navItems = computed(() => {
                 { label: '+ New Religion', href: slug ? route('campaigns.religions.create', slug) : '#', isAction: true },
                 { label: 'Magic Systems', href: slug ? route('campaigns.magic.index', slug) : '#' },
                 { label: '+ New Magic', href: slug ? route('campaigns.magic.create', slug) : '#', isAction: true },
-                { label: 'History & Timeline', href: '#' },
+                { label: 'History & Timeline', href: slug ? route('campaigns.timelines.index', slug) : '#' },
+                { label: '+ New Timeline', href: slug ? route('campaigns.timelines.create', slug) : '#', isAction: true },
             ],
         },
     ];

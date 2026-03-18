@@ -133,6 +133,11 @@ class Node extends Model
         return $query->ofType('magic_system');
     }
 
+    public function scopeTimelines($query)
+    {
+        return $query->ofType('timeline');
+    }
+
     public function scopeVisible($query)
     {
         return $query->where('is_secret', false);

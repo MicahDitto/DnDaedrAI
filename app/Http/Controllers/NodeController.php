@@ -94,6 +94,16 @@ class NodeController extends Controller
                 'primal_magic' => 'Primal Magic',
                 'forbidden' => 'Forbidden',
             ],
+            'timeline' => [
+                'age' => 'Age/Era',
+                'epoch' => 'Epoch',
+                'dynasty' => 'Dynasty',
+                'period' => 'Historical Period',
+                'event' => 'Major Event',
+                'calendar' => 'Calendar System',
+                'chronicle' => 'Chronicle',
+                'annals' => 'Annals',
+            ],
             default => [],
         };
     }
@@ -2360,6 +2370,164 @@ class NodeController extends Controller
 
         return redirect()->route('campaigns.magic.index', $campaign->slug)
             ->with('success', 'Magic system deleted successfully.');
+    }
+
+    // ==================== Timeline Methods ====================
+
+    public function timelinesIndex(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $timelines = $campaign->nodes()
+            ->timelines()
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Timelines/Index', [
+            'campaign' => $campaign,
+            'timelines' => $timelines,
+            'subtypes' => $this->getSubtypes('timeline'),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'timelines'),
+        ]);
+    }
+
+    public function timelinesCreate(string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        return Inertia::render('Timelines/Create', [
+            'campaign' => $campaign,
+            'subtypes' => $this->getSubtypes('timeline'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'timelines', 'Create'),
+        ]);
+    }
+
+    public function timelinesStore(Request $request, string $campaignSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('timeline'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.start_date' => 'nullable|string',
+            'content.end_date' => 'nullable|string',
+            'content.key_events' => 'nullable|string',
+            'content.duration' => 'nullable|string',
+            'content.significance' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $node = $campaign->nodes()->create([
+            'type' => 'timeline',
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        return redirect()->route('campaigns.timelines.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $node->slug,
+        ])->with('success', 'Timeline created successfully.');
+    }
+
+    public function timelinesShow(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $timeline = $campaign->nodes()
+            ->timelines()
+            ->where('slug', $nodeSlug)
+            ->with(['tags', 'outgoingEdges.targetNode', 'incomingEdges.sourceNode'])
+            ->firstOrFail();
+
+        return Inertia::render('Timelines/Show', [
+            'campaign' => $campaign,
+            'timeline' => $timeline,
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'timelines', $timeline->name),
+        ]);
+    }
+
+    public function timelinesEdit(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $timeline = $campaign->nodes()
+            ->timelines()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        return Inertia::render('Timelines/Edit', [
+            'campaign' => $campaign,
+            'timeline' => $timeline,
+            'subtypes' => $this->getSubtypes('timeline'),
+            'confidenceLevels' => $this->getConfidenceLevels(),
+            'breadcrumbs' => $this->makeBreadcrumbs($campaign, 'timelines', $timeline->name, 'Edit'),
+        ]);
+    }
+
+    public function timelinesUpdate(Request $request, string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $timeline = $campaign->nodes()
+            ->timelines()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'subtype' => 'required|string|in:' . implode(',', array_keys($this->getSubtypes('timeline'))),
+            'summary' => 'nullable|string|max:500',
+            'content' => 'nullable|array',
+            'content.description' => 'nullable|string',
+            'content.start_date' => 'nullable|string',
+            'content.end_date' => 'nullable|string',
+            'content.key_events' => 'nullable|string',
+            'content.duration' => 'nullable|string',
+            'content.significance' => 'nullable|string',
+            'content.secrets' => 'nullable|string',
+            'confidence' => 'required|string|in:' . implode(',', array_keys($this->getConfidenceLevels())),
+            'is_secret' => 'boolean',
+        ]);
+
+        $timeline->update([
+            'subtype' => $validated['subtype'],
+            'name' => $validated['name'],
+            'slug' => Str::slug($validated['name']),
+            'summary' => $validated['summary'] ?? null,
+            'content' => $validated['content'] ?? [],
+            'confidence' => $validated['confidence'],
+            'is_secret' => $validated['is_secret'] ?? false,
+        ]);
+
+        return redirect()->route('campaigns.timelines.show', [
+            'campaignSlug' => $campaign->slug,
+            'nodeSlug' => $timeline->slug,
+        ])->with('success', 'Timeline updated successfully.');
+    }
+
+    public function timelinesDestroy(string $campaignSlug, string $nodeSlug)
+    {
+        $campaign = $this->getCampaign($campaignSlug);
+
+        $timeline = $campaign->nodes()
+            ->timelines()
+            ->where('slug', $nodeSlug)
+            ->firstOrFail();
+
+        $timeline->delete();
+
+        return redirect()->route('campaigns.timelines.index', $campaign->slug)
+            ->with('success', 'Timeline deleted successfully.');
     }
 
     /**
