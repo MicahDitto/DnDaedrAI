@@ -6,6 +6,34 @@ set -Eeuo pipefail
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 cd "$ROOT_DIR"
 
+# Parse command line arguments
+PRIORITY="github"  # Default: prioritize GitHub issues
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --priority=*)
+      PRIORITY="${1#*=}"
+      shift
+      ;;
+    --priority)
+      PRIORITY="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown option: $1"
+      echo "Usage: $0 [--priority=github|docs]"
+      exit 1
+      ;;
+  esac
+done
+
+# Validate priority value
+if [[ "$PRIORITY" != "github" ]] && [[ "$PRIORITY" != "docs" ]]; then
+  echo "Invalid priority: $PRIORITY"
+  echo "Valid options: github, docs"
+  exit 1
+fi
+
 START_TIME=$(date +%s)
 MAX_DURATION=$((8 * 60 * 60))  # 8 hours in seconds
 PASS=1
@@ -66,6 +94,7 @@ echo "Nightshift session: $SESSION_ID"
 echo "Review file: $REVIEW_FILE"
 echo "Starting nightshift at $(date)"
 echo "Will run for up to 8 hours"
+echo "Task priority: $PRIORITY"
 echo
 
 # Fetch GitHub issues at start
@@ -105,18 +134,33 @@ while true; do
   # Get latest commit before running Claude
   BEFORE_COMMIT=$(git rev-parse HEAD 2>/dev/null || echo "")
 
-  # Build prompt with GitHub integration
-  PROMPT="Use /design-md-tasks to find and work on ONE task from the docs or GitHub Project #4.
+  # Build prompt based on priority
+  if [[ "$PRIORITY" == "github" ]]; then
+    PROMPT="Use /design-md-tasks to find and work on ONE task from GitHub Project #4 or the docs.
 
 When choosing what to work on:
-1. Check GitHub Project #4 for 'Todo' issues: https://github.com/users/MicahDitto/projects/4
-2. Check FEATURES.md for items marked 📋 Planned
-3. Prioritize GitHub issues first (they're externally tracked)
+1. **Prioritize GitHub Project #4** for 'Todo' issues: https://github.com/users/MicahDitto/projects/4
+2. Check FEATURES.md for items marked 📋 Planned (if no GitHub issues available)
+3. Focus on GitHub issues first - they're externally tracked and often represent bugs or user requests
 
 When you commit your work:
 - If working on a GitHub issue, include 'Fixes #123' or 'Closes #123' in the commit message
 - Use a clear commit message describing what you accomplished
 - Commit when done, even if partially complete"
+  else
+    PROMPT="Use /design-md-tasks to find and work on ONE task from FEATURES.md or other documentation.
+
+When choosing what to work on:
+1. **Prioritize FEATURES.md** items marked 📋 Planned
+2. Check other documentation (UI_REQUIREMENTS.md, etc.) for planned features
+3. Check GitHub Project #4 for 'Todo' issues (if no doc tasks available): https://github.com/users/MicahDitto/projects/4
+4. Focus on documentation-driven feature development
+
+When you commit your work:
+- If working on a GitHub issue, include 'Fixes #123' or 'Closes #123' in the commit message
+- Use a clear commit message describing what you accomplished
+- Commit when done, even if partially complete"
+  fi
 
   # Run one task (no timeout - let it run as long as needed)
   claude -p --dangerously-skip-permissions "$PROMPT" || echo "Claude failed"

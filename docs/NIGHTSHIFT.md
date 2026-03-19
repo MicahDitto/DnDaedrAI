@@ -19,7 +19,48 @@ Nightshift is an automated development workflow that runs overnight to implement
 
 ## Quick Start
 
-### Basic Usage
+### Basic Usage (Simple Version)
+
+The recommended approach is using `bin/nightshift-simple`, which commits directly to main and includes GitHub integration:
+
+```bash
+# Run nightshift with default priority (GitHub issues first)
+bin/nightshift-simple
+```
+
+**Task Prioritization:**
+
+Control which tasks nightshift focuses on using the `--priority` flag:
+
+```bash
+# Prioritize GitHub Project #4 issues (default)
+bin/nightshift-simple --priority=github
+
+# Prioritize FEATURES.md documentation tasks
+bin/nightshift-simple --priority=docs
+```
+
+- `--priority=github`: Checks GitHub Project #4 for "Todo" issues first, then falls back to FEATURES.md
+- `--priority=docs`: Checks FEATURES.md for 📋 Planned features first, then falls back to GitHub issues
+
+**Running in tmux for Long Sessions:**
+
+For overnight runs, use tmux to keep the session active:
+
+```bash
+# Start new tmux session
+tmux new -s nightshift
+
+# Inside tmux, run nightshift
+bin/nightshift-simple
+
+# Detach from tmux: Ctrl+b, then d
+# Reattach later: tmux attach -t nightshift
+```
+
+### Advanced Usage (Full Version)
+
+The full branching version creates isolated branches for each task:
 
 Run nightshift with default settings (10 iterations):
 
@@ -43,8 +84,9 @@ bin/nightshift --iterations 20
 
 - Clean working directory (commit or stash changes first)
 - Claude CLI installed and authenticated
-- Python 3 available
+- Python 3 available (for full version)
 - GitHub CLI (`gh`) installed (optional, for GitHub integration)
+- tmux installed (recommended for long-running sessions)
 
 ## How Nightshift Works
 
@@ -198,16 +240,30 @@ Nightshift integrates with [GitHub Project #4](https://github.com/users/MicahDit
 **Task Discovery:**
 - Fetches issues with status "Todo"
 - Converts them to nightshift tasks
-- Prioritizes GitHub issues over Markdown tasks
+- Priority controlled by `--priority` flag (default: GitHub first)
+
+**Task Prioritization:**
+
+Use the `--priority` flag to control task selection:
+
+```bash
+# Default: Check GitHub first, then FEATURES.md
+bin/nightshift-simple --priority=github
+
+# Alternative: Check FEATURES.md first, then GitHub
+bin/nightshift-simple --priority=docs
+```
+
+**Priority Behavior:**
+- `--priority=github`: "I want to focus on bugs and user-reported issues from GitHub"
+- `--priority=docs`: "I want to focus on planned feature development from documentation"
+
+Both modes check both sources - the flag just controls which is prioritized.
 
 **Issue Closing:**
-- When a GitHub-sourced task completes, the issue is automatically closed
-- A comment is added with link to the branch and review doc
-
-**Design Questions:**
-- When nightshift needs human input, it creates a new issue
-- Issue is labeled "design-decision" and assigned to you
-- Includes context, the question, and links to relevant code
+- When a task with a GitHub issue reference completes, the issue is automatically closed
+- If commit message includes `Fixes #123` or `Closes #123`, that issue is closed
+- A comment is added with commit details and session ID
 
 ### Branch Naming
 
@@ -281,19 +337,26 @@ bin/nightshift --iterations 5
 
 If GitHub CLI is not available or you don't have network access, nightshift automatically falls back to Markdown-only task discovery.
 
-### Emergency Mode
+### Simple vs. Full Version
 
-If the full nightshift script has issues, use the simple version:
+**bin/nightshift-simple** (Recommended):
+- ✅ Commits directly to `main` (immediate integration)
+- ✅ Produces comprehensive review documents
+- ✅ Integrates with GitHub Project #4
+- ✅ Supports task prioritization (`--priority` flag)
+- ✅ Runs for 8 hours by default
+- ❌ No isolated branches (changes go directly to main)
 
-```bash
-bin/nightshift-simple
-```
+**bin/nightshift** (Full Version):
+- ✅ Creates isolated branches for each task
+- ✅ Supports manual review before merging
+- ✅ Iteration or time-limited runs
+- ❌ More complex workflow
+- ❌ Requires Python 3 for task extraction
 
-**Note:** The simple version:
-- Commits directly to `main` (no branches)
-- Doesn't produce review documents
-- Doesn't integrate with GitHub
-- Only recommended for emergency use
+**When to use which:**
+- Use `bin/nightshift-simple` for rapid iteration and immediate progress (most common)
+- Use `bin/nightshift` when you want to review each change in isolation before merging
 
 ## Troubleshooting
 
@@ -403,11 +466,74 @@ Each nightshift run creates a session directory:
 
 ## Examples
 
-### Example Review Document
+### Example 1: Focus on GitHub Issues (Default)
 
-See the appendix in the main planning document for a complete example review document.
+**Scenario:** You have bug reports in GitHub Project #4 that need fixing.
 
-### Example Task Flow
+```bash
+# Start tmux session
+tmux new -s nightshift
+
+# Run nightshift with GitHub priority (default)
+bin/nightshift-simple --priority=github
+
+# Detach: Ctrl+b, then d
+```
+
+**What happens:**
+1. Nightshift checks GitHub Project #4 for "Todo" issues
+2. Finds issue #145: "Loading states are inconsistent"
+3. Implements the fix and commits to main
+4. Automatically closes issue #145 with comment
+5. Generates review doc at `.git/nightshift/{SESSION_ID}/nightshift-review.md`
+
+### Example 2: Focus on Feature Development
+
+**Scenario:** You want to work through planned features in FEATURES.md.
+
+```bash
+# Start tmux session
+tmux new -s nightshift
+
+# Run nightshift with docs priority
+bin/nightshift-simple --priority=docs
+
+# Detach: Ctrl+b, then d
+```
+
+**What happens:**
+1. Nightshift checks FEATURES.md for items marked 📋 Planned
+2. Finds "Relationship Graph" visualization feature
+3. Implements the feature and commits to main
+4. Generates review doc showing the completed work
+5. Falls back to GitHub issues if no doc tasks available
+
+### Example 3: Overnight Run with Morning Review
+
+**Evening:**
+```bash
+tmux new -s nightshift
+bin/nightshift-simple
+# Ctrl+b, then d to detach
+```
+
+**Morning:**
+```bash
+# Reattach to see if it's still running
+tmux attach -t nightshift
+
+# If finished, read the review
+cat .git/nightshift/20260318-220000/nightshift-review.md
+
+# Check what was committed
+git log --oneline --since="last night"
+
+# Update FEATURES.md status markers
+# Close the tmux session
+tmux kill-session -t nightshift
+```
+
+### Example Task Flow (Full Version)
 
 1. **Create GitHub Issue:**
    - Title: "Add combat tracker to Play mode"
